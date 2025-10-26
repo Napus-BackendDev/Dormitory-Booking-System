@@ -1,7 +1,14 @@
 import { Bell, User, Calendar, CheckCircle, Clock, Zap, Eye, Wrench, Award } from 'lucide-react';
-import './Dashboard.css';
+import './Dashboard_User.css';
 
-export default function Dashboard() {
+type PageType = 'dashboard' | 'profile';
+
+interface DashboardProps {
+    onNavigate?: (page: PageType) => void;
+    currentPage?: PageType;
+}
+
+export default function Dashboard({ onNavigate, currentPage }: DashboardProps) {
     return (
         <div className="dashboard-container">
             {/* Header/Navbar */}
@@ -20,8 +27,18 @@ export default function Dashboard() {
                     </div>
 
                     <div className="navbar-right">
-                        <button className="btn-dashboard">แดชบอร์ด</button>
-                        <button className="btn-profile">โปรไฟล์</button>
+                        <button
+                            className={`btn-dashboard ${currentPage === 'dashboard' ? 'active' : ''}`}
+                            onClick={() => onNavigate?.('dashboard')}
+                        >
+                            แดชบอร์ด
+                        </button>
+                        <button
+                            className={`btn-profile ${currentPage === 'profile' ? 'active' : ''}`}
+                            onClick={() => onNavigate?.('profile')}
+                        >
+                            โปรไฟล์
+                        </button>
 
                         <div className="user-section">
                             <div className="user-avatar-container">
