@@ -22,7 +22,7 @@ export class AttachmentController {
         return this.attachmentService.findById(id);
     }
     @Put(":id")
-    async updateAttachment(@Param("id") id: UUID, @Body() updateData: UpdateAttachmentDto) {
+    async updateAttachment(@Param("id") id: UUID, @Body() updateData: Partial<UpdateAttachmentDto>) {
         return this.attachmentService.update(id, updateData);
     }
     @Delete(":id")
