@@ -23,3 +23,18 @@ model Ticket {
   dueAt       DateTime
   createdAt   DateTime @default(now())
 }
+model ticket_events {
+  id       String   @default(uuid()) @id
+  ticketId String      @unique
+  type     String?
+  note     String?  
+  createdAt DateTime @default(now())
+}
+
+model attachments {
+  id       String   @default(uuid()) @id
+  ticketId String      @unique
+  url      String?
+  type     String?
+  createdAt DateTime @default(now())
+}
