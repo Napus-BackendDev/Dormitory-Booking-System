@@ -5,7 +5,7 @@ import { TicketEventService } from "./ticket-event.service";
 import { CreateTicketEventDto } from "./dto/create-ticket-event.dto";
 import { UpdateTicketEventDto } from "./dto/update-ticket-event.dto";
 
-@Controller('ticket-events')
+@Controller('ticket-event')
 export class TicketEventController {
     constructor(private ticketEventService: TicketEventService) {}
 

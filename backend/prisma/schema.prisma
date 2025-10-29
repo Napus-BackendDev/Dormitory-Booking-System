@@ -24,18 +24,25 @@ model Ticket {
   createdAt   DateTime @default(now())
 }
 
-model TicketEvents {
-  id        String   @id @default(uuid())
+model TicketEvent {
+  id        String   @id @default(cuid())
   ticketId  String   @unique
   type      String?
   note      String?
   createdAt DateTime @default(now())
 }
 
-model Attachments {
-  id        String   @id @default(uuid())
+model Attachment {
+  id        String   @id @default(cuid())
   ticketId  String   @unique
   url       String?
   type      String?
   createdAt DateTime @default(now())
+}
+
+model Survey {
+  id       String  @id @default(cuid())
+  ticketId String  @unique
+  score    Int
+  comment  String?
 }

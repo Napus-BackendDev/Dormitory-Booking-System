@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { TicketEvents } from '@prisma/client';
+import { TicketEvent } from '@prisma/client';
 import { PrismaService } from "src/common/prisma.service";
 import { UpdateTicketEventDto } from "./dto/update-ticket-event.dto";
 import { CreateTicketEventDto } from "./dto/create-ticket-event.dto";
@@ -8,18 +8,18 @@ import { CreateTicketEventDto } from "./dto/create-ticket-event.dto";
 export class TicketEventService {
     constructor(private prisma: PrismaService) {}
 
-    async create(createTicketEventDto: CreateTicketEventDto): Promise<TicketEvents> {
-        return this.prisma.ticketEvents.create({
+    async create(createTicketEventDto: CreateTicketEventDto): Promise<TicketEvent> {
+        return this.prisma.ticketEvent.create({
             data: createTicketEventDto
         });
     }
     
-    async findAll(): Promise<TicketEvents[]> {
-        return this.prisma.ticketEvents.findMany();
+    async findAll(): Promise<TicketEvent[]> {
+        return this.prisma.ticketEvent.findMany();
     }
 
-    async findById(id: string): Promise<TicketEvents> {
-        const ticketEvent = await this.prisma.ticketEvents.findUnique({
+    async findById(id: string): Promise<TicketEvent> {
+        const ticketEvent = await this.prisma.ticketEvent.findUnique({
             where: { id }
         });
         if (!ticketEvent) {
@@ -29,13 +29,13 @@ export class TicketEventService {
     }
 
     async delete(id: string): Promise<void> {
-        await this.prisma.ticketEvents.delete({
+        await this.prisma.ticketEvent.delete({
             where: { id }
         });
     }
 
-    async update(id: string, updateData: UpdateTicketEventDto): Promise<TicketEvents> {
-        return this.prisma.ticketEvents.update({
+    async update(id: string, updateData: UpdateTicketEventDto): Promise<TicketEvent> {
+        return this.prisma.ticketEvent.update({
             where: { id },
             data: updateData
         });
