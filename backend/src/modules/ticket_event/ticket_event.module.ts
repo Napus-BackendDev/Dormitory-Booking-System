@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { TicketEventService } from "./service/ticket-event.service";
-import { TicketEventController } from "./controller/ticket-event.controller";
+import { TicketEventService } from "./ticket-event.service";
+import { TicketEventController } from "./ticket-event.controller";
 
 @Module({
     controllers: [TicketEventController],

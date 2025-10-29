@@ -1,9 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
-import { AttachmentService } from "../service/attachment.service";
-import { CreateAttachmentDto } from "../dtos/create-attachment.dto";
+import { Body, Controller, Delete, Get, Param, Post, Patch } from "@nestjs/common";
 import { UUID } from "crypto";
-import { UpdateAttachmentDto } from "../dtos/update-attachment.dto";
-import { TicketEvent } from "src/modules/ticket_event/entitys/ticket-event.entity";
+import { CreateAttachmentDto } from "./dto/create-attachment.dto";
+import { UpdateAttachmentDto } from "./dto/update-attachment.dto";
+import { AttachmentService } from "./attachment.service";
 
 @Controller("attachments")
 export class AttachmentController {
@@ -21,7 +20,7 @@ export class AttachmentController {
     async getAttachmentById(@Param("id") id: UUID) {
         return this.attachmentService.findById(id);
     }
-    @Put(":id")
+    @Patch(":id")
     async updateAttachment(@Param("id") id: UUID, @Body() updateData: Partial<UpdateAttachmentDto>) {
         return this.attachmentService.update(id, updateData);
     }

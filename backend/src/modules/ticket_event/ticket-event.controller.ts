@@ -1,9 +1,9 @@
-import { Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
-import { TicketEventService } from "../service/ticket-event.service";
+import { Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 import { Body } from "@nestjs/common";
-import { CreateTicketEventDto } from "../dtos/create-ticket-event.dto";
 import { UUID } from "crypto";
-import { UpdateTicketEventDto } from "../dtos/update-ticket-event.dto";
+import { TicketEventService } from "./ticket-event.service";
+import { CreateTicketEventDto } from "./dto/create-ticket-event.dto";
+import { UpdateTicketEventDto } from "./dto/update-ticket-event.dto";
 
 @Controller('ticket-events')
 export class TicketEventController {
@@ -24,7 +24,7 @@ export class TicketEventController {
         return this.ticketEventService.findById(id);
     }
 
-    @Put(':id')
+    @Patch(':id')
     async updateTicketEvent(@Param('id') id: UUID, @Body() updateData: Partial<UpdateTicketEventDto>) {
         return this.ticketEventService.update(id, updateData);
     }
