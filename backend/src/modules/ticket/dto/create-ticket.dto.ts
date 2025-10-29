@@ -1,6 +1,6 @@
 import { IsString, IsDateString } from 'class-validator';
 
-export class CreateTicketsDto {
+export class CreateTicketDto {
   @IsString()
   code: string;
 

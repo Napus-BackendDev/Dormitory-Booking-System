@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from './common/prisma.module';
-import { TicketsModule } from './modules/tickets/tickets.module';
+import { TicketModule } from './modules/ticket/ticket.module';
 import { AttachmentModule } from './modules/attachment/attachment.module';
 import { TicketEventModule } from './modules/ticket_event/ticket_event.module';
+import { SurveyModule } from './modules/survey/survey.module';
 
 @Module({
   imports: [
     PrismaModule,
     AttachmentModule,
     TicketEventModule,
-    TicketsModule,
+    TicketModule,
+    SurveyModule
   ],
 })
 export class AppModule { }

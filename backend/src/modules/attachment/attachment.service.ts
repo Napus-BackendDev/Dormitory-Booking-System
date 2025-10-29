@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { UUID } from "node:crypto";
-import { Attachments } from '@prisma/client';
+import { Attachment } from '@prisma/client';
 import { PrismaService } from "src/common/prisma.service";
 import { CreateAttachmentDto } from "./dto/create-attachment.dto";
 import { UpdateAttachmentDto } from "./dto/update-attachment.dto";
@@ -9,8 +9,8 @@ import { UpdateAttachmentDto } from "./dto/update-attachment.dto";
 export class AttachmentService {
     constructor(private prisma: PrismaService) { }
 
-    async create(createAttachmentDto: CreateAttachmentDto): Promise<Attachments> {
-        const attachment = await this.prisma.attachments.create({
+    async create(createAttachmentDto: CreateAttachmentDto): Promise<Attachment> {
+        const attachment = await this.prisma.attachment.create({
             data: {
                 ticketId: createAttachmentDto.ticketId,
                 url: createAttachmentDto.url,
@@ -20,12 +20,12 @@ export class AttachmentService {
         return attachment;
     }
 
-    async findAll(): Promise<Attachments[]> {
-        return this.prisma.attachments.findMany();
+    async findAll(): Promise<Attachment[]> {
+        return this.prisma.attachment.findMany();
     }
 
-    async findById(id: UUID): Promise<Attachments> {
-        const attachment = await this.prisma.attachments.findUnique({
+    async findById(id: UUID): Promise<Attachment> {
+        const attachment = await this.prisma.attachment.findUnique({
             where: { id }
         });
         if (!attachment) {
@@ -35,13 +35,13 @@ export class AttachmentService {
     }
 
     async delete(id: UUID): Promise<void> {
-        await this.prisma.attachments.delete({
+        await this.prisma.attachment.delete({
             where: { id }
         });
     }
 
-    async update(id: UUID, updateData: Partial<UpdateAttachmentDto>): Promise<Attachments> {
-        return this.prisma.attachments.update({
+    async update(id: UUID, updateData: Partial<UpdateAttachmentDto>): Promise<Attachment> {
+        return this.prisma.attachment.update({
             where: { id },
             data: updateData
         });

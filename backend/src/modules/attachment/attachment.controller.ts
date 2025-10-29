@@ -4,7 +4,7 @@ import { CreateAttachmentDto } from "./dto/create-attachment.dto";
 import { UpdateAttachmentDto } from "./dto/update-attachment.dto";
 import { AttachmentService } from "./attachment.service";
 
-@Controller("attachments")
+@Controller("attachment")
 export class AttachmentController {
     constructor(private attachmentService: AttachmentService) {}
 
