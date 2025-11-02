@@ -3,6 +3,12 @@ import { PrismaService } from "src/common/prisma.service";
 
 @Injectable()
 export class UserService {
+    getAdminUser() {
+        const adminUser= this.prismaService.user.findFirst({
+            where: { role: 'ADMIN' }
+        });
+        return adminUser;
+    }
 
     constructor(private prismaService: PrismaService) {}
 
