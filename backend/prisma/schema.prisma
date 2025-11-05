@@ -5,11 +5,68 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Ticket {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  title       String
+  description String
+  status      String
+  priority    String
+  dueAt       DateTime
+  createdAt   DateTime @default(now())
+}
+
+model TicketEvent {
+  id        String   @id @default(cuid())
+  ticketId  String   @unique
+  type      String?
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  ticketId  String   @unique
+  url       String?
+  type      String?
+  createdAt DateTime @default(now())
+}
+
+model Survey {
+  id       String  @id @default(cuid())
+  ticketId String  @unique
+  score    Int
+  comment  String?
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String   
+  role      String  @default("USER")
+  createdAt DateTime @default(now())
+}
+model RepairType {
+  id   String @id @default(cuid())
+  name String @unique
+}
+
+model Role {
+  id   String @id @default(cuid())
+  name Json[] @unique
+}
+
+model Location {
+  id      String @id @default(cuid())
+  name    String @unique
+  address String
 }

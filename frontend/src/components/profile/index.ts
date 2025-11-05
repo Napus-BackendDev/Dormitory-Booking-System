@@ -1,0 +1,1 @@
+export { ProfileManagement } from '../ProfileManagement';
