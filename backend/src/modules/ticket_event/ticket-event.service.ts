@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { TicketEvent } from '@prisma/client';
 import { PrismaService } from "src/common/prisma.service";
-import { UpdateTicketEventDto } from "./dto/update-ticket-event.dto";
-import { CreateTicketEventDto } from "./dto/create-ticket-event.dto";
+import { UpdateTicketEventDto } from "./dto/update-ticket_event.dto";
+import { CreateTicketEventDto } from "./dto/create-ticket_event.dto";
 
 @Injectable()
 export class TicketEventService {

@@ -2,9 +2,8 @@ import { Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/
 import { Body } from "@nestjs/common";
 import { UUID } from "crypto";
 import { TicketEventService } from "./ticket-event.service";
-import { CreateTicketEventDto } from "./dto/create-ticket-event.dto";
-import { UpdateTicketEventDto } from "./dto/update-ticket-event.dto";
-import { AuthGuard } from "../auth/auth.guard";
+import { CreateTicketEventDto } from "./dto/create-ticket_event.dto";
+import { UpdateTicketEventDto } from "./dto/update-ticket_event.dto";
 
 @Controller('ticket-event')
 @UseGuards(AuthGuard)
