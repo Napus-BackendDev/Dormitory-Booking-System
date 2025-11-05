@@ -46,3 +46,19 @@ model Survey {
   score    Int
   comment  String?
 }
+
+model RepairType {
+  id   String @id @default(cuid())
+  name String @unique
+}
+
+model Role {
+  id   String @id @default(cuid())
+  name Json[] @unique
+}
+
+model Location {
+  id      String @id @default(cuid())
+  name    String @unique
+  address String
+}
