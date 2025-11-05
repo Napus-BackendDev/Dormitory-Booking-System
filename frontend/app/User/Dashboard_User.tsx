@@ -1,5 +1,8 @@
 import { Bell, User, Calendar, CheckCircle, Clock, Zap, Eye, Wrench, Award } from 'lucide-react';
+import { useState } from 'react';
 import './Dashboard_User.css';
+import MaintenanceBooking from './Maintenance_Booking';
+import MaintenanceDetail from './Maintenance_Detail';
 
 type PageType = 'dashboard' | 'profile';
 
@@ -9,6 +12,17 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ onNavigate, currentPage }: DashboardProps) {
+    const [isMaintenanceModalOpen, setIsMaintenanceModalOpen] = useState(false);
+    const [isMaintenanceDetailOpen, setIsMaintenanceDetailOpen] = useState(false);
+
+    const handleNewMaintenanceRequest = () => {
+        setIsMaintenanceModalOpen(true);
+    };
+
+    const handleViewDetails = () => {
+        setIsMaintenanceDetailOpen(true);
+    };
+
     return (
         <div className="dashboard-container">
             {/* Header/Navbar */}
@@ -66,7 +80,7 @@ export default function Dashboard({ onNavigate, currentPage }: DashboardProps) {
                         <h1 className="welcome-title">แดชบอร์ดผู้ใช้</h1>
                         <p className="welcome-greeting">สวัสดี, สุรพัฒน์ ฟิต 👋</p>
                     </div>
-                    <button className="btn-add">+ แจ้งซ่อมใหม่</button>
+                    <button className="btn-add" onClick={handleNewMaintenanceRequest}>+ แจ้งซ่อมใหม่</button>
                 </div>
 
                 {/* Stats Cards */}
@@ -151,9 +165,15 @@ export default function Dashboard({ onNavigate, currentPage }: DashboardProps) {
                 {/* Booking Requests */}
                 <div className="requests-container">
                     <div className="requests-header">
-                        <Calendar className="requests-icon" />
-                        <h2 className="requests-title">คำร้องขอลิงก์</h2>
-                        <span className="requests-subtitle">รายการแจ้งซ่อมทั้งหมดของคุณ</span>
+                        <div className="requests-header-content">
+                            <div className="requests-icon-container">
+                                <Calendar className="requests-icon" />
+                            </div>
+                            <div className="requests-text-container">
+                                <h2 className="requests-title">คำขอซ่อมล่าสุด</h2>
+                                <span className="requests-subtitle">รายการแจ้งซ่อมทั้งหมดของคุณ</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="requests-list">
@@ -170,7 +190,10 @@ export default function Dashboard({ onNavigate, currentPage }: DashboardProps) {
                                     <span className="tag tag-gray">กดข้างล A - 301</span>
                                 </div>
                             </div>
-                            <button className="btn-view-details">ดูรายละเอียด</button>
+                            <button className="btn-view-details" onClick={handleViewDetails}>
+                                <Eye className="btn-icon" />
+                                ดูรายละเอียด
+                            </button>
                         </div>
 
                         {/* Second Request */}
@@ -187,11 +210,26 @@ export default function Dashboard({ onNavigate, currentPage }: DashboardProps) {
                                 </div>
                                 <p className="request-note">อันดับของคือ: สิทธิ์ 6 ห้องใหญ่</p>
                             </div>
-                            <button className="btn-view-details">ดูรายละเอียด</button>
+                            <button className="btn-view-details" onClick={handleViewDetails}>
+                                <Eye className="btn-icon" />
+                                ดูรายละเอียด
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* Maintenance Booking Modal */}
+            <MaintenanceBooking
+                isOpen={isMaintenanceModalOpen}
+                onClose={() => setIsMaintenanceModalOpen(false)}
+            />
+
+            {/* Maintenance Detail Modal */}
+            <MaintenanceDetail
+                isOpen={isMaintenanceDetailOpen}
+                onClose={() => setIsMaintenanceDetailOpen(false)}
+            />
         </div>
     );
 }
