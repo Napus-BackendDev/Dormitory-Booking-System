@@ -6,6 +6,9 @@ import { TicketEventModule } from './modules/ticket_event/ticket_event.module';
 import { SurveyModule } from './modules/survey/survey.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { RepairTypeModule } from './modules/repair_type/repairtype.module';
+import { RoleModule } from './modules/role/role.module';
+import { LocationModule } from './modules/location/location.module';
 
 @Module({
   imports: [
@@ -15,7 +18,10 @@ import { AuthModule } from './modules/auth/auth.module';
     TicketModule,
     SurveyModule,
     UserModule,
-    AuthModule
+    AuthModule,
+    RepairTypeModule,
+    RoleModule,
+    LocationModule,
   ],
 })
 export class AppModule { }
