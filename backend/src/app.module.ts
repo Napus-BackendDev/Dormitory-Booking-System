@@ -6,6 +6,7 @@ import { TicketEventModule } from './modules/ticket_event/ticket_event.module';
 import { SurveyModule } from './modules/survey/survey.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { AuthModule } from './modules/auth/auth.module';
     TicketModule,
     SurveyModule,
     UserModule,
-    AuthModule
+    AuthModule,
+    EmailModule
   ],
 })
 export class AppModule { }

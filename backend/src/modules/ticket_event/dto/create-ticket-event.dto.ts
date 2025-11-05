@@ -12,4 +12,8 @@ export class CreateTicketEventDto {
     @IsString()
     @IsOptional()
     note?: string;
+
+    @IsString()
+    @IsOptional()
+    createdBy?: string;
 }

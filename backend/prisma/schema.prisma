@@ -30,6 +30,7 @@ model TicketEvent {
   type      String?
   note      String?
   createdAt DateTime @default(now())
+  createdBy String
 }
 
 model Attachment {
