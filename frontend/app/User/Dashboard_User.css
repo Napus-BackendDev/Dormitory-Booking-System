@@ -1,0 +1,667 @@
+/* Container */
+.dashboard-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #F9FAFB 0%, rgba(239, 246, 255, 0.3) 50%, #F9FAFB 100%);
+}
+
+/* Navbar Styles */
+.navbar {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid #E5E7EB;
+    padding: 1rem 24rem;
+}
+
+.navbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-container {
+    position: relative;
+}
+
+.logo-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    background: linear-gradient(to bottom, #DC2626, #EF4444);
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.logo-wrench {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #FBBF24;
+}
+
+.brand-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: linear-gradient(to bottom, #DC2626, #EF4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+}
+
+.brand-subtitle {
+    font-size: 0.75rem;
+    color: #6B7280;
+    margin: 0;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-dashboard {
+    color: #374151;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-dashboard.active {
+    background: linear-gradient(to bottom, #DC2626, #EF4444);
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-dashboard:hover {
+    background: rgba(0, 45, 114, 0.1);
+    color: #002D72;
+}
+
+.btn-dashboard.active:hover {
+    background: linear-gradient(to bottom, #B91C1C, #DC2626);
+    transform: translateY(-1px);
+    color: white;
+}
+
+.btn-profile {
+    color: #374151;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-profile.active {
+    background: linear-gradient(to bottom, #DC2626, #EF4444);
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-profile:hover {
+    background: rgba(0, 45, 114, 0.1);
+    color: #002D72;
+}
+
+.btn-profile.active:hover {
+    background: linear-gradient(to bottom, #B91C1C, #DC2626);
+    transform: translateY(-1px);
+    color: white;
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: 1rem;
+}
+
+.user-avatar-container {
+    position: relative;
+}
+
+.user-avatar {
+    width: 2rem;
+    height: 2rem;
+    background: linear-gradient(to bottom, #DC2626, #EF4444);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(251, 191, 36, 0.3);
+}
+
+.user-initial {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #FBBF24;
+}
+
+.user-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #111827;
+    margin: 0;
+}
+
+.user-role {
+    font-size: 0.75rem;
+    color: #6B7280;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin: 0;
+}
+
+.user-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+    color: #FBBF24;
+}
+
+/* Main Content */
+.main-content {
+    background: #F9FAFB;
+    padding: 1.5rem;
+}
+
+/* Welcome Banner */
+.welcome-banner {
+    margin: 0 auto 1rem auto;
+    width: 1216px;
+    /* ตรงกับ Figma */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #C91A1A 0%, #E44646 100%);
+    /* ใช้ gradient ใหม่ */
+    box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+    /* ตรงกับ Figma */
+    border-radius: 24px;
+    /* ตรงกับ Figma */
+    padding: 1.5rem;
+    color: white;
+}
+
+.welcome-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+}
+
+.welcome-greeting {
+    font-size: 0.875rem;
+    color: #FFB81C;
+    /* เปลี่ยนจาก #FEE2E2 เป็น #FFB81C */
+    margin: 0;
+}
+
+.btn-add {
+    border-radius: 50px;
+    background: #FBBF24;
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: black;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-add:hover {
+    background: #F59E0B;
+}
+
+/* Stats Grid */
+.stats-grid {
+    margin: 0 auto 1rem auto;
+    width: 1240px;
+    display: grid;
+    grid-template-columns: repeat(3, 389.33px);
+    gap: 24px;
+    justify-content: center;
+}
+
+/* Stat Card - อัปเดตให้ตรงกับ Figma structure */
+.stat-card {
+    position: relative;
+    width: 389.33px;
+    height: 218px;
+    background: #FFFFFF;
+    box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 8px 10px -6px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+/* Background Decorative Elements */
+.stat-card::before {
+    content: '';
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    right: -50px;
+    top: -80px;
+    opacity: 0.1;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.stat-card-orange::before {
+    background: linear-gradient(135deg, #FF8904 0%, #F54900 100%);
+}
+
+.stat-card-blue::before {
+    background: linear-gradient(180deg, #002D72 0%, #0A4A9D 100%);
+}
+
+.stat-card-green::before {
+    background: linear-gradient(135deg, #05DF72 0%, #00A63E 100%);
+}
+
+/* Card Content Container */
+.stat-card-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Card Header */
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    height: 80px;
+}
+
+.stat-title-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.150391px;
+    color: #364153;
+    margin: 0;
+}
+
+/* Icon Container */
+.stat-icon-container {
+    width: 44px;
+    height: 44px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon-container-orange {
+    background: #FFEDD4;
+}
+
+.stat-icon-container-blue {
+    background: #DBEAFE;
+}
+
+.stat-icon-container-green {
+    background: #DCFCE7;
+}
+
+.stat-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.stat-icon-orange {
+    color: #F54900;
+}
+
+.stat-icon-blue {
+    color: #002D72;
+}
+
+.stat-icon-green {
+    color: #00A63E;
+}
+
+/* Card Content */
+.stat-content {
+    padding: 0 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+}
+
+/* Number Section */
+.stat-number-section {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.stat-number {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 40px;
+    letter-spacing: 0.369141px;
+    color: #101828;
+    margin: 0;
+}
+
+/* Description Section - แก้ให้ "งานที่เสร็จแล้ว ↑ 12%" อยู่บรรทัดเดียวกัน */
+.stat-description-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-description {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.150391px;
+    color: #6A7282;
+    margin: 0;
+}
+
+.stat-percentage {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.150391px;
+    color: #00A63E;
+    margin: 0;
+}
+
+/* Progress Bar */
+.stat-progress-container {
+    width: 100%;
+    height: 6px;
+    background: #F3F4F6;
+    border-radius: 50px;
+    overflow: hidden;
+    margin-top: auto;
+}
+
+.stat-progress {
+    height: 100%;
+    border-radius: 50px;
+}
+
+.stat-progress-orange {
+    background: linear-gradient(90deg, #FF8904 0%, #F54900 100%);
+    width: 10%;
+}
+
+.stat-progress-blue {
+    background: linear-gradient(180deg, #002D72 0%, #0A4A9D 100%);
+    width: 10%;
+}
+
+.stat-progress-green {
+    background: linear-gradient(90deg, #05DF72 0%, #00A63E 100%);
+    width: 0.3%;
+}
+
+/* Animation and Hover Effects */
+.stat-card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-in-out;
+}
+
+.stat-card:hover .stat-icon-container {
+    transform: scale(1.05);
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Requests Section */
+.requests-container {
+    margin: 0 auto;
+    /* จัดให้อยู่กึ่งกลาง */
+    width: 1216px;
+    /* ตรงกับ Figma */
+    height: 459px;
+    /* ตรงกับ Figma */
+    background: rgba(255, 255, 255, 0.95);
+    /* ตรงกับ Figma - โปร่งใสเล็กน้อย */
+    box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+    /* ตรงกับ Figma */
+    border-radius: 16px;
+    /* ตรงกับ Figma */
+    padding: 1.5rem;
+    overflow: hidden;
+    /* ป้องกัน content เกิน container */
+    display: flex;
+    flex-direction: column;
+}
+
+.requests-header {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    /* ไม่ให้ header หดขนาด */
+}
+
+.requests-icon {
+    height: 1.25rem;
+    /* เพิ่มขนาด icon ให้ใหญ่ขึ้น */
+    width: 1.25rem;
+    color: #2563EB;
+}
+
+.requests-title {
+    font-size: 1rem;
+    /* เพิ่มขนาดตัวอักษร */
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.requests-subtitle {
+    font-size: 0.875rem;
+    /* เพิ่มขนาดตัวอักษร */
+    color: #6B7280;
+    margin-left: auto;
+    /* ให้ subtitle อยู่ด้านขวา */
+}
+
+.requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    /* เพิ่ม gap ระหว่าง cards */
+    flex: 1;
+    /* ใช้พื้นที่ที่เหลือทั้งหมด */
+    overflow-y: auto;
+    /* เพิ่ม scroll ถ้าเนื้อหาเยอะ */
+    padding-right: 0.5rem;
+    /* พื้นที่สำหรับ scrollbar */
+}
+
+/* Request Cards - ปรับปรุงให้เข้ากับ container ใหม่ */
+.request-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+    /* เพิ่ม padding */
+    border-radius: 12px;
+    /* เพิ่ม border radius */
+    min-height: 120px;
+    /* กำหนดความสูงขั้นต่ำ */
+    box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1);
+    /* เพิ่ม shadow เล็กน้อย */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.request-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 8px 12px -2px rgba(0, 0, 0, 0.15);
+}
+
+.request-card-orange {
+    border-left: 4px solid #FB923C;
+    background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
+    /* เพิ่ม gradient */
+}
+
+.request-card-blue {
+    border-left: 4px solid #60A5FA;
+    background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+    /* เพิ่ม gradient */
+}
+
+.request-content {
+    flex: 1;
+}
+
+.request-title {
+    font-size: 1rem;
+    /* เพิ่มขนาดตัวอักษร */
+    font-weight: 600;
+    /* เพิ่ม font weight */
+    color: #111827;
+    margin: 0 0 0.5rem 0;
+}
+
+.request-description {
+    font-size: 0.875rem;
+    /* เพิ่มขนาดตัวอักษร */
+    color: #4B5563;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.5;
+    /* เพิ่ม line height */
+}
+
+.request-tags {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 1rem;
+    /* เพิ่ม gap */
+    font-size: 0.875rem;
+    /* เพิ่มขนาดตัวอักษร */
+    flex-wrap: wrap;
+    /* ให้ tags ขึ้นบรรทัดใหม่ได้ */
+}
+
+.tag {
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    /* เพิ่ม padding */
+    border-radius: 6px;
+    /* เพิ่ม background */
+    font-size: 0.75rem;
+}
+
+.tag-orange {
+    color: #EA580C;
+    background: #FED7AA;
+}
+
+.tag-blue {
+    color: #2563EB;
+    background: #BFDBFE;
+}
+
+.tag-gray {
+    color: #6B7280;
+    background: #F3F4F6;
+}
+
+.request-note {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #6B7280;
+    margin-bottom: 0;
+    font-style: italic;
+    /* เพิ่ม italic */
+}
+
+.btn-view-details {
+    border-radius: 12px;
+    /* เพิ่ม border radius */
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    /* เพิ่ม gradient */
+    padding: 0.75rem 1.5rem;
+    /* เพิ่ม padding */
+    font-size: 0.875rem;
+    /* เพิ่มขนาดตัวอักษร */
+    font-weight: 500;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-view-details:hover {
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+    transform: translateY(-1px);
+    box-shadow: 0px 6px 8px -1px rgba(0, 0, 0, 0.15);
+}
+
+/* Scrollbar Styling */
+.requests-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.requests-list::-webkit-scrollbar-track {
+    background: #F3F4F6;
+    border-radius: 3px;
+}
+
+.requests-list::-webkit-scrollbar-thumb {
+    background: #D1D5DB;
+    border-radius: 3px;
+}
+
+.requests-list::-webkit-scrollbar-thumb:hover {
+    background: #9CA3AF;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .request-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
