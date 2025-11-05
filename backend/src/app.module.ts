@@ -18,7 +18,7 @@ import { LocationModule } from './modules/location/location.module';
     TicketModule,
     SurveyModule,
     UserModule,
-    AuthModule
+    AuthModule,
     RepairTypeModule,
     RoleModule,
     LocationModule,
