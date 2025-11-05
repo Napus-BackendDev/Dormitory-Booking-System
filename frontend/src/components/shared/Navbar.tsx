@@ -1,6 +1,6 @@
 import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { Button } from './ui/button';
+import { useAuth } from '../../contexts/AuthContext';
+import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,9 +8,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+} from '../ui/dropdown-menu';
 import { Wrench, User, LogOut, Sparkles } from 'lucide-react';
-import { Badge } from './ui/badge';
+import { Badge } from '../ui/badge';
 import { motion } from 'motion/react';
 
 interface NavbarProps {

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useMaintenance } from '../contexts/MaintenanceContext';
-import { useAuth } from '../contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { useMaintenance } from '../../contexts/MaintenanceContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import {
   AlertTriangle,
   ClipboardList,
@@ -21,12 +21,12 @@ import {
   Star,
   User,
 } from 'lucide-react';
-import { RequestDetailsDialog } from './RequestDetailsDialog';
-import { SLAConfigDialog } from './SLAConfigDialog';
-import { TechnicianDetailDialog } from './TechnicianDetailDialog';
-import { StatCard } from './StatCard';
+import { RequestDetailsDialog } from '../dialogs/RequestDetailsDialog';
+import { SLAConfigDialog } from '../dialogs/SLAConfigDialog';
+import { TechnicianDetailDialog } from '../dialogs/TechnicianDetailDialog';
+import { StatCard } from '../shared/StatCard';
 import { motion } from 'motion/react';
-import type { MaintenanceRequest, RequestStatus, RequestPriority } from '../contexts/MaintenanceContext';
+import type { MaintenanceRequest, RequestStatus, RequestPriority } from '../../contexts/MaintenanceContext';
 
 export const SupervisorDashboard: React.FC = () => {
   const { user } = useAuth();

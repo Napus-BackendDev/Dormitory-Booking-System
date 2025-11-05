@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useMaintenance } from '../contexts/MaintenanceContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { useAuth } from '../../contexts/AuthContext';
+import { useMaintenance } from '../../contexts/MaintenanceContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { ClipboardList, Clock, CheckCircle, UserCheck, Wrench, AlertTriangle, Award, Zap, Star } from 'lucide-react';
-import { RequestDetailsDialog } from './RequestDetailsDialog';
-import { StatCard } from './StatCard';
+import { RequestDetailsDialog } from '../dialogs/RequestDetailsDialog';
+import { StatCard } from '../shared/StatCard';
 import { toast } from 'sonner';
 import { motion } from 'motion/react';
-import type { MaintenanceRequest } from '../contexts/MaintenanceContext';
+import type { MaintenanceRequest } from '../../contexts/MaintenanceContext';
 
 export const TechnicianDashboard: React.FC = () => {
   const { user } = useAuth();

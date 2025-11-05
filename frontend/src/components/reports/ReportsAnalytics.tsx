@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import { useMaintenance } from '../contexts/MaintenanceContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
+import { useMaintenance } from '../../contexts/MaintenanceContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 import {
   BarChart3,
   Download,
