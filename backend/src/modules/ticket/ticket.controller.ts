@@ -5,6 +5,7 @@ import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('ticket')
+@UseGuards(AuthGuard)
 export class TicketController {
   constructor(private readonly ticketService: TicketService) { }
 
