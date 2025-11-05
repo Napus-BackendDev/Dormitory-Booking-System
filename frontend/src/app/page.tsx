@@ -1,13 +1,11 @@
 'use client';
 
 import { useAuth } from '../contexts/AuthContext';
-import { LoginPage } from '../components/auth/LoginPage';
-import { UserDashboard } from '../components/UserDashboard';
-import { TechnicianDashboard } from '../components/TechnicianDashboard';
-import { SupervisorDashboard } from '../components/SupervisorDashboard';
-import { Navbar } from '../components/Navbar';
-import { ReportsAnalytics } from '../components/ReportsAnalytics';
-import { ProfileManagement } from '../components/ProfileManagement';
+import { LoginPage } from '../components/auth';
+import { UserDashboard, TechnicianDashboard, SupervisorDashboard } from '../components/dashboard';
+import { Navbar } from '../components/shared';
+import { ReportsAnalytics } from '../components/reports';
+import { ProfileManagement } from '../components/profile';
 import { useState } from 'react';
 
 export default function HomePage() {

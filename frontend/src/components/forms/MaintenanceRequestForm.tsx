@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useMaintenance } from '../contexts/MaintenanceContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useMaintenance } from '../../contexts/MaintenanceContext';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from './ui/dialog';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Textarea } from './ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Badge } from './ui/badge';
+} from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Badge } from '../ui/badge';
 import { toast } from 'sonner';
 import { Wrench, AlertCircle, Zap, Send, Building, Hash, Image, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import type { RequestPriority } from '../contexts/MaintenanceContext';
+import type { RequestPriority } from '../../contexts/MaintenanceContext';
 
 interface MaintenanceRequestFormProps {
   open: boolean;

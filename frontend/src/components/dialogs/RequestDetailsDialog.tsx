@@ -5,12 +5,12 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from './ui/dialog';
-import { Badge } from './ui/badge';
-import { Separator } from './ui/separator';
+} from '../ui/dialog';
+import { Badge } from '../ui/badge';
+import { Separator } from '../ui/separator';
 import { Calendar, User, MapPin, Clock, Star, CheckCircle2, AlertCircle, Zap, Image as ImageIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import type { MaintenanceRequest } from '../contexts/MaintenanceContext';
+import type { MaintenanceRequest } from '../../contexts/MaintenanceContext';
 
 interface RequestDetailsDialogProps {
   request: MaintenanceRequest;

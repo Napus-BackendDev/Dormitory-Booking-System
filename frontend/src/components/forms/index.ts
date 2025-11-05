@@ -1,1 +1,1 @@
-export { MaintenanceRequestForm } from '../MaintenanceRequestForm';
+export { MaintenanceRequestForm } from './MaintenanceRequestForm';

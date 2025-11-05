@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useMaintenance } from '../contexts/MaintenanceContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
+import { useAuth } from '../../contexts/AuthContext';
+import { useMaintenance } from '../../contexts/MaintenanceContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 import { ClipboardList, Clock, CheckCircle, Plus, Eye, Award, Zap, Star } from 'lucide-react';
-import { MaintenanceRequestForm } from './MaintenanceRequestForm';
-import { RequestDetailsDialog } from './RequestDetailsDialog';
-import { RatingDialog } from './RatingDialog';
-import { StatCard } from './StatCard';
+import { MaintenanceRequestForm } from '../forms/MaintenanceRequestForm';
+import { RequestDetailsDialog } from '../dialogs/RequestDetailsDialog';
+import { RatingDialog } from '../dialogs/RatingDialog';
+import { StatCard } from '../shared/StatCard';
 import { motion } from 'motion/react';
-import type { MaintenanceRequest } from '../contexts/MaintenanceContext';
+import type { MaintenanceRequest } from '../../contexts/MaintenanceContext';
 
 export const UserDashboard: React.FC = () => {
   const { user } = useAuth();

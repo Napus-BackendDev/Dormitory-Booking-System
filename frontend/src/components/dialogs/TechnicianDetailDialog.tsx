@@ -1,15 +1,15 @@
 import React from "react";
-import { useMaintenance } from "../contexts/MaintenanceContext";
+import { useMaintenance } from "../../contexts/MaintenanceContext";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { Card, CardContent } from "./ui/card";
-import { Badge } from "./ui/badge";
-import { ScrollArea } from "./ui/scroll-area";
+} from "../ui/dialog";
+import { Card, CardContent } from "../ui/card";
+import { Badge } from "../ui/badge";
+import { ScrollArea } from "../ui/scroll-area";
 import {
   Star,
   User,
@@ -23,7 +23,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { motion } from "motion/react";
-import type { MaintenanceRequest } from "../contexts/MaintenanceContext";
+import type { MaintenanceRequest } from "../../contexts/MaintenanceContext";
 
 interface TechnicianDetailDialogProps {
   open: boolean;

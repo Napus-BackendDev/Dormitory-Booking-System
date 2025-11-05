@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { useMaintenance } from '../contexts/MaintenanceContext';
+import { useMaintenance } from '../../contexts/MaintenanceContext';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from './ui/dialog';
-import { Button } from './ui/button';
-import { Textarea } from './ui/textarea';
+} from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner';
 import { Star, Send, Heart, User, Wrench, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import type { MaintenanceRequest } from '../contexts/MaintenanceContext';
+import type { MaintenanceRequest } from '../../contexts/MaintenanceContext';
 
 interface RatingDialogProps {
   open: boolean;

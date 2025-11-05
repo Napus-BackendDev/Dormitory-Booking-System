@@ -1,1 +1,1 @@
-export { ProfileManagement } from '../ProfileManagement';
+export { ProfileManagement } from './ProfileManagement';
