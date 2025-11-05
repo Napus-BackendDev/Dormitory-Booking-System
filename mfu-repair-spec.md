@@ -25,13 +25,6 @@
 | Executive | รองอธิการ / มหาวิทยาลัย | ดูสถิติรวม, Dashboard |
 | System Admin | ผู้ดูแลระบบ | ตั้งค่า category, SLA, users, permissions |
 
-// Mark
-| User | 
-| Technician | 
-| Supervisor | 
-| Executive | 
-| Admin |
-
 ---
 
 ## 4. Features
