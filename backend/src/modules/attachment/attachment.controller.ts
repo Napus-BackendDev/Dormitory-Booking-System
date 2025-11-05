@@ -1,0 +1,39 @@
+import { Body, Controller, Delete, Get, Param, Post, Patch, UseGuards } from "@nestjs/common";
+import { UUID } from "crypto";
+import { CreateAttachmentDto } from "./dto/create-attachment.dto";
+import { UpdateAttachmentDto } from "./dto/update-attachment.dto";
+import { AttachmentService } from "./attachment.service";
+import { AuthGuard } from "../auth/auth.guard";
+import { Role } from "src/common/enums/role.enum";
+import { RolesGuard } from "src/common/author/roles.guard";
+import { Roles } from "src/common/author/role.decorator";
+
+@UseGuards(AuthGuard, RolesGuard)
+@Controller("attachment")
+export class AttachmentController {
+    constructor(private attachmentService: AttachmentService) {}
+
+    @Roles(Role.ADMIN)
+    @Post()
+    async createAttachment(@Body() createAttachmentDto: CreateAttachmentDto) {
+        return this.attachmentService.create(createAttachmentDto);
+    }
+    
+    @Get()
+    async getAllAttachments() {
+        return this.attachmentService.findAll();
+    }
+    @Get(":id")
+    async getAttachmentById(@Param("id") id: UUID) {
+        return this.attachmentService.findById(id);
+    }
+    @Patch(":id")
+    async updateAttachment(@Param("id") id: UUID, @Body() updateData: Partial<UpdateAttachmentDto>) {
+        return this.attachmentService.update(id, updateData);
+    }
+    @Delete(":id")
+    async deleteAttachment(@Param("id") id: UUID) {
+        console.log("Deleting attachment with ID:", id);
+        return this.attachmentService.delete(id);
+    }
+}   

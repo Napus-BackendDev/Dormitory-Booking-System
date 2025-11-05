@@ -1,0 +1,48 @@
+# Basic GitLab CI/CD for full-stack (frontend + backend)
+image: node:20
+
+stages:
+  - install
+  - test
+  - build
+
+cache:
+  paths:
+    - frontend/node_modules/
+    - backend/node_modules/
+
+# STEP 1: Install dependencies
+install:
+  stage: install
+  script:
+    - echo "Installing dependencies..."
+    - cd frontend && npm ci && cd ..
+    - cd backend && npm ci && cd ..
+  artifacts:
+    paths:
+      - frontend/node_modules/
+      - backend/node_modules/
+    expire_in: 1 week
+
+# STEP 2: Run tests (optional)
+test:
+  stage: test
+  script:
+    - echo "Running frontend tests..."
+    - cd frontend && npm test || echo "No frontend tests"
+    - cd ../backend && npm test || echo "No backend tests"
+  allow_failure: true
+
+# STEP 3: Build projects
+build:
+  stage: build
+  script:
+    - echo "Building frontend..."
+    - cd frontend && npm run build
+    - echo "Building backend..."
+    - cd ../backend && npm run build
+  artifacts:
+    paths:
+      - frontend/.next/
+      - backend/dist/
+    expire_in: 1 week
