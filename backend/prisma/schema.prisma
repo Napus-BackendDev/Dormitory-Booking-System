@@ -32,6 +32,10 @@ model TicketEvent {
   createdAt DateTime @default(now())
 }
 
+model Line {
+  userId    String   @unique
+}
+
 model Attachment {
   id        String   @id @default(cuid())
   ticketId  String   @unique

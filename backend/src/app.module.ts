@@ -9,6 +9,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { RepairTypeModule } from './modules/repair_type/repairtype.module';
 import { RoleModule } from './modules/role/role.module';
 import { LocationModule } from './modules/location/location.module';
+import { LineModule } from './modules/line/Line.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { LocationModule } from './modules/location/location.module';
     RepairTypeModule,
     RoleModule,
     LocationModule,
+    LineModule,
   ],
 })
 export class AppModule { }
