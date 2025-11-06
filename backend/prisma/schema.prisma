@@ -22,23 +22,48 @@ model Ticket {
   priority    String
   dueAt       DateTime
   createdAt   DateTime @default(now())
+
+  // SLA Fields
+  slaResponseDueAt DateTime?
+  slaResolveDueAt  DateTime?
+  acknowledgedAt   DateTime?
+  resolvedAt       DateTime?
+  responseWarnAt  DateTime?
+  resolveWarnAt   DateTime?
+  responseBreached Boolean @default(false)
+  resolvedBreached Boolean @default(false)
+
+  onHoldSeconds Int     @default(0)
+
+  events      TicketEvent[]
+  attachments Attachment[]
+  survey      Survey?
+
+  @@index([status,slaResponseDueAt])
+  @@index([status,slaResolveDueAt])
 }
 
 model TicketEvent {
   id        String   @id @default(cuid())
-  ticketId  String   @unique
+  ticketId  String
   type      String?
   note      String?
   createdAt DateTime @default(now())
   createdBy String
+
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  @@index([ticketId])
 }
 
 model Attachment {
   id        String   @id @default(cuid())
-  ticketId  String   @unique
+  ticketId  String
   url       String?
   type      String?
   createdAt DateTime @default(now())
+
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  @@index([ticketId])
 }
 
 model Survey {
@@ -46,10 +71,12 @@ model Survey {
   ticketId String  @unique
   score    Int
   comment  String?
+
+  ticket   Ticket  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   email     String   @unique
   name      String
   password  String   

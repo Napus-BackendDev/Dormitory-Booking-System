@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
-
+import { AuthGuard } from '../auth/auth.guard';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @Controller('ticket')
 export class TicketController {
@@ -19,17 +20,20 @@ export class TicketController {
   }
 
   @Post()
-  create(@Body() createTicketsDto: CreateTicketDto) {
-    return this.ticketService.create(createTicketsDto);
+  @UseGuards(AuthGuard)
+  create(@Body() createTicketsDto: CreateTicketDto, @CurrentUser() user: any) {
+    return this.ticketService.create(createTicketsDto, user);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTicketsDto: UpdateTicketDto) {
-    return this.ticketService.update(id, updateTicketsDto);
+  @UseGuards(AuthGuard)
+  update(@Param('id') id: string, @Body() updateTicketsDto: UpdateTicketDto, @CurrentUser() user: any) {
+    return this.ticketService.update(id, updateTicketsDto, user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ticketService.delete(id);
+  @UseGuards(AuthGuard)
+  remove(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.ticketService.delete(id, user);
   }
 }

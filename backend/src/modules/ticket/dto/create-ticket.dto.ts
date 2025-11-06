@@ -1,4 +1,4 @@
-import { IsString, IsDateString } from 'class-validator';
+import { IsString, IsDateString, IsIn } from 'class-validator';
 
 export class CreateTicketDto {
   @IsString()
@@ -13,8 +13,8 @@ export class CreateTicketDto {
   @IsString()
   status: string;
 
-  @IsString()
-  priority: string;
+  @IsIn(['P1', 'P2', 'P3', 'P4'])
+  priority: 'P1' | 'P2' | 'P3' | 'P4';
 
   @IsDateString()
   dueAt: Date;

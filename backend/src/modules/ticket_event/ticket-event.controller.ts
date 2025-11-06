@@ -24,7 +24,7 @@ export class TicketEventController {
     }
 
     @Get()
-    @Roles(Role.STAFF, Role.ADMIN)
+    @Roles(Role.STAFF, Role.ADMIN, Role.USER)
     async getAllTicketEvents() {
         return this.ticketEventService.findAll();
     }
