@@ -8,7 +8,7 @@ import { Roles } from 'src/common/author/role.decorator';
 
 @Controller('role')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles('ADMIN')
+//@Roles('ADMIN')
 export class RoleController {
   constructor(private readonly roleService: RoleService) { }
 
@@ -23,19 +23,16 @@ export class RoleController {
   }
 
   @Post()
-  @Roles('ADMIN')
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.roleService.create(createRoleDto);
   }
 
   @Patch(':id')
-  @Roles('ADMIN')
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.roleService.update(id, updateRoleDto);
   }
 
   @Delete(':id')
-  @Roles('ADMIN')
   remove(@Param('id') id: string) {
     return this.roleService.delete(id);
   }
