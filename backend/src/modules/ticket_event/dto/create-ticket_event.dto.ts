@@ -1,13 +1,13 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { TicketEventType } from '@prisma/client';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class CreateTicketEventDto {
     @IsString()
-    @IsUUID()
     ticketId: string;
 
     @IsString()
-    @IsOptional()
-    type?: string;
+    @IsEnum(TicketEventType)
+    type: TicketEventType;
 
     @IsString()
     @IsOptional()

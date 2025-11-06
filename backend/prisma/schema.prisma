@@ -21,7 +21,7 @@ enum TicketPriority {
   P4
 }
 
-enum TicketType {
+enum TicketEventType {
   CREATED
   ASSIGNED
   STARTED
@@ -56,7 +56,7 @@ model Ticket {
 
 model TicketEvent {
   id        String     @id @default(cuid())
-  type      TicketType
+  type      TicketEventType
   note      String?
   createdAt DateTime   @default(now())
   ticketId  String? // Foreign key to Ticket
