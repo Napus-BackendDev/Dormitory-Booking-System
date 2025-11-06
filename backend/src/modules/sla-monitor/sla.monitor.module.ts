@@ -5,12 +5,14 @@ import { SlaMonitorService } from './sla.monitor.service';
 import { SlaMonitorScheduler } from './sla.monitor.scheduler';
 import { SlaMonitorWorker } from './sla.monitor.worker';
 import { PrismaService } from '../../common/prisma.service';
+import { EmailModule } from '../../common/email/email.module';
 
 @Module({
   imports: [
     BullModule.registerQueue({
       name: 'sla-monitor',
     }),
+    EmailModule,
   ],
   controllers: [SlaMonitorController],
   providers: [

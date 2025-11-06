@@ -66,6 +66,19 @@ The module works with the following database entities:
 - Warning window: 15 minutes before deadline
 
 ## Usage
+⏰ Notification Timing:
+Automatic Notifications:
+SLA Monitor runs every 5 minutes automatically
+Warning emails: Sent when tickets are 15 minutes from SLA deadline
+Breach emails: Sent when tickets exceed SLA deadline
+For Your P1 Test Ticket:
+Response SLA: 15 minutes from ticket creation
+Resolution SLA: 4 hours from ticket creation
+Timeline:
+
+Now → Ticket created with SLA deadlines calculated
+~10-13 minutes → ⚠️ Warning email sent to all admin users
+15+ minutes → 🚨 Breach email sent to all admin users
 
 ### Automatic Monitoring
 The scheduler automatically runs SLA checks every 5 minutes when the application starts.

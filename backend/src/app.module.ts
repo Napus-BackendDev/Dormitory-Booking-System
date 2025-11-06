@@ -10,12 +10,12 @@ import { AuthModule } from './modules/auth/auth.module';
 import { EmailModule } from './common/email/email.module';
 import { BullModule } from '@nestjs/bull';
 import { SlaMonitorModule } from './modules/sla-monitor/sla.monitor.module';
-
+import { RedisModule } from './common/redis/redis.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,  // Make ConfigService available globally
+      isGlobal: true,
     }),
     PrismaModule,
     AttachmentModule,
@@ -25,6 +25,7 @@ import { SlaMonitorModule } from './modules/sla-monitor/sla.monitor.module';
     UserModule,
     AuthModule,
     EmailModule,
+    RedisModule,
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST || 'localhost',

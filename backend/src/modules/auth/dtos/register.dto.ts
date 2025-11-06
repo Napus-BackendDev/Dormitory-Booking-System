@@ -27,5 +27,5 @@ export class RegisterDto {
         message: `Role must be one of: ${Object.values(Role).join(', ')}`
     })
     @IsOptional()
-    role: Role = Role.USER; // Default to USER role
+    role: Role = Role.USER; 
 }

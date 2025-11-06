@@ -1,12 +1,17 @@
 import { Processor, Process } from '@nestjs/bull';
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../common/prisma.service";
-import { RecieveTicketMailer } from 'src/common/email/mail-temp/recieve.confirm';
+import { EmailService } from "../../common/email/email.service";
+import { SlaWarningMailer } from 'src/common/email/mail-temp/sla-warning';
+import { SlaBreachMailer } from 'src/common/email/mail-temp/sla-breach';
 
 @Injectable()
 @Processor('sla-monitor')
 export class SlaMonitorWorker{
-    constructor(private prismaService: PrismaService) {}
+    constructor(
+        private prismaService: PrismaService,
+        private emailService: EmailService
+    ) {}
 
     @Process('tick')
     async handle() {
@@ -46,7 +51,20 @@ export class SlaMonitorWorker{
             });
             // TODO: send email/LINE here if you want
             try {
-                RecieveTicketMailer(this.prismaService, t.id);
+                // Determine if this is a response or resolution warning
+                const isResponseWarning = !t.acknowledgedAt && t.slaResponseDueAt && t.slaResponseDueAt <= soon && t.slaResponseDueAt > now;
+                const slaType = isResponseWarning ? 'response' : 'resolution';
+                const dueAt = isResponseWarning ? t.slaResponseDueAt : t.slaResolveDueAt;
+
+                await SlaWarningMailer(
+                    this.prismaService,
+                    this.emailService,
+                    t.id,
+                    t.code,
+                    t.title,
+                    slaType,
+                    dueAt!
+                );
             } catch (error) {
                 console.error('Failed to send SLA warning email:', error);
             }
@@ -81,9 +99,22 @@ export class SlaMonitorWorker{
                 createdBy: 'system',
                 },
             });
-            // TODO: send urgent email/LINE here
-            try{
-                RecieveTicketMailer(this.prismaService, t.id);
+            // Send urgent email notification for SLA breach
+            try {
+                // Determine if this is a response or resolution breach
+                const isResponseBreach = !t.acknowledgedAt && t.slaResponseDueAt && t.slaResponseDueAt < now;
+                const slaType = isResponseBreach ? 'response' : 'resolution';
+                const breachedAt = isResponseBreach ? t.slaResponseDueAt : t.slaResolveDueAt;
+
+                await SlaBreachMailer(
+                    this.prismaService,
+                    this.emailService,
+                    t.id,
+                    t.code,
+                    t.title,
+                    slaType,
+                    breachedAt!
+                );
             } catch (error) {
                 console.error('Failed to send SLA breach email:', error);
             }
