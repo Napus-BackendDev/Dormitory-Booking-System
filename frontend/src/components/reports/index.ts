@@ -1,1 +1,1 @@
-export { ReportsAnalytics } from '../ReportsAnalytics';
+export { ReportsAnalytics } from './ReportsAnalytics';

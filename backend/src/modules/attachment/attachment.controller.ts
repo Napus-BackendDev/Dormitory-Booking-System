@@ -7,8 +7,8 @@ import { AuthGuard } from "../auth/auth.guard";
 import { RolesGuard } from "src/common/author/roles.guard";
 import { Roles } from "src/common/author/role.decorator";
 
-@UseGuards(AuthGuard, RolesGuard)
 @Controller("attachment")
+@UseGuards(AuthGuard, RolesGuard)
 export class AttachmentController {
     constructor(private attachmentService: AttachmentService) {}
 

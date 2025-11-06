@@ -18,4 +18,4 @@ import { AuthGuard } from "./auth.guard";
     providers: [AuthService, PrismaService, AuthGuard],
     exports: [AuthService, AuthGuard]
 })
-export class AuthModule {}
+export class AuthModule { }
