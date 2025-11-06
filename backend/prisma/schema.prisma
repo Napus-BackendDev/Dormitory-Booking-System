@@ -65,6 +65,10 @@ model TicketEvent {
   ticket Ticket? @relation(fields: [ticketId], references: [id])
 }
 
+model Line {
+  userId    String   @unique
+}
+
 model Attachment {
   id        String         @id @default(cuid())
   url       String
