@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { PrismaModule } from './common/prisma.module';
 import { TicketModule } from './modules/ticket/ticket.module';
 import { AttachmentModule } from './modules/attachment/attachment.module';
@@ -10,6 +11,7 @@ import { RepairTypeModule } from './modules/repair_type/repairtype.module';
 import { RoleModule } from './modules/role/role.module';
 import { LocationModule } from './modules/location/location.module';
 import { LineModule } from './modules/line/Line.module';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -24,6 +26,10 @@ import { LineModule } from './modules/line/Line.module';
     RoleModule,
     LocationModule,
     LineModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
   ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -4,6 +4,7 @@ import { PrismaService } from 'src/common/prisma.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { LineService } from '../line/Line.service';
+import { generateImageUrl } from '../../common/utils/utils';
 
 @Injectable()
 export class TicketService {
@@ -20,10 +21,10 @@ export class TicketService {
     return this.prisma.ticket.findUnique({ where: { id } });
   }
 
-  async create(createTicketDto: CreateTicketDto): Promise<Ticket> {
-    const ticket = await this.prisma.ticket.create({
-      data: { ...createTicketDto, createdAt: new Date() },
-    });
+  async create(createTicketDto: CreateTicketDto, photos: Express.Multer.File[]): Promise<Ticket> {
+    const photoUrls = photos.map(file => generateImageUrl(file.filename));
+
+    const ticket = await this.prisma.ticket.create({ data: { ...createTicketDto, photo: photoUrls, createdAt: new Date() }, });
 
     this.lineService.sendLineCreateTicket(ticket);
     return ticket;
