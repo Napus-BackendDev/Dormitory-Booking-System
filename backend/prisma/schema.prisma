@@ -41,6 +41,7 @@ model Ticket {
   description  String
   status       String
   priority     TicketPriority
+  photo        String[]
   dueAt        DateTime
   createdAt    DateTime       @default(now())
   repairTypeId String? // Foreign key to RepairType

@@ -17,6 +17,9 @@ export class CreateTicketDto {
   @IsEnum(TicketPriority)
   priority: TicketPriority;
 
+  @IsString()
+  photo: string[];
+
   @IsDateString()
   dueAt: Date;
 }
