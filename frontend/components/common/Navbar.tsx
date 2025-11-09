@@ -11,7 +11,7 @@ import {
 } from '../ui/dropdown-menu';
 import { Wrench, User, LogOut, Sparkles } from 'lucide-react';
 import { Badge } from '../ui/badge';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 interface NavbarProps {
   currentPage: string;
@@ -31,6 +31,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
         return 'ทีมช่าง';
       case 'supervisor':
         return 'หัวหน้างาน';
+      case 'admin':
+        return 'ผู้ดูแลระบบ';
       default:
         return role;
     }
@@ -38,9 +40,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
 
   const getNavItems = () => {
     const baseItems = [
-      { id: 'dashboard', label: 'แดชบอร์ด', roles: ['user', 'technician', 'supervisor'] },
-      { id: 'reports', label: 'รายงานและสถิติ', roles: ['supervisor', 'technician'] },
-      { id: 'profile', label: 'โปรไฟล์', roles: ['user', 'technician', 'supervisor'] },
+      { id: 'dashboard', label: 'แดชบอร์ด', roles: ['user', 'technician', 'supervisor', 'admin'] },
+      { id: 'reports', label: 'รายงานและสถิติ', roles: ['supervisor', 'technician', 'admin'] },
+      { id: 'profile', label: 'โปรไฟล์', roles: ['user', 'technician', 'supervisor', 'admin'] },
     ];
 
     return baseItems.filter(item => item.roles.includes(user.role));
@@ -64,20 +66,20 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                   opacity: [0.3, 0.5, 0.3]
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="absolute inset-0 bg-gradient-to-r from-[#C91A1A] to-[#E44646] rounded-lg blur"
+                className="absolute inset-0 bg-gradient-to-r from-[#DC2626] to-[#EF4444] rounded-lg blur"
               ></motion.div>
               
-              <div className="relative bg-gradient-to-br from-[#C91A1A] to-[#E44646] p-2 rounded-lg shadow-xl">
+              <div className="relative bg-gradient-to-br from-[#DC2626] to-[#EF4444] p-2 rounded-lg shadow-xl">
                 <motion.div
                   animate={{ rotate: [0, 5, 0, -5, 0] }}
                   transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <Wrench className="w-5 h-5 text-white" />
+                  <Wrench className="w-5 h-5 text-[#FCD34D]" />
                 </motion.div>
               </div>
             </div>
             <div>
-              <h2 className="text-sm bg-gradient-to-r from-[#C91A1A] to-[#E44646] bg-clip-text text-transparent">
+              <h2 className="text-sm bg-gradient-to-r from-[#DC2626] to-[#EF4444] bg-clip-text text-transparent">
                 MFU Maintenance
               </h2>
               <p className="text-xs text-gray-500">ระบบแจ้งซ่อมบำรุง</p>
@@ -98,14 +100,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                   onClick={() => onNavigate(item.id)}
                   className={`relative transition-all duration-200 ${
                     currentPage === item.id
-                      ? 'bg-gradient-to-r from-[#C91A1A] to-[#E44646] text-white shadow-lg'
-                      : 'hover:bg-[#C91A1A]/5'
+                      ? 'bg-gradient-to-r from-[#DC2626] to-[#EF4444] text-white shadow-lg'
+                      : 'hover:bg-[#DC2626]/5'
                   }`}
                 >
                   {currentPage === item.id && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute inset-0 bg-gradient-to-r from-[#C91A1A] to-[#E44646] rounded-md"
+                      className="absolute inset-0 bg-gradient-to-r from-[#DC2626] to-[#EF4444] rounded-md"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -119,7 +121,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="ghost" className="gap-2 hover:bg-[#C91A1A]/5 transition-all duration-200">
+                <Button variant="ghost" className="gap-2 hover:bg-[#DC2626]/5 transition-all duration-200">
                   <div className="relative">
                     <motion.div
                       animate={{ 
@@ -127,27 +129,27 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                         opacity: [0.3, 0.5, 0.3]
                       }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="absolute inset-0 bg-gradient-to-br from-[#C91A1A] to-[#E44646] rounded-full blur-sm"
+                      className="absolute inset-0 bg-gradient-to-br from-[#DC2626] to-[#EF4444] rounded-full blur-sm"
                     ></motion.div>
-                    <div className="relative w-8 h-8 bg-gradient-to-br from-[#C91A1A] to-[#E44646] rounded-full flex items-center justify-center shadow-lg ring-2 ring-white/30">
-                      <span className="text-sm text-white font-semibold">{user.name.charAt(0)}</span>
+                    <div className="relative w-8 h-8 bg-gradient-to-br from-[#DC2626] to-[#EF4444] rounded-full flex items-center justify-center shadow-lg ring-2 ring-[#FCD34D]/30">
+                      <span className="text-sm text-[#FCD34D]">{user.name.charAt(0)}</span>
                     </div>
                   </div>
                   <div className="hidden md:block text-left">
                     <p className="text-sm text-gray-900">{user.name}</p>
                     <p className="text-xs text-gray-500 flex items-center gap-1">
-                      <Sparkles className="w-3 h-3 text-[#C91A1A]" />
+                      <Sparkles className="w-3 h-3 text-[#FCD34D]" />
                       {getRoleText(user.role)}
                     </p>
                   </div>
                 </Button>
               </motion.div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 !bg-white">
+            <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-gradient-to-br from-[#C91A1A] to-[#E44646] rounded-full flex items-center justify-center">
-                    <span className="text-white font-semibold">{user.name.charAt(0)}</span>
+                  <div className="w-10 h-10 bg-gradient-to-br from-[#DC2626] to-[#EF4444] rounded-full flex items-center justify-center">
+                    <span className="text-[#FCD34D]">{user.name.charAt(0)}</span>
                   </div>
                   <div>
                     <p className="text-sm">{user.name}</p>

@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useMaintenance } from '../../contexts/MaintenanceContext';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useMaintenance } from '../../../contexts/MaintenanceContext';
+import { useBuildings } from '../../../contexts/BuildingContext';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '../ui/dialog';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Badge } from '../ui/badge';
+} from '../../ui/dialog';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
+import { Label } from '../../ui/label';
+import { Textarea } from '../../ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+import { Badge } from '../../ui/badge';
 import { toast } from 'sonner';
-import { Wrench, AlertCircle, Zap, Send, Building, Hash, Image, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import type { RequestPriority } from '../../contexts/MaintenanceContext';
+import { Wrench, AlertCircle, Zap, Send, Image, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import type { RequestPriority } from '../../../contexts/MaintenanceContext';
 
 interface MaintenanceRequestFormProps {
   open: boolean;
@@ -30,11 +31,11 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
 }) => {
   const { user } = useAuth();
   const { addRequest } = useMaintenance();
+  const { buildings, maintenanceTypes } = useBuildings();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [dormBuilding, setDormBuilding] = useState(user?.dormBuilding || '');
-  const [roomNumber, setRoomNumber] = useState(user?.roomNumber || '');
+  const [maintenanceType, setMaintenanceType] = useState('');
   const [priority, setPriority] = useState<RequestPriority>('medium');
   const [images, setImages] = useState<string[]>([]);
 
@@ -82,11 +83,13 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
 
     if (!user) return;
 
+    const selectedType = maintenanceTypes.find(t => t.id === maintenanceType);
+    
     addRequest({
       userId: user.id,
       userName: user.name,
-      dormBuilding,
-      roomNumber,
+      maintenanceType: maintenanceType || undefined,
+      maintenanceTypeName: selectedType?.name || undefined,
       title,
       description,
       priority,
@@ -100,6 +103,7 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
     // Reset form
     setTitle('');
     setDescription('');
+    setMaintenanceType('');
     setPriority('medium');
     setImages([]);
     onClose();
@@ -107,9 +111,9 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl border-0 shadow-2xl bg-white backdrop-blur-sm max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl border-0 shadow-2xl bg-white/98 backdrop-blur-sm max-h-[90vh] overflow-y-auto">
         {/* Gradient header bar */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#C91A1A] via-[#E44646] to-[#C91A1A]"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#DC2626] via-[#FCD34D] to-[#DC2626]"></div>
         
         <DialogHeader className="pb-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
@@ -117,12 +121,12 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: "spring", stiffness: 200 }}
-              className="p-3 bg-gradient-to-br from-[#C91A1A] to-[#E44646] rounded-xl shadow-lg"
+              className="p-3 bg-gradient-to-br from-[#DC2626] to-[#EF4444] rounded-xl shadow-lg"
             >
-              <Wrench className="w-6 h-6 text-white" />
+              <Wrench className="w-6 h-6 text-[#FCD34D]" />
             </motion.div>
             <div>
-              <DialogTitle className="text-2xl bg-gradient-to-r from-[#C91A1A] to-[#E44646] bg-clip-text text-transparent">
+              <DialogTitle className="text-2xl bg-gradient-to-r from-[#DC2626] to-[#EF4444] bg-clip-text text-transparent">
                 แจ้งซ่อมใหม่
               </DialogTitle>
               <DialogDescription className="text-gray-600">
@@ -133,48 +137,33 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 mt-6">
-          {/* Location Information */}
-          <div className="grid grid-cols-2 gap-4">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-              className="space-y-2"
-            >
-              <Label htmlFor="dormBuilding" className="flex items-center gap-2 text-gray-700">
-                <Building className="w-4 h-4 text-[#C91A1A]" />
-                อาคาร/หอพัก
-              </Label>
-              <Input
-                id="dormBuilding"
-                value={dormBuilding}
-                onChange={(e) => setDormBuilding(e.target.value)}
-                required
-                placeholder="เช่น หอพักชาย A"
-                className="bg-transparent border-gray-300 focus:ring-[#C91A1A] focus:border-[#C91A1A] transition-all duration-200"
-              />
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="space-y-2"
-            >
-              <Label htmlFor="roomNumber" className="flex items-center gap-2 text-gray-700">
-                <Hash className="w-4 h-4 text-[#C91A1A]" />
-                หมายเลขห้อง
-              </Label>
-              <Input
-                id="roomNumber"
-                value={roomNumber}
-                onChange={(e) => setRoomNumber(e.target.value)}
-                required
-                placeholder="เช่น 301"
-                className="bg-transparent border-gray-300 focus:ring-[#C91A1A] focus:border-[#C91A1A] transition-all duration-200"
-              />
-            </motion.div>
-          </div>
+          {/* Maintenance Type */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="space-y-2"
+          >
+            <Label htmlFor="maintenanceType" className="flex items-center gap-2 text-gray-700">
+              <Wrench className="w-4 h-4 text-[#DC2626]" />
+              ประเภทการซ่อม
+              <span className="text-xs text-gray-400">(ไม่บังคับ)</span>
+            </Label>
+            <Select value={maintenanceType} onValueChange={setMaintenanceType}>
+              <SelectTrigger className="border-gray-300 focus:ring-[#DC2626] focus:border-[#DC2626]">
+                <SelectValue placeholder="เลือกประเภทการซ่อม" />
+              </SelectTrigger>
+              <SelectContent>
+                {maintenanceTypes
+                  .filter(t => t.status === 'active')
+                  .map((type) => (
+                    <SelectItem key={type.id} value={type.id}>
+                      {type.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </motion.div>
 
           {/* Problem Title */}
           <motion.div
@@ -184,7 +173,7 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
             className="space-y-2"
           >
             <Label htmlFor="title" className="flex items-center gap-2 text-gray-700">
-              <AlertCircle className="w-4 h-4 text-[#C91A1A]" />
+              <AlertCircle className="w-4 h-4 text-[#DC2626]" />
               หัวข้อ / ปัญหา
             </Label>
             <Input
@@ -193,7 +182,7 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
               onChange={(e) => setTitle(e.target.value)}
               required
               placeholder="เช่น ท่อน้ำรั่ว, แอร์เสีย, หลอดไฟไม่ติด"
-              className="bg-transparent border-gray-300 focus:ring-[#C91A1A] focus:border-[#C91A1A] transition-all duration-200"
+              className="border-gray-300 focus:ring-[#DC2626] focus:border-[#DC2626] transition-all duration-200"
             />
           </motion.div>
 
@@ -214,7 +203,7 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
               required
               placeholder="อธิบายปัญหาโดยละเอียด เช่น อาการที่พบ ความรุนแรง เป็นต้น..."
               rows={4}
-              className="bg-transparent border-gray-300 focus:ring-[#C91A1A] focus:border-[#C91A1A] transition-all duration-200 resize-none"
+              className="border-gray-300 focus:ring-[#DC2626] focus:border-[#DC2626] transition-all duration-200 resize-none"
             />
           </motion.div>
 
@@ -226,7 +215,7 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
             className="space-y-3"
           >
             <Label className="flex items-center gap-2 text-gray-700">
-              <Image className="w-4 h-4 text-[#C91A1A]" />
+              <Image className="w-4 h-4 text-[#DC2626]" />
               แนบรูปภาพ (ไม่บังคับ)
             </Label>
             
@@ -246,7 +235,7 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
                   variant="outline"
                   onClick={() => document.getElementById('image-upload')?.click()}
                   disabled={images.length >= 5}
-                  className="bg-transparent border-2 border-dashed border-gray-300 hover:border-[#C91A1A] hover:bg-[#C91A1A]/5 transition-all duration-200"
+                  className="border-2 border-dashed border-gray-300 hover:border-[#DC2626] hover:bg-[#DC2626]/5 transition-all duration-200"
                 >
                   <Image className="w-4 h-4 mr-2" />
                   เลือกรูปภาพ
@@ -305,32 +294,17 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
             className="space-y-2"
           >
             <Label htmlFor="priority" className="flex items-center gap-2 text-gray-700">
-              <Zap className="w-4 h-4 text-[#FFB81C]" />
+              <Zap className="w-4 h-4 text-[#FCD34D]" />
               ระดับความเร่งด่วน
             </Label>
             <Select value={priority} onValueChange={(value) => setPriority(value as RequestPriority)}>
-              <SelectTrigger className="bg-transparent border-gray-300 focus:ring-[#C91A1A] focus:border-[#C91A1A]">
+              <SelectTrigger className="border-gray-300 focus:ring-[#DC2626] focus:border-[#DC2626]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="low">
-                  <div className="flex items-center gap-2">
-                    <Badge className="bg-gray-100 text-gray-700 border-0 text-xs">ต่ำ</Badge>
-                    <span>ไม่เร่งด่วน</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="medium">
-                  <div className="flex items-center gap-2">
-                    <Badge className="bg-amber-100 text-amber-700 border-0 text-xs">ปานกลาง</Badge>
-                    <span>ควรแก้ไขเร็ว</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="high">
-                  <div className="flex items-center gap-2">
-                    <Badge className="bg-red-100 text-red-700 border-0 text-xs">สูง</Badge>
-                    <span>เร่งด่วนมาก</span>
-                  </div>
-                </SelectItem>
+                <SelectItem value="low">ต่ำ - ไม่เร่งด่วน</SelectItem>
+                <SelectItem value="medium">ปานกลาง - ควรแก้ไขเร็ว</SelectItem>
+                <SelectItem value="high">สูง - เร่งด่วนมาก</SelectItem>
               </SelectContent>
             </Select>
           </motion.div>
@@ -352,7 +326,7 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
             </Button>
             <Button 
               type="submit"
-              className="bg-gradient-to-r from-[#C91A1A] to-[#E44646] hover:from-[#E44646] hover:to-[#C91A1A] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 px-6"
+              className="bg-gradient-to-r from-[#DC2626] to-[#EF4444] hover:from-[#EF4444] hover:to-[#DC2626] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 px-6"
             >
               <Send className="w-4 h-4 mr-2" />
               ส่งคำขอ

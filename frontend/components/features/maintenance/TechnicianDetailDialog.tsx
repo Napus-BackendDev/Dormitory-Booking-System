@@ -1,29 +1,29 @@
-import React from "react";
-import { useMaintenance } from "../../contexts/MaintenanceContext";
+import React from 'react';
+import { useMaintenance } from '../../../contexts/MaintenanceContext';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "../ui/dialog";
-import { Card, CardContent } from "../ui/card";
-import { Badge } from "../ui/badge";
-import { ScrollArea } from "../ui/scroll-area";
-import {
-  Star,
-  User,
-  CheckCircle2,
-  Clock,
+} from '../../ui/dialog';
+import { Card, CardContent } from '../../ui/card';
+import { Badge } from '../../ui/badge';
+import { ScrollArea } from '../../ui/scroll-area';
+import { 
+  Star, 
+  User, 
+  CheckCircle2, 
+  Clock, 
   Zap,
   TrendingUp,
   Award,
   MessageSquare,
   Calendar,
-  BarChart3,
-} from "lucide-react";
-import { motion } from "motion/react";
-import type { MaintenanceRequest } from "../../contexts/MaintenanceContext";
+  BarChart3
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import type { MaintenanceRequest } from '../../../contexts/MaintenanceContext';
 
 interface TechnicianDetailDialogProps {
   open: boolean;
@@ -32,65 +32,46 @@ interface TechnicianDetailDialogProps {
   technicianName: string;
 }
 
-export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
-  open,
-  onClose,
+export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({ 
+  open, 
+  onClose, 
   technicianId,
-  technicianName,
+  technicianName 
 }) => {
   const { requests } = useMaintenance();
 
   // Filter requests for this technician
-  const technicianRequests = requests.filter(
-    (req) => req.assignedTo === technicianId
-  );
-  const completedRequests = technicianRequests.filter(
-    (req) => req.status === "completed"
-  );
-  const inProgressRequests = technicianRequests.filter(
-    (req) => req.status === "in_progress"
-  );
-  const pendingRequests = technicianRequests.filter(
-    (req) => req.status === "pending"
-  );
+  const technicianRequests = requests.filter(req => req.assignedTo === technicianId);
+  const completedRequests = technicianRequests.filter(req => req.status === 'completed');
+  const inProgressRequests = technicianRequests.filter(req => req.status === 'in_progress');
+  const pendingRequests = technicianRequests.filter(req => req.status === 'pending');
 
   // Calculate ratings
-  const ratedRequests = completedRequests.filter(
-    (req) => req.rating !== undefined
-  );
-  const averageRating =
-    ratedRequests.length > 0
-      ? ratedRequests.reduce((sum, req) => sum + (req.rating || 0), 0) /
-        ratedRequests.length
-      : 0;
+  const ratedRequests = completedRequests.filter(req => req.rating !== undefined);
+  const averageRating = ratedRequests.length > 0 
+    ? ratedRequests.reduce((sum, req) => sum + (req.rating || 0), 0) / ratedRequests.length 
+    : 0;
 
   // Get feedback
   const feedbackList = completedRequests
-    .filter((req) => req.feedback)
-    .sort(
-      (a, b) =>
-        new Date(b.completedAt || b.updatedAt).getTime() -
-        new Date(a.completedAt || a.updatedAt).getTime()
-    );
+    .filter(req => req.feedback)
+    .sort((a, b) => new Date(b.completedAt || b.updatedAt).getTime() - new Date(a.completedAt || a.updatedAt).getTime());
 
   // Calculate rating distribution
-  const ratingDistribution = [5, 4, 3, 2, 1].map((stars) => ({
+  const ratingDistribution = [5, 4, 3, 2, 1].map(stars => ({
     stars,
-    count: ratedRequests.filter((req) => req.rating === stars).length,
-    percentage:
-      ratedRequests.length > 0
-        ? (ratedRequests.filter((req) => req.rating === stars).length /
-            ratedRequests.length) *
-          100
-        : 0,
+    count: ratedRequests.filter(req => req.rating === stars).length,
+    percentage: ratedRequests.length > 0 
+      ? (ratedRequests.filter(req => req.rating === stars).length / ratedRequests.length) * 100 
+      : 0
   }));
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] border-0 shadow-2xl bg-gray-100">
+      <DialogContent className="max-w-4xl max-h-[90vh] border-0 shadow-2xl bg-white/98 backdrop-blur-sm">
         {/* Gradient header bar */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#C91A1A] via-[#FFB81C] to-[#C91A1A]"></div>
-
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#002D72] via-[#FFB81C] to-[#002D72]"></div>
+        
         <DialogHeader className="pb-6 border-b border-gray-200">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -101,12 +82,12 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200 }}
-                className="p-4 bg-gradient-to-br from-[#C91A1A] to-[#E44646] rounded-2xl shadow-lg"
+                className="p-4 bg-gradient-to-br from-[#002D72] to-[#0a4a9d] rounded-2xl shadow-lg"
               >
-                <User className="w-8 h-8 text-white" />
+                <User className="w-8 h-8 text-[#FFB81C]" />
               </motion.div>
               <div className="flex-1">
-                <DialogTitle className="text-2xl bg-gradient-to-r from-[#C91A1A] to-[#E44646] bg-clip-text text-transparent">
+                <DialogTitle className="text-2xl bg-gradient-to-r from-[#002D72] to-[#0a4a9d] bg-clip-text text-transparent">
                   {technicianName}
                 </DialogTitle>
                 <DialogDescription className="text-gray-600 flex items-center gap-2 mt-1">
@@ -139,53 +120,45 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
               transition={{ delay: 0.1 }}
             >
               <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-[#C91A1A]" />
+                <BarChart3 className="w-4 h-4 text-[#002D72]" />
                 สถิติการทำงาน
               </h3>
               <div className="grid grid-cols-4 gap-4">
-                <Card className="border border-orange-200 shadow-md bg-gradient-to-br from-orange-50 to-white">
+                <Card className="border-0 shadow-md bg-gradient-to-br from-blue-50 to-white">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-2">
                       <Clock className="w-8 h-8 text-orange-600" />
-                      <span className="text-2xl font-bold text-gray-900">
-                        {pendingRequests.length}
-                      </span>
+                      <span className="text-2xl font-bold text-gray-900">{pendingRequests.length}</span>
                     </div>
                     <p className="text-xs text-gray-600">งานรอดำเนินการ</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border border-red-200 shadow-md bg-gradient-to-br from-red-50 to-white">
+                <Card className="border-0 shadow-md bg-gradient-to-br from-blue-50 to-white">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <Zap className="w-8 h-8 text-[#C91A1A]" />
-                      <span className="text-2xl font-bold text-gray-900">
-                        {inProgressRequests.length}
-                      </span>
+                      <Zap className="w-8 h-8 text-blue-600" />
+                      <span className="text-2xl font-bold text-gray-900">{inProgressRequests.length}</span>
                     </div>
                     <p className="text-xs text-gray-600">กำลังทำงาน</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border border-green-200 shadow-md bg-gradient-to-br from-green-50 to-white">
+                <Card className="border-0 shadow-md bg-gradient-to-br from-green-50 to-white">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-2">
                       <CheckCircle2 className="w-8 h-8 text-green-600" />
-                      <span className="text-2xl font-bold text-gray-900">
-                        {completedRequests.length}
-                      </span>
+                      <span className="text-2xl font-bold text-gray-900">{completedRequests.length}</span>
                     </div>
                     <p className="text-xs text-gray-600">งานเสร็จสิ้น</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border border-blue-200 shadow-md bg-gradient-to-br from-blue-50 to-white">
+                <Card className="border-0 shadow-md bg-gradient-to-br from-purple-50 to-white">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <TrendingUp className="w-8 h-8 text-[#C91A1A]" />
-                      <span className="text-2xl font-bold text-gray-900">
-                        {technicianRequests.length}
-                      </span>
+                      <TrendingUp className="w-8 h-8 text-purple-600" />
+                      <span className="text-2xl font-bold text-gray-900">{technicianRequests.length}</span>
                     </div>
                     <p className="text-xs text-gray-600">งานทั้งหมด</p>
                   </CardContent>
@@ -209,9 +182,7 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
                   {ratingDistribution.map(({ stars, count, percentage }) => (
                     <div key={stars} className="flex items-center gap-3">
                       <div className="flex items-center gap-1 w-20">
-                        <span className="text-sm font-medium text-gray-700">
-                          {stars}
-                        </span>
+                        <span className="text-sm font-medium text-gray-700">{stars}</span>
                         <Star className="w-4 h-4 text-[#FFB81C] fill-[#FFB81C]" />
                       </div>
                       <div className="flex-1">
@@ -241,7 +212,7 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
                 transition={{ delay: 0.3 }}
               >
                 <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-[#C91A1A]" />
+                  <MessageSquare className="w-4 h-4 text-blue-600" />
                   ความคิดเห็นจากผู้ใช้บริการ
                 </h3>
                 <div className="space-y-3">
@@ -250,8 +221,8 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
                       key={request.id}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.4 + index * 0.1 }}
-                      className="p-4 bg-gradient-to-br from-red-50 to-white rounded-xl border border-red-200 hover:shadow-md transition-shadow duration-200"
+                      transition={{ delay: 0.4 + (index * 0.1) }}
+                      className="p-4 bg-gradient-to-br from-blue-50 to-white rounded-xl border border-blue-200 hover:shadow-md transition-shadow duration-200"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2">
@@ -261,8 +232,8 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
                                 key={i}
                                 className={`w-4 h-4 ${
                                   i < (request.rating || 0)
-                                    ? "text-[#FFB81C] fill-[#FFB81C]"
-                                    : "text-gray-300"
+                                    ? 'text-[#FFB81C] fill-[#FFB81C]'
+                                    : 'text-gray-300'
                                 }`}
                               />
                             ))}
@@ -273,27 +244,17 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
                         </div>
                         <div className="flex items-center gap-1 text-xs text-gray-500">
                           <Calendar className="w-3 h-3" />
-                          {request.completedAt &&
-                            new Date(request.completedAt).toLocaleDateString(
-                              "th-TH",
-                              {
-                                day: "numeric",
-                                month: "short",
-                              }
-                            )}
+                          {request.completedAt && new Date(request.completedAt).toLocaleDateString('th-TH', {
+                            day: 'numeric',
+                            month: 'short'
+                          })}
                         </div>
                       </div>
-                      <p className="text-sm text-gray-900 italic mb-2">
-                        &ldquo;{request.feedback}&rdquo;
-                      </p>
+                      <p className="text-sm text-gray-900 italic mb-2">&ldquo;{request.feedback}&rdquo;</p>
                       <div className="flex items-center gap-2 text-xs text-gray-600">
                         <Badge variant="outline" className="text-xs">
                           {request.title}
                         </Badge>
-                        <span>•</span>
-                        <span>
-                          {request.dormBuilding} ห้อง {request.roomNumber}
-                        </span>
                       </div>
                     </motion.div>
                   ))}

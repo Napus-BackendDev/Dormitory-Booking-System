@@ -1,17 +1,17 @@
-import type { Metadata } from 'next';
-import { Providers } from './providers';
-import './globals.css';
+import { ReactNode } from 'react'
+import { Providers } from './providers'
+import './globals.css'
 
-export const metadata: Metadata = {
+export const metadata = {
   title: 'MFU Dorm Maintenance System',
   description: 'ระบบจัดการงานซ่อมบำรุงหอพักมหาวิทยาลัยแม่ฟ้าหลวง',
   keywords: ['maintenance', 'dorm', 'MFU', 'repair', 'request'],
-};
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
     <html lang="th" suppressHydrationWarning>
@@ -21,5 +21,5 @@ export default function RootLayout({
         </Providers>
       </body>
     </html>
-  );
+  )
 }

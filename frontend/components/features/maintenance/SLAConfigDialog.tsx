@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { useMaintenance } from '../../contexts/MaintenanceContext';
+import { useMaintenance } from '../../../contexts/MaintenanceContext';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '../ui/dialog';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
+} from '../../ui/dialog';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
+import { Label } from '../../ui/label';
 import { toast } from 'sonner';
 import { Clock, Save, AlertTriangle, RotateCcw } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 interface SLAConfigDialogProps {
   open: boolean;
