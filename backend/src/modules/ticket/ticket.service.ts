@@ -37,7 +37,7 @@ export class TicketService {
   }
 
 
-  async create(createTicketDto: CreateTicketDto, user: any, photos: Express.Multer.File[]): Promise<Ticket> {
+  async create(createTicketDto: CreateTicketDto, photos: Express.Multer.File[], user: any): Promise<Ticket> {
     // Send email notification to the user who created the ticket
     try {
       await RecieveTicketMailer(this.emailService, user.email);
