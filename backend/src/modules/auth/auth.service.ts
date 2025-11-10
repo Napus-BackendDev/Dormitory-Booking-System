@@ -1,13 +1,19 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, Inject } from "@nestjs/common";
 import { PrismaService } from "src/common/prisma.service";
 import { RegisterDto } from "./dtos/register.dto";
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from "./dtos/login.dto";
 import { JwtService } from "@nestjs/jwt";
+import { Redis } from 'ioredis';
 
 @Injectable()
 export class AuthService {
-    constructor(private prismaService: PrismaService, private jwtService: JwtService) { }
+    
+    constructor(
+        private prismaService: PrismaService, 
+        private jwtService: JwtService,
+        @Inject('REDIS_CLIENT') private redisClient: Redis
+    ) { }
 
     async register(registerDto: RegisterDto) {
         const { email, password, role, name } = registerDto;
@@ -59,7 +65,7 @@ export class AuthService {
         }
     }
 
-    async login(data: LoginDto): Promise<{ access_token: string }> {
+    async login(data:LoginDto): Promise<{ access_token: string, user: any }> {
         const { email, password } = data;
         const user = await this.prismaService.user.findUnique({
             where: { email },
@@ -73,14 +79,57 @@ export class AuthService {
         if (!passwordMatch) {
             throw new BadRequestException('Invalid password');
         }
-        const payload = {
-            email: user.email,
-            sub: user.id,
-            role: user.role?.name
+        const payload = { email: NotUser.email, sub: NotUser.id, role: NotUser.role };
+        const access_token = await this.jwtService.signAsync(payload);
+        return {
+            access_token: access_token,
+            user: {
+                id: NotUser.id,
+                email: NotUser.email,
+                name: NotUser.name,
+                role: NotUser.role
+            }
         };
+    }
+    async getProfile(userId: string) {
+        const user = await this.prismaService.user.findUnique({
+            where: { id: userId },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                role: true,
+                createdAt: true
+            }
+        });
+
+        if (!user) {
+            throw new BadRequestException('User not found');
+        }
+
+        return user;
+    }
+    async logout(token: string) {
+        const decoded = this.jwtService.decode(token) as { [key: string]: any };
+        if (!decoded || !decoded.exp) {
+            throw new BadRequestException('Invalid token');
+        }
+
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (decoded.exp < currentTime) {
+            throw new BadRequestException('Token already expired');
+        }
+
+        // Calculate remaining time until token expires (in seconds)
+        const expiresIn = decoded.exp - currentTime;
+
+        if (expiresIn > 0) {
+            // Store token in Redis blacklist with expiration
+            await this.redisClient.setex(`blacklist:${token}`, expiresIn, 'true');
+        }
 
         return {
-            access_token: await this.jwtService.signAsync(payload)
+            message: 'Logged out successfully'
         };
     }
 }

@@ -1,4 +1,4 @@
-import { IsString, IsDateString, IsEnum } from 'class-validator';
+import { IsString, IsDateString, IsEnum, IsIn } from 'class-validator';
 import { TicketPriority } from '@prisma/client';
 
 export class CreateTicketDto {
