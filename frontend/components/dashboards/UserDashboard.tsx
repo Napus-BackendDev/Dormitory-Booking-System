@@ -5,11 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { ClipboardList, Clock, CheckCircle, Plus, Eye, Award, Zap, Star } from 'lucide-react';
-import { MaintenanceRequestForm } from '../forms/MaintenanceRequestForm';
-import { RequestDetailsDialog } from '../dialogs/RequestDetailsDialog';
-import { RatingDialog } from '../dialogs/RatingDialog';
-import { StatCard } from '../shared/StatCard';
-import { motion } from 'motion/react';
+import { MaintenanceRequestForm } from '../features/maintenance/MaintenanceRequestForm';
+import { RequestDetailsDialog } from '../features/maintenance/RequestDetailsDialog';
+import { RatingDialog } from '../features/maintenance/RatingDialog';
+import { StatCard } from '../common/StatCard';
+import { motion } from 'framer-motion';
 import type { MaintenanceRequest } from '../../contexts/MaintenanceContext';
 
 export const UserDashboard: React.FC = () => {
@@ -31,7 +31,7 @@ export const UserDashboard: React.FC = () => {
       case 'pending':
         return <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-200 border-0">รอดำเนินการ</Badge>;
       case 'in_progress':
-        return <Badge className="bg-red-100 text-[#C91A1A] hover:bg-red-200 border-0">กำลังซ่อม</Badge>;
+        return <Badge className="bg-red-100 text-[#DC2626] hover:bg-red-200 border-0">กำลังซ่อม</Badge>;
       case 'completed':
         return <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-0">เสร็จสิ้น</Badge>;
       default:
@@ -59,7 +59,7 @@ export const UserDashboard: React.FC = () => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#C91A1A] via-[#E44646] to-[#C91A1A] p-8 shadow-2xl"
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#DC2626] via-[#EF4444] to-[#DC2626] p-8 shadow-2xl"
       >
         {/* Animated background pattern */}
         <div className="absolute inset-0">
@@ -67,8 +67,8 @@ export const UserDashboard: React.FC = () => {
         </div>
         
         {/* Floating orbs */}
-        <div className="absolute top-10 right-20 w-32 h-32 bg-[#FFB81C]/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 left-20 w-40 h-40 bg-[#FFB81C]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-10 right-20 w-32 h-32 bg-[#FCD34D]/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 left-20 w-40 h-40 bg-[#FCD34D]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
         <div className="relative flex items-center justify-between">
           <div className="text-white space-y-2">
@@ -84,7 +84,7 @@ export const UserDashboard: React.FC = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-[#FFB81C] text-xl flex items-center gap-2"
+              className="text-[#FCD34D] text-xl flex items-center gap-2"
             >
               สวัสดี, {user?.name} 
               <span className="inline-block animate-wave">👋</span>
@@ -97,7 +97,7 @@ export const UserDashboard: React.FC = () => {
           >
             <Button 
               onClick={() => setShowRequestForm(true)}
-              className="bg-[#FFB81C] text-[#C91A1A] hover:bg-[#ffd166] shadow-2xl hover:shadow-[0_20px_50px_rgba(255,184,28,0.5)] hover:scale-105 transition-all duration-300 text-base px-6 py-6 rounded-xl group"
+              className="bg-[#FCD34D] text-[#1F2937] hover:bg-[#FDE68A] shadow-2xl hover:shadow-[0_20px_50px_rgba(252,211,77,0.5)] hover:scale-105 transition-all duration-300 text-base px-6 py-6 rounded-xl group"
             >
               <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
               แจ้งซ่อมใหม่
@@ -135,10 +135,10 @@ export const UserDashboard: React.FC = () => {
             value={inProgressCount}
             description="กำลังดำเนินการ"
             icon={Zap}
-            iconColor="text-[#C91A1A]"
+            iconColor="text-[#DC2626]"
             iconBg="bg-red-100"
-            gradientFrom="from-[#C91A1A]"
-            gradientTo="to-[#E44646]"
+            gradientFrom="from-[#DC2626]"
+            gradientTo="to-[#EF4444]"
           />
         </motion.div>
 
@@ -168,14 +168,14 @@ export const UserDashboard: React.FC = () => {
         transition={{ delay: 0.4 }}
       >
         <Card className="border-0 shadow-2xl backdrop-blur-sm bg-white/95 overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#C91A1A] via-[#FFB81C] to-[#C91A1A]"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#DC2626] via-[#FCD34D] to-[#DC2626]"></div>
           <CardHeader className="border-b bg-gradient-to-r from-gray-50/80 to-white/80 backdrop-blur-sm">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-[#C91A1A]/10 rounded-lg">
-                <ClipboardList className="w-5 h-5 text-[#C91A1A]" />
+              <div className="p-2 bg-[#DC2626]/10 rounded-lg">
+                <ClipboardList className="w-5 h-5 text-[#DC2626]" />
               </div>
               <div>
-                <CardTitle className="text-[#C91A1A]">คำขอซ่อมล่าสุด</CardTitle>
+                <CardTitle className="text-[#DC2626]">คำขอซ่อมล่าสุด</CardTitle>
                 <CardDescription>รายการแจ้งซ่อมทั้งหมดของคุณ</CardDescription>
               </div>
             </div>
@@ -195,15 +195,15 @@ export const UserDashboard: React.FC = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 * index }}
-                    className="group relative flex items-center justify-between p-5 border border-gray-200 rounded-2xl hover:shadow-xl hover:border-[#C91A1A]/30 transition-all duration-300 bg-gradient-to-r from-white to-gray-50/30 overflow-hidden"
+                    className="group relative flex items-center justify-between p-5 border border-gray-200 rounded-2xl hover:shadow-xl hover:border-[#DC2626]/30 transition-all duration-300 bg-gradient-to-r from-white to-gray-50/30 overflow-hidden"
                   >
                     {/* Hover effect background */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#C91A1A]/5 to-[#FFB81C]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#DC2626]/5 to-[#FCD34D]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     
                     {/* Status indicator line */}
                     <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl ${
                       request.status === 'pending' ? 'bg-orange-400' :
-                      request.status === 'in_progress' ? 'bg-red-600' :
+                      request.status === 'in_progress' ? 'bg-blue-600' :
                       'bg-green-500'
                     }`}></div>
 
@@ -215,9 +215,11 @@ export const UserDashboard: React.FC = () => {
                           <div className="flex items-center gap-2 flex-wrap">
                             {getStatusBadge(request.status)}
                             {getPriorityBadge(request.priority)}
-                            <Badge variant="outline" className="border-gray-300">
-                              {request.dormBuilding} - {request.roomNumber}
-                            </Badge>
+                            {request.maintenanceTypeName && (
+                              <Badge variant="outline" className="border-red-300 text-red-700 bg-red-50">
+                                {request.maintenanceTypeName}
+                              </Badge>
+                            )}
                           </div>
                           {request.assignedToName && (
                             <p className="text-sm text-gray-500 mt-2">
@@ -233,7 +235,7 @@ export const UserDashboard: React.FC = () => {
                         <Button
                           size="sm"
                           onClick={() => setRatingRequest(request)}
-                          className="bg-gradient-to-r from-[#FFB81C] to-amber-500 hover:from-amber-500 hover:to-[#FFB81C] text-gray-900 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 rounded-xl"
+                          className="bg-gradient-to-r from-[#FCD34D] to-amber-500 hover:from-amber-500 hover:to-[#FCD34D] text-gray-900 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 rounded-xl"
                         >
                           <Star className="w-4 h-4 mr-1" />
                           ให้คะแนน
@@ -244,7 +246,7 @@ export const UserDashboard: React.FC = () => {
                       <Button
                         size="sm"
                         onClick={() => setSelectedRequest(request)}
-                        className="bg-[#C91A1A] hover:bg-[#E44646] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 rounded-xl"
+                        className="bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 rounded-xl"
                       >
                         <Eye className="w-4 h-4 mr-1" />
                         ดูรายละเอียด

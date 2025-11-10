@@ -5,12 +5,15 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '../ui/dialog';
-import { Badge } from '../ui/badge';
-import { Separator } from '../ui/separator';
-import { Calendar, User, MapPin, Clock, Star, CheckCircle2, AlertCircle, Zap, Image as ImageIcon } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import type { MaintenanceRequest } from '../../contexts/MaintenanceContext';
+} from '../../ui/dialog';
+import { Badge } from '../../ui/badge';
+import { Separator } from '../../ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
+import { Calendar, User, MapPin, Clock, Star, CheckCircle2, AlertCircle, Zap, Image as ImageIcon, Wrench, History } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import type { MaintenanceRequest } from '../../../contexts/MaintenanceContext';
+import { useMaintenance } from '../../../contexts/MaintenanceContext';
+import { TicketTimeline } from '../../common/TicketTimeline';
 
 interface RequestDetailsDialogProps {
   request: MaintenanceRequest;
@@ -23,6 +26,9 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
   open,
   onClose,
 }) => {
+  const { getEventsByTicketId } = useMaintenance();
+  const events = getEventsByTicketId(request.id);
+
   const getStatusText = (status: string) => {
     switch (status) {
       case 'pending':
@@ -57,7 +63,7 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
           {getStatusText(status)}
         </Badge>;
       case 'in_progress':
-        return <Badge className="bg-red-100 text-[#C91A1A] hover:bg-red-200 border-0 flex items-center gap-1">
+        return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 flex items-center gap-1">
           <Zap className="w-3 h-3" />
           {getStatusText(status)}
         </Badge>;
@@ -93,16 +99,16 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl border-0 shadow-2xl bg-white backdrop-blur-sm max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl border-0 shadow-2xl bg-white/98 backdrop-blur-sm max-h-[90vh] overflow-y-auto">
         {/* Gradient header bar */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#C91A1A] via-[#E44646] to-[#C91A1A]"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-yellow-400 to-red-600"></div>
         
         <DialogHeader className="pb-6 border-b border-gray-200">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <DialogTitle className="text-2xl bg-gradient-to-r from-[#C91A1A] to-[#E44646] bg-clip-text text-transparent mb-2">
+            <DialogTitle className="text-2xl bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent mb-2">
               รายละเอียดคำขอซ่อม
             </DialogTitle>
             <DialogDescription className="sr-only">
@@ -123,16 +129,28 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
           </motion.div>
         </DialogHeader>
 
-        <div className="space-y-6 mt-6">
+        <Tabs defaultValue="details" className="mt-6">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="details" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
+              <AlertCircle className="w-4 h-4 mr-2" />
+              รายละเอียด
+            </TabsTrigger>
+            <TabsTrigger value="timeline" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
+              <History className="w-4 h-4 mr-2" />
+              ประวัติ ({events.length})
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="details" className="space-y-6 mt-0">
           {/* Description */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="p-4 bg-transparent rounded-xl border border-gray-200"
+            className="p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200"
           >
             <h4 className="text-sm text-gray-600 mb-2 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-[#C91A1A]" />
+              <AlertCircle className="w-4 h-4 text-red-600" />
               รายละเอียดปัญหา
             </h4>
             <p className="text-gray-900">{request.description}</p>
@@ -147,7 +165,7 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
               className="space-y-3"
             >
               <h4 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-[#C91A1A]" />
+                <ImageIcon className="w-4 h-4 text-red-600" />
                 รูปภาพประกอบ ({request.images.length} รูป)
               </h4>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -163,7 +181,7 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
                     <img
                       src={image}
                       alt={`รูปภาพที่ ${index + 1}`}
-                      className="w-full h-full object-cover rounded-lg border-2 border-gray-200 group-hover:border-[#C91A1A] transition-all duration-200 shadow-md group-hover:shadow-xl"
+                      className="w-full h-full object-cover rounded-lg border-2 border-gray-200 group-hover:border-red-600 transition-all duration-200 shadow-md group-hover:shadow-xl"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-lg transition-all duration-200"></div>
                   </motion.div>
@@ -179,25 +197,28 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
             transition={{ delay: 0.2 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
-            {/* Location */}
-            <div className="p-4 bg-transparent rounded-xl border border-gray-200 hover:shadow-md transition-shadow duration-200">
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <MapPin className="w-5 h-5 text-[#C91A1A]" />
-                </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">สถานที่</p>
-                  <p className="font-semibold text-gray-900">{request.dormBuilding}</p>
-                  <p className="text-sm text-gray-700">ห้อง {request.roomNumber}</p>
+            {/* Maintenance Type */}
+            {request.maintenanceTypeName && (
+              <div className="p-4 bg-gradient-to-br from-red-50/50 to-white rounded-xl border border-red-100 hover:shadow-md transition-shadow duration-200">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-red-100 rounded-lg">
+                    <Wrench className="w-5 h-5 text-red-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600 mb-1">ประเภทการซ่อม</p>
+                    <p className="font-semibold text-gray-900">{request.maintenanceTypeName}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+
+
 
             {/* Reporter */}
-            <div className="p-4 bg-transparent rounded-xl border border-gray-200 hover:shadow-md transition-shadow duration-200">
+            <div className="p-4 bg-gradient-to-br from-purple-50/50 to-white rounded-xl border border-purple-100 hover:shadow-md transition-shadow duration-200">
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <User className="w-5 h-5 text-[#C91A1A]" />
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <User className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 mb-1">ผู้แจ้ง</p>
@@ -207,10 +228,10 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
             </div>
 
             {/* Created Date */}
-            <div className="p-4 bg-transparent rounded-xl border border-gray-200 hover:shadow-md transition-shadow duration-200">
+            <div className="p-4 bg-gradient-to-br from-green-50/50 to-white rounded-xl border border-green-100 hover:shadow-md transition-shadow duration-200">
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <Calendar className="w-5 h-5 text-[#C91A1A]" />
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Calendar className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 mb-1">วันที่แจ้ง</p>
@@ -232,10 +253,10 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
             </div>
 
             {/* Updated Date */}
-            <div className="p-4 bg-transparent rounded-xl border border-gray-200 hover:shadow-md transition-shadow duration-200">
+            <div className="p-4 bg-gradient-to-br from-amber-50/50 to-white rounded-xl border border-amber-100 hover:shadow-md transition-shadow duration-200">
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <Clock className="w-5 h-5 text-[#C91A1A]" />
+                <div className="p-2 bg-amber-100 rounded-lg">
+                  <Clock className="w-5 h-5 text-amber-600" />
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 mb-1">อัปเดตล่าสุด</p>
@@ -263,15 +284,15 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="p-4 bg-transparent rounded-xl border border-gray-200"
+              className="p-4 bg-gradient-to-br from-red-50 to-white rounded-xl border border-red-200"
             >
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-gradient-to-br from-[#C91A1A] to-[#E44646] rounded-xl shadow-lg">
-                  <User className="w-6 h-6 text-white" />
+                <div className="p-3 bg-red-600 rounded-xl shadow-lg">
+                  <User className="w-6 h-6 text-yellow-300" />
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 mb-1">ช่างผู้รับผิดชอบ</p>
-                  <p className="font-semibold text-[#C91A1A] text-lg">{request.assignedToName}</p>
+                  <p className="font-semibold text-red-600 text-lg">{request.assignedToName}</p>
                 </div>
               </div>
             </motion.div>
@@ -312,10 +333,10 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
 
                 {/* Rating */}
                 {request.rating && (
-                  <div className="p-5 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border-2 border-[#FFB81C]/30 shadow-md">
+                  <div className="p-5 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border-2 border-yellow-300 shadow-md">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <div className="p-2 bg-[#FFB81C] rounded-lg">
+                        <div className="p-2 bg-yellow-400 rounded-lg">
                           <Star className="w-4 h-4 text-white fill-white" />
                         </div>
                         <div>
@@ -323,7 +344,7 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
                           <p className="text-xs text-gray-500">ความพึงพอใจในการให้บริการ</p>
                         </div>
                       </div>
-                      <span className="text-3xl font-bold text-[#FFB81C]">{request.rating}/5</span>
+                      <span className="text-3xl font-bold text-yellow-500">{request.rating}/5</span>
                     </div>
                     <div className="flex gap-1 justify-center py-2">
                       {[...Array(5)].map((_, i) => (
@@ -331,7 +352,7 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
                           key={i}
                           className={`w-7 h-7 ${
                             i < request.rating!
-                              ? 'text-[#FFB81C] fill-[#FFB81C] drop-shadow-md'
+                              ? 'text-yellow-400 fill-yellow-400 drop-shadow-md'
                               : 'text-gray-300'
                           }`}
                         />
@@ -360,7 +381,12 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
               </div>
             </motion.div>
           )}
-        </div>
+          </TabsContent>
+
+          <TabsContent value="timeline" className="mt-0">
+            <TicketTimeline ticketId={request.id} events={events} />
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );

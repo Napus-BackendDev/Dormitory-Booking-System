@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import { useMaintenance } from '../../contexts/MaintenanceContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
+import { useMaintenance } from '../../../contexts/MaintenanceContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
+import { Button } from '../../ui/button';
+import { Badge } from '../../ui/badge';
 import {
   BarChart3,
   Download,
@@ -31,7 +31,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 export const ReportsAnalytics: React.FC = () => {
   const { requests } = useMaintenance();
@@ -101,14 +101,14 @@ export const ReportsAnalytics: React.FC = () => {
 
   // Chart data
   const dailyChartData = [
-    { name: 'งานใหม่', value: todayRequests.length, fill: '#002D72' },
+    { name: 'งานใหม่', value: todayRequests.length, fill: '#DC2626' },
     { name: 'งานเสร็จ', value: todayCompleted.length, fill: '#10b981' },
     { name: 'งานค้าง', value: todayPending.length, fill: '#f59e0b' },
   ];
 
   const statusChartData = [
     { name: 'รอดำเนินการ', value: pendingCount, fill: '#f59e0b' },
-    { name: 'กำลังซ่อม', value: inProgressCount, fill: '#3b82f6' },
+    { name: 'กำลังซ่อม', value: inProgressCount, fill: '#DC2626' },
     { name: 'เสร็จสิ้น', value: completedCount, fill: '#10b981' },
   ];
 
@@ -228,7 +228,7 @@ export const ReportsAnalytics: React.FC = () => {
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#C91A1A] via-[#E44646] to-[#C91A1A] p-8 shadow-2xl"
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#DC2626] via-[#EF4444] to-[#DC2626] p-8 shadow-2xl"
       >
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-50"></div>
         
@@ -262,7 +262,7 @@ export const ReportsAnalytics: React.FC = () => {
           >
             <Button 
               onClick={handleExportReport}
-              className="bg-[#FFB81C] text-[#C91A1A] hover:bg-[#ffd166] shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
+              className="bg-[#FFB81C] text-[#DC2626] hover:bg-[#ffd166] shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
             >
               <Download className="w-4 h-4 mr-2" />
               ดาวน์โหลดรายงาน
@@ -280,8 +280,8 @@ export const ReportsAnalytics: React.FC = () => {
         <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50">
           <CardHeader className="border-b bg-gradient-to-r from-gray-50/80 to-white/80 backdrop-blur-sm">
             <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-[#C91A1A]" />
-              <CardTitle className="text-[#C91A1A]">สรุปรายวัน</CardTitle>
+              <Calendar className="w-5 h-5 text-[#DC2626]" />
+              <CardTitle className="text-[#DC2626]">สรุปรายวัน</CardTitle>
             </div>
             <CardDescription>
               {today.toLocaleDateString('th-TH', {
@@ -297,14 +297,14 @@ export const ReportsAnalytics: React.FC = () => {
               <div className="grid grid-cols-3 gap-4">
                 <motion.div 
                   whileHover={{ scale: 1.05 }}
-                  className="p-4 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl border border-blue-200 shadow-md"
+                  className="p-4 bg-gradient-to-br from-red-50 to-red-100/50 rounded-xl border border-red-200 shadow-md"
                 >
                   <div className="flex flex-col items-center gap-2">
-                    <div className="bg-[#002D72] p-3 rounded-xl shadow-lg">
+                    <div className="bg-[#DC2626] p-3 rounded-xl shadow-lg">
                       <BarChart3 className="w-6 h-6 text-[#FFB81C]" />
                     </div>
                     <p className="text-xs text-gray-600 text-center">งานใหม่</p>
-                    <p className="text-2xl font-bold text-[#002D72]">{todayRequests.length}</p>
+                    <p className="text-2xl font-bold text-[#DC2626]">{todayRequests.length}</p>
                   </div>
                 </motion.div>
 
@@ -338,7 +338,7 @@ export const ReportsAnalytics: React.FC = () => {
               {/* Daily Bar Chart */}
               <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-md">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-[#002D72]" />
+                  <BarChart3 className="w-4 h-4 text-[#DC2626]" />
                   สถิติรายวัน
                 </h4>
                 <ResponsiveContainer width="100%" height={200}>
@@ -369,8 +369,8 @@ export const ReportsAnalytics: React.FC = () => {
         <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50">
           <CardHeader className="border-b bg-gradient-to-r from-gray-50/80 to-white/80 backdrop-blur-sm">
             <div className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-[#C91A1A]" />
-              <CardTitle className="text-[#C91A1A]">แนวโน้ม 7 วันย้อนหลัง</CardTitle>
+              <Activity className="w-5 h-5 text-[#DC2626]" />
+              <CardTitle className="text-[#DC2626]">แนวโน้ม 7 วันย้อนหลัง</CardTitle>
             </div>
             <CardDescription>เปรียบเทียบงานใหม่และงานที่เสร็จสิ้น</CardDescription>
           </CardHeader>
@@ -385,9 +385,9 @@ export const ReportsAnalytics: React.FC = () => {
                 <Line 
                   type="monotone" 
                   dataKey="งานใหม่" 
-                  stroke="#002D72" 
+                  stroke="#DC2626" 
                   strokeWidth={3}
-                  dot={{ fill: '#002D72', r: 5 }}
+                  dot={{ fill: '#DC2626', r: 5 }}
                   activeDot={{ r: 7 }}
                 />
                 <Line 
@@ -413,8 +413,8 @@ export const ReportsAnalytics: React.FC = () => {
         <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50">
           <CardHeader className="border-b bg-gradient-to-r from-gray-50/80 to-white/80 backdrop-blur-sm">
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-[#C91A1A]" />
-              <CardTitle className="text-[#C91A1A]">อัตราการซ่อมสำเร็จ</CardTitle>
+              <TrendingUp className="w-5 h-5 text-[#DC2626]" />
+              <CardTitle className="text-[#DC2626]">อัตราการซ่อมสำเร็จ</CardTitle>
             </div>
             <CardDescription>เปอร์เซ็นต์ความสำเร็จในการซ่อม 7 วันย้อนหลัง</CardDescription>
           </CardHeader>
@@ -456,8 +456,8 @@ export const ReportsAnalytics: React.FC = () => {
           <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50">
             <CardHeader className="border-b bg-gradient-to-r from-gray-50/80 to-white/80 backdrop-blur-sm">
               <div className="flex items-center gap-2">
-                <PieChartIcon className="w-5 h-5 text-[#C91A1A]" />
-                <CardTitle className="text-[#C91A1A]">สถานะงานทั้งหมด</CardTitle>
+                <PieChartIcon className="w-5 h-5 text-[#DC2626]" />
+                <CardTitle className="text-[#DC2626]">สถานะงานทั้งหมด</CardTitle>
               </div>
               <CardDescription>แบ่งตามสถานะการดำเนินงาน</CardDescription>
             </CardHeader>
@@ -492,12 +492,12 @@ export const ReportsAnalytics: React.FC = () => {
                     <Badge className="bg-orange-500">{pendingCount}</Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                  <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-red-600 rounded-full"></div>
                       <span className="text-sm">กำลังซ่อม</span>
                     </div>
-                    <Badge className="bg-blue-500">{inProgressCount}</Badge>
+                    <Badge className="bg-red-600">{inProgressCount}</Badge>
                   </div>
 
                   <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
@@ -522,8 +522,8 @@ export const ReportsAnalytics: React.FC = () => {
           <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50">
             <CardHeader className="border-b bg-gradient-to-r from-gray-50/80 to-white/80 backdrop-blur-sm">
               <div className="flex items-center gap-2">
-                <PieChartIcon className="w-5 h-5 text-[#C91A1A]" />
-                <CardTitle className="text-[#C91A1A]">ระดับความเร่งด่วน</CardTitle>
+                <PieChartIcon className="w-5 h-5 text-[#002D72]" />
+                <CardTitle className="text-[#002D72]">ระดับความเร่งด่วน</CardTitle>
               </div>
               <CardDescription>แบ่งตามความสำคัญของงาน</CardDescription>
             </CardHeader>
@@ -586,14 +586,14 @@ export const ReportsAnalytics: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
       >
-          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50">
-            <CardHeader className="border-b bg-gradient-to-r from-gray-50/80 to-white/80 backdrop-blur-sm">
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-[#FFB81C]" />
-                <CardTitle className="text-[#C91A1A]">ความพึงพอใจ</CardTitle>
-              </div>
-              <CardDescription>คะแนนเฉลี่ยจากผู้ใช้บริการ</CardDescription>
-            </CardHeader>
+        <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50">
+          <CardHeader className="border-b bg-gradient-to-r from-gray-50/80 to-white/80 backdrop-blur-sm">
+            <div className="flex items-center gap-2">
+              <Star className="w-5 h-5 text-[#FFB81C]" />
+              <CardTitle className="text-[#002D72]">ความพึงพอใจ</CardTitle>
+            </div>
+            <CardDescription>คะแนนเฉลี่ยจากผู้ใช้บริการ</CardDescription>
+          </CardHeader>
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="flex flex-col items-center gap-3 p-6 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl border border-amber-200 shadow-md">

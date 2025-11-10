@@ -1,49 +1,54 @@
-'use client';
+'use client'
 
-import { useAuth } from '../contexts/AuthContext';
-import { LoginPage } from '../components/auth';
-import { UserDashboard, TechnicianDashboard, SupervisorDashboard } from '../components/dashboard';
-import { Navbar } from '../components/shared';
-import { ReportsAnalytics } from '../components/reports';
-import { ProfileManagement } from '../components/profile';
-import { useState } from 'react';
+import { useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
+import { LoginPage } from '@/components/auth/LoginPage'
+import { UserDashboard } from '@/components/dashboards/UserDashboard'
+import { TechnicianDashboard } from '@/components/dashboards/TechnicianDashboard'
+import { SupervisorDashboard } from '@/components/dashboards/SupervisorDashboard'
+import { AdminDashboard } from '@/components/dashboards/AdminDashboard'
+import { Navbar } from '@/components/common/Navbar'
+import { ReportsAnalytics } from '@/components/features/reports/ReportsAnalytics'
+import { ProfileManagement } from '@/components/features/profile/ProfileManagement'
 
 export default function HomePage() {
-  const { user, isAuthenticated } = useAuth();
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const { user, isAuthenticated } = useAuth()
+  const [currentPage, setCurrentPage] = useState('dashboard')
 
   if (!isAuthenticated || !user) {
-    return <LoginPage />;
+    return <LoginPage />
   }
 
   const renderDashboard = () => {
     switch (user.role) {
       case 'user':
-        return <UserDashboard />;
+        return <UserDashboard />
       case 'technician':
-        return <TechnicianDashboard />;
+        return <TechnicianDashboard />
       case 'supervisor':
-        return <SupervisorDashboard />;
+        return <SupervisorDashboard />
+      case 'admin':
+        return <AdminDashboard />
       default:
-        return <UserDashboard />;
+        return <UserDashboard />
     }
-  };
+  }
 
   const renderContent = () => {
     switch (currentPage) {
       case 'dashboard':
-        return renderDashboard();
+        return renderDashboard()
       case 'reports':
-        if (user.role === 'supervisor' || user.role === 'technician') {
-          return <ReportsAnalytics />;
+        if (user.role === 'supervisor' || user.role === 'technician' || user.role === 'admin') {
+          return <ReportsAnalytics />
         }
-        return renderDashboard();
+        return renderDashboard()
       case 'profile':
-        return <ProfileManagement />;
+        return <ProfileManagement />
       default:
-        return renderDashboard();
+        return renderDashboard()
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50">
@@ -52,5 +57,5 @@ export default function HomePage() {
         {renderContent()}
       </main>
     </div>
-  );
+  )
 }

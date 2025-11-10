@@ -6,10 +6,10 @@ import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { ClipboardList, Clock, CheckCircle, UserCheck, Wrench, AlertTriangle, Award, Zap, Star } from 'lucide-react';
-import { RequestDetailsDialog } from '../dialogs/RequestDetailsDialog';
-import { StatCard } from '../shared/StatCard';
+import { RequestDetailsDialog } from '../features/maintenance/RequestDetailsDialog';
+import { StatCard } from '../common/StatCard';
 import { toast } from 'sonner';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import type { MaintenanceRequest } from '../../contexts/MaintenanceContext';
 
 export const TechnicianDashboard: React.FC = () => {
@@ -78,11 +78,11 @@ export const TechnicianDashboard: React.FC = () => {
         className={`group relative p-5 border rounded-2xl hover:shadow-xl transition-all duration-300 overflow-hidden ${
           isOverSLA && request.status !== 'completed' 
             ? 'border-red-300 bg-gradient-to-br from-red-50/80 to-white shadow-md' 
-            : 'border-gray-200 bg-gradient-to-br from-white to-gray-50/30 hover:border-[#C91A1A]/30'
+            : 'border-gray-200 bg-gradient-to-br from-white to-gray-50/30 hover:border-[#DC2626]/30'
         }`}
       >
         {/* Hover effect background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#C91A1A]/5 to-[#E44646]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#DC2626]/5 to-[#FFB81C]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         
         {/* Status indicator line */}
         <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl ${
@@ -107,9 +107,6 @@ export const TechnicianDashboard: React.FC = () => {
               </div>
               <p className="text-sm text-gray-600 mb-3">{request.description}</p>
               <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
-                <Badge variant="outline" className="border-gray-300">
-                  {request.dormBuilding} ห้อง {request.roomNumber}
-                </Badge>
                 <span>ผู้แจ้ง: {request.userName}</span>
                 <span>
                   {new Date(request.createdAt).toLocaleDateString('th-TH', {
@@ -121,7 +118,7 @@ export const TechnicianDashboard: React.FC = () => {
                   })}
                 </span>
                 {request.assignedToName && (
-                  <span className="text-[#C91A1A] font-medium">ผู้รับผิดชอบ: {request.assignedToName}</span>
+                  <span className="text-[#DC2626] font-medium">ผู้รับผิดชอบ: {request.assignedToName}</span>
                 )}
               </div>
             </div>
@@ -132,7 +129,7 @@ export const TechnicianDashboard: React.FC = () => {
               size="sm"
               variant="outline"
               onClick={() => setSelectedRequest(request)}
-              className="hover:bg-[#C91A1A] hover:text-white transition-all duration-200"
+              className="hover:bg-[#DC2626] hover:text-white transition-all duration-200"
             >
               ดูรายละเอียด
             </Button>
@@ -142,7 +139,7 @@ export const TechnicianDashboard: React.FC = () => {
                   <Button
                     size="sm"
                     onClick={() => handleAcceptJob(request)}
-                    className="bg-[#C91A1A] hover:bg-[#991B1B] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
+                    className="bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
                   >
                     <UserCheck className="w-4 h-4 mr-1" />
                     รับงาน
@@ -173,7 +170,7 @@ export const TechnicianDashboard: React.FC = () => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#C91A1A] to-[#E44646] p-8 shadow-2xl"
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#DC2626] via-[#EF4444] to-[#DC2626] p-8 shadow-2xl"
       >
         {/* Animated background pattern */}
         <div className="absolute inset-0">
@@ -181,8 +178,8 @@ export const TechnicianDashboard: React.FC = () => {
         </div>
         
         {/* Floating orbs */}
-        <div className="absolute top-10 right-20 w-32 h-32 bg-red-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 left-20 w-40 h-40 bg-red-300/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-10 right-20 w-32 h-32 bg-[#FFB81C]/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 left-20 w-40 h-40 bg-[#FFB81C]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
         <div className="relative text-white space-y-2">
           <motion.h1 
@@ -191,14 +188,14 @@ export const TechnicianDashboard: React.FC = () => {
             transition={{ delay: 0.2 }}
             className="text-white mb-2 text-3xl flex items-center gap-3"
           >
-            <Wrench className="w-8 h-8 text-white" />
+            <Wrench className="w-8 h-8 text-[#FFB81C]" />
             แดชบอร์ดช่าง
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-red-100 text-xl flex items-center gap-2"
+            className="text-[#FFB81C] text-xl flex items-center gap-2"
           >
             สวัสดี, {user?.name}
             <span className="inline-block animate-wave">🔧</span>
@@ -235,10 +232,10 @@ export const TechnicianDashboard: React.FC = () => {
             value={myInProgress.length}
             description="งานที่กำลังดำเนินการ"
             icon={Zap}
-            iconColor="text-[#C91A1A]"
+            iconColor="text-[#DC2626]"
             iconBg="bg-red-100"
-            gradientFrom="from-[#C91A1A]"
-            gradientTo="to-[#E44646]"
+            gradientFrom="from-[#DC2626]"
+            gradientTo="to-[#B91C1C]"
           />
         </motion.div>
 
@@ -309,9 +306,9 @@ export const TechnicianDashboard: React.FC = () => {
         transition={{ delay: 0.4 }}
       >
         <Card className="border-0 shadow-2xl backdrop-blur-sm bg-white/95 overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#C91A1A] to-[#E44646]"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#DC2626] via-[#FFB81C] to-[#DC2626]"></div>
           <CardHeader className="border-b bg-gradient-to-r from-gray-50/80 to-white/80 backdrop-blur-sm">
-            <CardTitle className="text-[#C91A1A] flex items-center gap-2">
+            <CardTitle className="text-[#DC2626] flex items-center gap-2">
               <ClipboardList className="w-5 h-5" />
               จัดการงานซ่อม
             </CardTitle>
@@ -322,19 +319,19 @@ export const TechnicianDashboard: React.FC = () => {
               <TabsList className="grid w-full grid-cols-3 bg-gray-100/80 p-1 rounded-xl">
                 <TabsTrigger 
                   value="pending"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#C91A1A] data-[state=active]:to-[#E44646] data-[state=active]:text-white rounded-lg transition-all duration-200"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#DC2626] data-[state=active]:to-[#B91C1C] data-[state=active]:text-white rounded-lg transition-all duration-200"
                 >
                   รอรับงาน ({pendingRequests.length})
                 </TabsTrigger>
                 <TabsTrigger 
                   value="in_progress"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#C91A1A] data-[state=active]:to-[#E44646] data-[state=active]:text-white rounded-lg transition-all duration-200"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#DC2626] data-[state=active]:to-[#B91C1C] data-[state=active]:text-white rounded-lg transition-all duration-200"
                 >
                   กำลังซ่อม ({inProgressRequests.length})
                 </TabsTrigger>
                 <TabsTrigger 
                   value="completed"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#C91A1A] data-[state=active]:to-[#E44646] data-[state=active]:text-white rounded-lg transition-all duration-200"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#DC2626] data-[state=active]:to-[#B91C1C] data-[state=active]:text-white rounded-lg transition-all duration-200"
                 >
                   เสร็จสิ้น ({completedRequests.length})
                 </TabsTrigger>

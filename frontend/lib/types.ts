@@ -2,7 +2,7 @@
  * Type definitions for the Dorm Maintenance System
  */
 
-export type UserRole = 'user' | 'technician' | 'supervisor'
+export type UserRole = 'user' | 'technician' | 'supervisor' | 'admin'
 
 export type RequestStatus = 'pending' | 'in_progress' | 'done' | 'rejected'
 
@@ -22,9 +22,6 @@ export interface User {
   email: string
   role: UserRole
   phone?: string
-  roomNumber?: string
-  buildingNumber?: string
-  department?: string
   profileImage?: string
   specialization?: string[] // For technicians
   createdAt: Date
@@ -38,8 +35,6 @@ export interface MaintenanceRequest {
   priority: RequestPriority
   status: RequestStatus
   location: string
-  roomNumber?: string
-  buildingNumber?: string
   images?: string[]
   userId: string
   userName: string
