@@ -1,0 +1,157 @@
+openapi: 3.0.3
+info:
+  title: Dormitory Booking System API
+  version: 1.0.0
+  description: OpenAPI skeleton for the backend. This file is a minimal starting point; expand schemas and endpoints from DTOs/controllers.
+servers:
+  - url: http://localhost:3000
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: access_token
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    RegisterDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [USER, STAFF, ADMIN]
+      required: [email, name, password]
+    LoginDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [email, password]
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        priority:
+          type: string
+          enum: [P1,P2,P3,P4]
+        dueAt:
+          type: string
+          format: date-time
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDto'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+
+  /auth/login:
+    post:
+      summary: Login and set JWT cookie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      responses:
+        '200':
+          description: OK
+
+  /auth/profile:
+    get:
+      summary: Get current user profile
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+
+  /ticket:
+    get:
+      summary: List tickets (ADMIN)
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create ticket (USER)
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+      responses:
+        '201':
+          description: Created
+
+  /ticket/{id}:
+    get:
+      summary: Get ticket by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /ticket-event:
+    post:
+      summary: Create ticket event
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ticketId:
+                  type: string
+                type:
+                  type: string
+                note:
+                  type: string
+      responses:
+        '201':
+          description: Created

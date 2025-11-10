@@ -50,24 +50,41 @@ model Ticket {
   // Relations
   repairType  RepairType?   @relation(fields: [repairTypeId], references: [id])
   location    Location?     @relation(fields: [locationId], references: [id])
-  ticketEvent TicketEvent[]
-  attachment  Attachment[]
+  events      TicketEvent[]
+  attachments Attachment[]
   survey      Survey[]
+
+  // SLA Fields
+  slaResponseDueAt DateTime?
+  slaResolveDueAt  DateTime?
+  acknowledgedAt   DateTime?
+  resolvedAt       DateTime?
+  responseWarnAt   DateTime?
+  resolveWarnAt    DateTime?
+  responseBreached Boolean   @default(false)
+  resolvedBreached Boolean   @default(false)
+
+  onHoldSeconds Int @default(0)
+
+  @@index([status, slaResponseDueAt])
+  @@index([status, slaResolveDueAt])
 }
 
 model TicketEvent {
-  id        String     @id @default(cuid())
-  type      TicketEventType
+  id        String   @id @default(cuid())
+  ticketId  String
+  type      String?
   note      String?
-  createdAt DateTime   @default(now())
-  ticketId  String? // Foreign key to Ticket
+  createdAt DateTime @default(now())
+  createdBy String
 
-  // Relations
-  ticket Ticket? @relation(fields: [ticketId], references: [id])
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
 }
 
 model Line {
-  userId    String   @unique
+  userId String @unique
 }
 
 model Attachment {
@@ -92,7 +109,7 @@ model RepairType {
 
 model Location {
   id        String   @id @default(cuid())
-  name      String   @unique
+  name      String
   address   String
   createdAt DateTime @default(now())
 
@@ -121,7 +138,7 @@ model Role {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   email     String   @unique
   name      String
   password  String

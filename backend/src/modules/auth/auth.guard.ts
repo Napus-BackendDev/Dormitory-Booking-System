@@ -1,27 +1,39 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException, Inject } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 import { jwtConstants } from "src/common/constants/jwt.constant";
+import { Redis } from 'ioredis';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private authService: AuthService, private jwtService: JwtService) {}
+    constructor(
+        private authService: AuthService, 
+        private jwtService: JwtService,
+        @Inject('REDIS_CLIENT') private redisClient: Redis
+    ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
-        const token = this.extractTokenFromHeader(request);
-        
+        const token = this.extractTokenFromHeader(request) || this.extractTokenFromCookie(request);
+
         if (!token) {
-            console.log('No token found in request');
+            console.log('No token found in request (checked header and cookie)');
             throw new UnauthorizedException('No token provided');
         }
 
         try {
+            // Check if token is blacklisted
+            const isBlacklisted = await this.redisClient.get(`blacklist:${token}`);
+            if (isBlacklisted) {
+                console.log('Token is blacklisted');
+                throw new UnauthorizedException('Token has been invalidated');
+            }
+
             const payload = await this.jwtService.verifyAsync(token, {
                 secret: jwtConstants.secret
             });
-            
+
             // Attach the decoded token payload to the request
             request['user'] = payload;
             console.log('Token verified successfully:', payload);
@@ -31,8 +43,13 @@ export class AuthGuard implements CanActivate {
             throw new UnauthorizedException('Invalid token');
         }
     }
+
     private extractTokenFromHeader(request: Request): string | undefined {
         const [type, token] = request.headers.authorization?.split(' ') ?? [];
         return type === 'Bearer' ? token : undefined;
+    }
+
+    private extractTokenFromCookie(request: Request): string | undefined {
+        return request.cookies?.access_token;
     }
 }
