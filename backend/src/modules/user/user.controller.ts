@@ -12,7 +12,6 @@ import { UpdateAccessDto } from "./dtos/update.access.dto";
 export class UserController {
     constructor(private userService: UserService) { }
 
-
     @Get()
     @Roles(Role.USER,Role.STAFF, Role.ADMIN)
     async getAllUsers() {

@@ -14,7 +14,7 @@ export class TicketService {
   constructor(
     private prisma: PrismaService,
     private lineService: LineService,
-      private emailService: EmailService
+    private emailService: EmailService
   ) {}
 
   private computeSLA(priority: 'P1' | 'P2' | 'P3' | 'P4', now = new Date()) {
