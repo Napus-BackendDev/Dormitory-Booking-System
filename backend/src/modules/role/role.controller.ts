@@ -7,32 +7,34 @@ import { RolesGuard } from 'src/common/author/roles.guard';
 import { Roles } from 'src/common/author/role.decorator';
 
 @Controller('role')
-// @UseGuards(AuthGuard, RolesGuard)
-//@Roles('ADMIN')
+@UseGuards(AuthGuard, RolesGuard)
 export class RoleController {
   constructor(private readonly roleService: RoleService) { }
-
+  
   @Get()
   findAll() {
     return this.roleService.findAll();
   }
-
+  
   @Get(':id')
   findById(@Param('id') id: string) {
     return this.roleService.findOne(id);
   }
-
+  
   @Post()
+  @Roles('ADMIN')
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.roleService.create(createRoleDto);
   }
-
+  
   @Patch(':id')
+  @Roles('ADMIN')
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.roleService.update(id, updateRoleDto);
   }
-
+  
   @Delete(':id')
+  @Roles('ADMIN')
   remove(@Param('id') id: string) {
     return this.roleService.delete(id);
   }

@@ -13,7 +13,6 @@ export class UserController {
 
 
     @Get()
-    @Roles(Role.USER,Role.STAFF, Role.ADMIN)
     async getAllUsers() {
         return this.userService.getAllUsers();
     }
@@ -29,15 +28,9 @@ export class UserController {
     async deleteAllUsers() {
         return this.userService.deleteAllUsers();
     }
-
-    @Get('/admin-user')
-    @Roles(Role.ADMIN)
-    async getAdminUser() {
-        return this.userService.getAdminUser();
-    }
     
     @Put('/manage-access/:id')
-    @Roles(Role.USER)
+    @Roles("USER")
     async manageAccess(@Param('id') id: string, @Body() updateAccessDto: UpdateAccessDto) {
         return this.userService.manageAccess(id, updateAccessDto);
     }
