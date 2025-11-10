@@ -31,13 +31,14 @@ import { RedisModule } from './common/redis/redis.module';
     RepairTypeModule,
     RoleModule,
     LocationModule,
-    LineModule,,
+  LineModule,
     EmailModule,
     RedisModule,
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST || 'localhost',
-        port: process.env.REDIS_PORT! || 6379,
+        // ensure we pass a number to the Bull redis config
+        port: parseInt(process.env.REDIS_PORT || '6379', 10),
       }
     }),
     SlaMonitorModule,

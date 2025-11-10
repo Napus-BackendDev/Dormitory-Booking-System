@@ -7,11 +7,9 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { RolesGuard } from 'src/common/author/roles.guard';
 import { Role } from 'src/common/enums/role.enum';
 import { Roles } from 'src/common/author/role.decorator';
-import { AuthGuard } from '../auth/auth.guard';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('ticket')
-@UseGuards(AuthGuard)
 export class TicketController {
   constructor(private readonly ticketService: TicketService) { }
 

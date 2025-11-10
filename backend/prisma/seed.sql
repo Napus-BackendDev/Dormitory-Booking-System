@@ -4,12 +4,19 @@ TRUNCATE TABLE "Attachment" CASCADE;
 TRUNCATE TABLE "Survey" CASCADE;
 TRUNCATE TABLE "Ticket" CASCADE;
 TRUNCATE TABLE "User" CASCADE;
+TRUNCATE TABLE "Role" CASCADE;
 
--- Insert sample users
-INSERT INTO "User" (id, email, name, password, role, "createdAt") VALUES
-('usr_admin_001', 'admin@example.com', 'Admin User', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPjYKCXWJ8F2', 'ADMIN', NOW()),
-('usr_staff_001', 'staff@example.com', 'Staff User', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPjYKCXWJ8F2', 'STAFF', NOW()),
-('usr_user_001', 'user@example.com', 'Regular User', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPjYKCXWJ8F2', 'USER', NOW());
+-- Insert sample roles
+INSERT INTO "Role" (id, name, "createdAt") VALUES
+('role_admin_001', 'ADMIN', NOW()),
+('role_staff_001', 'STAFF', NOW()),
+('role_user_001', 'USER', NOW());
+
+-- Insert sample users (link to roles via roleId)
+INSERT INTO "User" (id, email, name, password, "roleId", "createdAt") VALUES
+('usr_admin_001', 'admin@example.com', 'Admin User', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPjYKCXWJ8F2', 'role_admin_001', NOW()),
+('usr_staff_001', 'staff@example.com', 'Staff User', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPjYKCXWJ8F2', 'role_staff_001', NOW()),
+('usr_user_001', 'user@example.com', 'Regular User', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPjYKCXWJ8F2', 'role_user_001', NOW());
 
 -- Insert sample tickets with SLA fields
 -- P1: 15min response, 4hr resolve
@@ -71,23 +78,23 @@ INSERT INTO "TicketEvent" (id, "ticketId", type, note, "createdBy", "createdAt")
 
 -- Insert attachments (one per ticket due to unique constraint on ticketId)
 INSERT INTO "Attachment" (id, "ticketId", url, type, "createdAt") VALUES
-('att1', 'tk1', 'https://storage.example.com/photos/ac-repair-301.jpg', 'image/jpeg', NOW() - INTERVAL '4 minutes'),
-('att2', 'tk2', 'https://storage.example.com/photos/door-handle-205.jpg', 'image/jpeg', NOW() - INTERVAL '3 minutes'),
-('att3', 'tk3', 'https://storage.example.com/docs/completion-report.pdf', 'application/pdf', NOW() - INTERVAL '2 days 4 minutes'),
-('att4', 'tk4', 'https://storage.example.com/photos/leaking-faucet-412.jpg', 'image/jpeg', NOW() - INTERVAL '2 minutes'),
-('att5', 'tk5', 'https://storage.example.com/docs/wifi-diagnostic.pdf', 'application/pdf', NOW() - INTERVAL '1 minute'),
-('att6', 'tk6', 'https://storage.example.com/photos/fire-alarm-101.jpg', 'image/jpeg', NOW() - INTERVAL '19 minutes'),
-('att7', 'tk7', 'https://storage.example.com/docs/power-outage-report.pdf', 'application/pdf', NOW() - INTERVAL '9 minutes'),
-('att8', 'tk8', 'https://storage.example.com/photos/heating-system.jpg', 'image/jpeg', NOW() - INTERVAL '1 hour 59 minutes'),
-('att9', 'tk9', 'https://storage.example.com/photos/security-door.jpg', 'image/jpeg', NOW() - INTERVAL '29 minutes'),
-('att10', 'tk10', 'https://storage.example.com/docs/elevator-report.pdf', 'application/pdf', NOW() - INTERVAL '4 hours 59 minutes'),
-('att11', 'tk11', 'https://storage.example.com/photos/parking-lights.jpg', 'image/jpeg', NOW() - INTERVAL '2 hours 59 minutes'),
-('att12', 'tk12', 'https://storage.example.com/photos/garden-before.jpg', 'image/jpeg', NOW() - INTERVAL '1 day 23 hours'),
-('att13', 'tk13', 'https://storage.example.com/docs/bulletin-content.pdf', 'application/pdf', NOW() - INTERVAL '23 hours'),
-('att14', 'tk14', 'https://storage.example.com/docs/sla-test-p1.pdf', 'application/pdf', NOW() - INTERVAL '13 minutes'),
-('att15', 'tk15', 'https://storage.example.com/docs/sla-test-p2.pdf', 'application/pdf', NOW() - INTERVAL '7 hours 44 minutes'),
-('att16', 'tk16', 'https://storage.example.com/docs/breached-p1.pdf', 'application/pdf', NOW() - INTERVAL '29 minutes'),
-('att17', 'tk17', 'https://storage.example.com/docs/breached-p3.pdf', 'application/pdf', NOW() - INTERVAL '3 days 23 hours');
+('att1', 'tk1', 'https://storage.example.com/photos/ac-repair-301.jpg', 'IMAGE', NOW() - INTERVAL '4 minutes'),
+('att2', 'tk2', 'https://storage.example.com/photos/door-handle-205.jpg', 'IMAGE', NOW() - INTERVAL '3 minutes'),
+('att3', 'tk3', 'https://storage.example.com/docs/completion-report.pdf', 'IMAGE', NOW() - INTERVAL '2 days 4 minutes'),
+('att4', 'tk4', 'https://storage.example.com/photos/leaking-faucet-412.jpg', 'IMAGE', NOW() - INTERVAL '2 minutes'),
+('att5', 'tk5', 'https://storage.example.com/docs/wifi-diagnostic.pdf', 'IMAGE', NOW() - INTERVAL '1 minute'),
+('att6', 'tk6', 'https://storage.example.com/photos/fire-alarm-101.jpg', 'IMAGE', NOW() - INTERVAL '19 minutes'),
+('att7', 'tk7', 'https://storage.example.com/docs/power-outage-report.pdf', 'IMAGE', NOW() - INTERVAL '9 minutes'),
+('att8', 'tk8', 'https://storage.example.com/photos/heating-system.jpg', 'IMAGE', NOW() - INTERVAL '1 hour 59 minutes'),
+('att9', 'tk9', 'https://storage.example.com/photos/security-door.jpg', 'IMAGE', NOW() - INTERVAL '29 minutes'),
+('att10', 'tk10', 'https://storage.example.com/docs/elevator-report.pdf', 'IMAGE', NOW() - INTERVAL '4 hours 59 minutes'),
+('att11', 'tk11', 'https://storage.example.com/photos/parking-lights.jpg', 'IMAGE', NOW() - INTERVAL '2 hours 59 minutes'),
+('att12', 'tk12', 'https://storage.example.com/photos/garden-before.jpg', 'IMAGE', NOW() - INTERVAL '1 day 23 hours'),
+('att13', 'tk13', 'https://storage.example.com/docs/bulletin-content.pdf', 'IMAGE', NOW() - INTERVAL '23 hours'),
+('att14', 'tk14', 'https://storage.example.com/docs/sla-test-p1.pdf', 'IMAGE', NOW() - INTERVAL '13 minutes'),
+('att15', 'tk15', 'https://storage.example.com/docs/sla-test-p2.pdf', 'IMAGE', NOW() - INTERVAL '7 hours 44 minutes'),
+('att16', 'tk16', 'https://storage.example.com/docs/breached-p1.pdf', 'IMAGE', NOW() - INTERVAL '29 minutes'),
+('att17', 'tk17', 'https://storage.example.com/docs/breached-p3.pdf', 'IMAGE', NOW() - INTERVAL '3 days 23 hours');
 
 -- Insert surveys (one per ticket due to unique constraint on ticketId)
 INSERT INTO "Survey" (id, "ticketId", score, comment) VALUES
