@@ -8,6 +8,7 @@ import { RecieveTicketMailer } from 'src/common/email/mail-temp/recieve.confirm'
 import { EmailService } from 'src/common/email/email.service';
 import { WorkDoneMailer } from 'src/common/email/mail-temp/workdone.confirm';
 import { LineService } from '../line/Line.service';
+import { generateImageUrl } from '../../common/utils/utils';
 
 @Injectable()
 export class TicketService {
@@ -36,7 +37,7 @@ export class TicketService {
   }
 
 
-  async create(createTicketDto: CreateTicketDto, user: any): Promise<Ticket> {
+  async create(createTicketDto: CreateTicketDto, user: any, photos: Express.Multer.File[]): Promise<Ticket> {
     // Send email notification to the user who created the ticket
     try {
       await RecieveTicketMailer(this.emailService, user.email);
@@ -45,10 +46,13 @@ export class TicketService {
       // Don't fail the ticket creation if email fails
     }
 
+    const photoUrls = photos.map(file => generateImageUrl(file.filename));
+
     const { slaResponseDueAt, slaResolveDueAt } = this.computeSLA(createTicketDto.priority);
     const ticket = await this.prisma.ticket.create({
       data: {
         ...createTicketDto,
+        photo: photoUrls,
         createdAt: new Date(),
         slaResponseDueAt: new Date(slaResponseDueAt),
         slaResolveDueAt: new Date(slaResolveDueAt),

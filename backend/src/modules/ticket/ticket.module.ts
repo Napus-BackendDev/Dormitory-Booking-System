@@ -4,7 +4,7 @@ import { TicketController } from './ticket.controller';
 import { EmailModule } from 'src/common/email/email.module';
 import { RedisModule } from '../../common/redis/redis.module';
 import { LineModule } from '../line/Line.module';
-import { AuthModule } from '../auth/auth.module';
+import { AuthModule } from '../auth/auth.module'; 
 
 @Module({
   imports: [AuthModule,LineModule, EmailModule, RedisModule],
