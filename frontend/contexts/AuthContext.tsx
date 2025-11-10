@@ -15,6 +15,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -53,16 +54,22 @@ const mockUsers: Record<string, User> = {
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const login = async (email: string, password: string) => {
-    // Mock authentication
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const foundUser = mockUsers[email];
-    if (foundUser) {
-      setUser(foundUser);
-    } else {
-      throw new Error('Invalid credentials');
+    setLoading(true);
+    try {
+      // Mock authentication
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const foundUser = mockUsers[email];
+      if (foundUser) {
+        setUser(foundUser);
+      } else {
+        throw new Error('Invalid credentials');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,6 +84,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         login,
         logout,
         isAuthenticated: !!user,
+        loading,
       }}
     >
       {children}

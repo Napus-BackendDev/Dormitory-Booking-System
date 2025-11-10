@@ -1,4 +1,6 @@
 import React from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/button';
 import {
@@ -13,15 +15,17 @@ import { Wrench, User, LogOut, Sparkles } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { motion } from 'framer-motion';
 
-interface NavbarProps {
-  currentPage: string;
-  onNavigate: (page: string) => void;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
+export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
+  const pathname = usePathname();
+  const router = useRouter();
 
   if (!user) return null;
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
 
   const getRoleText = (role: string) => {
     switch (role) {
@@ -40,9 +44,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
 
   const getNavItems = () => {
     const baseItems = [
-      { id: 'dashboard', label: 'แดชบอร์ด', roles: ['user', 'technician', 'supervisor', 'admin'] },
-      { id: 'reports', label: 'รายงานและสถิติ', roles: ['supervisor', 'admin'] },
-      { id: 'profile', label: 'โปรไฟล์', roles: ['user', 'technician', 'supervisor', 'admin'] },
+      { id: 'dashboard', label: 'แดชบอร์ด', href: '/dashboard', roles: ['user', 'technician', 'supervisor', 'admin'] },
+      { id: 'reports', label: 'รายงานและสถิติ', href: '/reports', roles: ['supervisor', 'admin'] },
+      { id: 'profile', label: 'โปรไฟล์', href: '/profile', roles: ['user', 'technician', 'supervisor', 'admin'] },
     ];
 
     return baseItems.filter(item => item.roles.includes(user.role));
@@ -88,33 +92,37 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
 
           {/* Enhanced Navigation Items */}
           <div className="hidden md:flex items-center gap-2">
-            {getNavItems().map((item, index) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index }}
-              >
-                <Button
-                  variant={currentPage === item.id ? 'default' : 'ghost'}
-                  onClick={() => onNavigate(item.id)}
-                  className={`relative transition-all duration-200 ${
-                    currentPage === item.id
-                      ? 'bg-gradient-to-r from-[#DC2626] to-[#EF4444] text-white shadow-lg'
-                      : 'hover:bg-[#DC2626]/5'
-                  }`}
+            {getNavItems().map((item, index) => {
+              const isActive = pathname === item.href
+              return (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index }}
                 >
-                  {currentPage === item.id && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute inset-0 bg-gradient-to-r from-[#DC2626] to-[#EF4444] rounded-md"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                  <span className="relative z-10">{item.label}</span>
-                </Button>
-              </motion.div>
-            ))}
+                  <Link href={item.href}>
+                    <Button
+                      variant={isActive ? 'default' : 'ghost'}
+                      className={`relative transition-all duration-200 ${
+                        isActive
+                          ? 'bg-gradient-to-r from-[#DC2626] to-[#EF4444] text-white shadow-lg'
+                          : 'hover:bg-[#DC2626]/5'
+                      }`}
+                    >
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeTab"
+                          className="absolute inset-0 bg-gradient-to-r from-[#DC2626] to-[#EF4444] rounded-md"
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                      <span className="relative z-10">{item.label}</span>
+                    </Button>
+                  </Link>
+                </motion.div>
+              )
+            })}
           </div>
 
           {/* Enhanced User Menu */}
@@ -158,12 +166,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onNavigate('profile')}>
-                <User className="mr-2 h-4 w-4" />
-                <span>โปรไฟล์</span>
-              </DropdownMenuItem>
+              <Link href="/profile">
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>โปรไฟล์</span>
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout} className="text-red-600">
+              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>ออกจากระบบ</span>
               </DropdownMenuItem>
