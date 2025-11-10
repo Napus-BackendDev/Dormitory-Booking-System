@@ -1,4 +1,4 @@
-import { IsString, IsDateString, IsEnum } from 'class-validator';
+import { IsArray, IsString, IsDateString, IsEnum } from 'class-validator';
 import { TicketPriority } from '@prisma/client';
 
 export class CreateTicketDto {
@@ -16,9 +16,6 @@ export class CreateTicketDto {
 
   @IsEnum(TicketPriority)
   priority: TicketPriority;
-
-  @IsString()
-  photo: string[];
 
   @IsDateString()
   dueAt: Date;
