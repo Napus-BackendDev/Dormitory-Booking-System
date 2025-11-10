@@ -1,18 +1,4 @@
-import { IsString, IsUUID } from "class-validator";
-import { UUID } from "node:crypto";
+import { PartialType } from "@nestjs/mapped-types";
+import { CreateAttachmentDto } from "./create-attachment.dto";
 
-export class UpdateAttachmentDto {
-    @IsString()
-    @IsUUID()
-    id: UUID;
-
-    @IsString()
-    @IsUUID()
-    ticketId: UUID;
-
-    @IsString()
-    url: string;
-
-    @IsString()
-    type: string;
-}
+export class UpdateAttachmentDto extends PartialType(CreateAttachmentDto) { }

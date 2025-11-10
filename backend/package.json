@@ -23,6 +23,7 @@
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/bull": "^11.0.4",
     "@nestjs/bullmq": "^11.0.4",
+    "@line/bot-sdk": "^10.4.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",

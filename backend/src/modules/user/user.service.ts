@@ -4,18 +4,27 @@ import { UpdateAccessDto } from "./dtos/update.access.dto";
 
 @Injectable()
 export class UserService {
-    
+    getAdminUser() {
+        const adminUser = this.prismaService.user.findFirst({
+            where: {
+                role: {
+                    name: 'ADMIN'
+                }
+            }
+        });
+        return adminUser;
+    }
 
-    constructor(private prismaService: PrismaService) {}
+    constructor(private prismaService: PrismaService) { }
 
     getAllUsers() {
         return this.prismaService.user.findMany();
     }
 
     updateUserRole(userId: string, newRole: string) {
-        const updatedUser= this.prismaService.user.update({
+        const updatedUser = this.prismaService.user.update({
             where: { id: userId },
-            data: { role: newRole }
+            data: { name: newRole }
         });
         return updatedUser;
     }

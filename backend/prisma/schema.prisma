@@ -13,15 +13,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Enums //
+enum TicketPriority {
+  P1
+  P2
+  P3
+  P4
+}
+
+enum TicketEventType {
+  CREATED
+  ASSIGNED
+  STARTED
+  CLOSED
+}
+
+enum AttachmentType {
+  IMAGE
+  VIDEO
+}
+
+// Schema Models //
 model Ticket {
-  id          String   @id @default(cuid())
-  code        String   @unique
-  title       String
-  description String
-  status      String
-  priority    String
-  dueAt       DateTime
-  createdAt   DateTime @default(now())
+  id           String         @id @default(cuid())
+  code         String         @unique
+  title        String
+  description  String
+  status       String
+  priority     TicketPriority
+  dueAt        DateTime
+  createdAt    DateTime       @default(now())
+  repairTypeId String? // Foreign key to RepairType
+  locationId   String? // Foreign key to Location
+
+  // Relations
+  repairType  RepairType?   @relation(fields: [repairTypeId], references: [id])
+  location    Location?     @relation(fields: [locationId], references: [id])
+  ticketEvent TicketEvent[]
+  attachment  Attachment[]
+  survey      Survey[]
 
   // SLA Fields
   slaResponseDueAt DateTime?
@@ -48,29 +78,72 @@ model TicketEvent {
   ticketId  String
   type      String?
   note      String?
-  createdAt DateTime @default(now())
+  createdAt DateTime   @default(now())
   createdBy String
 
   ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   @@index([ticketId])
+  ticketId  String? // Foreign key to Ticket
+
+  // Relations
+  ticket Ticket? @relation(fields: [ticketId], references: [id])
+}
+
+model Line {
+  userId    String   @unique
 }
 
 model Attachment {
+  id        String         @id @default(cuid())
+  url       String
+  type      AttachmentType
+  createdAt DateTime       @default(now())
+  ticketId  String? // Foreign key to Ticket
+
+  // Relations
+  ticket Ticket? @relation(fields: [ticketId], references: [id])
+}
+
+model RepairType {
   id        String   @id @default(cuid())
-  ticketId  String
-  url       String?
-  type      String?
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  // Relations
+  Ticket Ticket[]
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  name      String
+  address   String
   createdAt DateTime @default(now())
 
   ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   @@index([ticketId])
+
+  // Relations
+  Ticket Ticket[]
 }
 
 model Survey {
-  id       String  @id @default(cuid())
-  ticketId String  @unique
-  score    Int
-  comment  String?
+  id        String   @id @default(cuid())
+  score     Int
+  comment   String?
+  createdAt DateTime @default(now())
+  ticketId  String? // Foreign key to Ticket
+
+  // Relations
+  ticket Ticket? @relation(fields: [ticketId], references: [id])
+}
+
+model Role {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  // Relations
+  User User[]
 
   ticket   Ticket  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }
@@ -79,7 +152,10 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String
-  password  String   
-  role      String  @default("USER")
+  password  String
   createdAt DateTime @default(now())
+  roleId    String? // Foreign key to Role
+
+  // Relations
+  role Role? @relation(fields: [roleId], references: [id])
 }

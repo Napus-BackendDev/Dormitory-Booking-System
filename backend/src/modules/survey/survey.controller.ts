@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { SurveyService } from './survey.service';
 import { CreateSurveyDto } from './dto/create-survey.dto';
 import { UpdateSurveyDto } from './dto/update-survey.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('survey')
+@UseGuards(AuthGuard)
 export class SurveyController {
   constructor(private readonly surveyService: SurveyService) { }
 

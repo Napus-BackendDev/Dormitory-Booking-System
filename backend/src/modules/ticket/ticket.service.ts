@@ -7,13 +7,15 @@ import { SLA_CONSTANTS} from 'src/common/constants/sla.constant';
 import { RecieveTicketMailer } from 'src/common/email/mail-temp/recieve.confirm';
 import { EmailService } from 'src/common/email/email.service';
 import { WorkDoneMailer } from 'src/common/email/mail-temp/workdone.confirm';
+import { LineService } from '../line/Line.service';
 
 @Injectable()
 export class TicketService {
   constructor(
     private prisma: PrismaService,
-    private emailService: EmailService
-  ) { }
+    private lineService: LineService,
+        private emailService: EmailService
+  ) {}
 
   private computeSLA(priority: 'P1' | 'P2' | 'P3' | 'P4', now = new Date()) {
     const responseMs = SLA_CONSTANTS.response[priority];
@@ -43,6 +45,8 @@ export class TicketService {
         slaResolveDueAt: new Date(slaResolveDueAt),
       },
     });
+
+    this.lineService.sendLineCreateTicket(ticket);
 
     await this.prisma.ticketEvent.create({
       data: {
@@ -82,6 +86,8 @@ export class TicketService {
           }
         }
       });
+
+      this.lineService.sendLineUpdateTicket(ticket);
 
       if (ticket) {
         // Find the creator's user ID from the CREATED event
@@ -126,4 +132,3 @@ export class TicketService {
     return this.prisma.ticket.findUnique({ where: { id } });
   }
 }
-

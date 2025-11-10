@@ -1,15 +1,13 @@
-import { IsOptional, IsString, IsUUID } from "class-validator";
+import { AttachmentType } from "@prisma/client";
+import { IsEnum, IsString } from "class-validator";
 
 export class CreateAttachmentDto {
     @IsString()
-    @IsUUID()
     ticketId: string;
 
     @IsString()
-    @IsOptional()
-    url?: string;
+    url: string;
 
-    @IsString()
-    @IsOptional()
-    type?: string;
+    @IsEnum(AttachmentType)
+    type: AttachmentType;
 }

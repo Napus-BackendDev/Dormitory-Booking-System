@@ -4,16 +4,15 @@ import { CreateAttachmentDto } from "./dto/create-attachment.dto";
 import { UpdateAttachmentDto } from "./dto/update-attachment.dto";
 import { AttachmentService } from "./attachment.service";
 import { AuthGuard } from "../auth/auth.guard";
-import { Role } from "src/common/enums/role.enum";
 import { RolesGuard } from "src/common/author/roles.guard";
 import { Roles } from "src/common/author/role.decorator";
 
-@UseGuards(AuthGuard, RolesGuard)
 @Controller("attachment")
+@UseGuards(AuthGuard, RolesGuard)
 export class AttachmentController {
     constructor(private attachmentService: AttachmentService) {}
 
-    @Roles(Role.ADMIN)
+    @Roles("ADMIN")
     @Post()
     async createAttachment(@Body() createAttachmentDto: CreateAttachmentDto) {
         return this.attachmentService.create(createAttachmentDto);

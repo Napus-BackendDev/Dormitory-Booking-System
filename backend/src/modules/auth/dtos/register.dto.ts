@@ -1,5 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Matches } from "class-validator";
-import { Role } from "../../../common/enums/role.enum";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches } from "class-validator";
 
 export class RegisterDto {
     @IsEmail({}, { message: 'Please provide a valid email address' })

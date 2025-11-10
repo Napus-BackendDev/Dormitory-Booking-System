@@ -15,6 +15,7 @@ export class AuthController {
     async register(@Body() data: RegisterDto) {
         return this.authService.register(data);
     }
+
     @Post('login')
     async login(@Body() data: LoginDto, @Res({ passthrough: true }) response: Response) {
         const result = await this.authService.login(data);
@@ -31,11 +32,15 @@ export class AuthController {
             message: 'Login successful',
             user: result.user
         };
-    }    @Get('profile')
+    }    
+    
+    @Get('profile')
     @UseGuards(AuthGuard)
     async getProfile(@CurrentUser() user: any) {
         return this.authService.getProfile(user.sub);
     }
+
+
     @Post('logout')
     @UseGuards(AuthGuard)
     async logout(@CurrentUser() user: any, @Res({ passthrough: true }) response: Response, @Headers('authorization') authHeader: string, @Request() req: any) {
