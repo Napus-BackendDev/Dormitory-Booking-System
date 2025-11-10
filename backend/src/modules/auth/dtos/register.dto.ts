@@ -22,7 +22,9 @@ export class RegisterDto {
     )
     password: string;
 
-    @IsNotEmpty({ message: 'Role is required' })
-    @IsString()
-    role?: string;
+    @IsEnum(Role, { 
+        message: `Role must be one of: ${Object.values(Role).join(', ')}`
+    })
+    @IsOptional()
+    role: Role = Role.USER; 
 }

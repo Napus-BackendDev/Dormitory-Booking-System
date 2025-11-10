@@ -8,9 +8,12 @@ import { CreateTicketEventDto } from "./dto/create-ticket_event.dto";
 export class TicketEventService {
     constructor(private prisma: PrismaService) {}
 
-    async create(createTicketEventDto: CreateTicketEventDto): Promise<TicketEvent> {
+    async create(createTicketEventDto: CreateTicketEventDto, userId: string): Promise<TicketEvent> {
         return this.prisma.ticketEvent.create({
-            data: createTicketEventDto
+            data: {
+                ...createTicketEventDto,
+                createdBy: userId
+            }
         });
     }
     
