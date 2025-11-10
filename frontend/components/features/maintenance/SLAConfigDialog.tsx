@@ -78,9 +78,9 @@ export const SLAConfigDialog: React.FC<SLAConfigDialogProps> = ({ open, onClose 
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg border-0 shadow-2xl bg-white/98 backdrop-blur-sm">
+      <DialogContent className="max-w-lg border-0 shadow-2xl bg-white">
         {/* Gradient header bar */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#002D72] via-[#FFB81C] to-[#002D72]"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#DC2626] via-[#FCD34D] to-[#DC2626]"></div>
         
         <DialogHeader className="pb-6 border-b border-gray-200">
           <motion.div
@@ -92,12 +92,12 @@ export const SLAConfigDialog: React.FC<SLAConfigDialogProps> = ({ open, onClose 
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200 }}
-                className="p-3 bg-gradient-to-br from-[#002D72] to-[#0a4a9d] rounded-xl shadow-lg"
+                className="p-3 bg-gradient-to-br from-[#DC2626] to-[#EF4444] rounded-xl shadow-lg"
               >
-                <Clock className="w-6 h-6 text-[#FFB81C]" />
+                <Clock className="w-6 h-6 text-[#FCD34D]" />
               </motion.div>
               <div>
-                <DialogTitle className="text-2xl bg-gradient-to-r from-[#002D72] to-[#0a4a9d] bg-clip-text text-transparent">
+                <DialogTitle className="text-2xl bg-gradient-to-r from-[#DC2626] to-[#EF4444] bg-clip-text text-transparent">
                   ตั้งค่า SLA
                 </DialogTitle>
                 <DialogDescription className="text-gray-600">
@@ -151,7 +151,7 @@ export const SLAConfigDialog: React.FC<SLAConfigDialogProps> = ({ open, onClose 
               className="space-y-3 p-4 bg-gradient-to-br from-amber-50 to-white rounded-xl border-2 border-amber-200"
             >
               <Label htmlFor="medium-priority" className="flex items-center gap-2 text-gray-900">
-                <div className="p-2 bg-[#FFB81C] rounded-lg">
+                <div className="p-2 bg-[#FCD34D] rounded-lg">
                   <Clock className="w-4 h-4 text-white" />
                 </div>
                 <div>
@@ -167,7 +167,7 @@ export const SLAConfigDialog: React.FC<SLAConfigDialogProps> = ({ open, onClose 
                   value={mediumPriority}
                   onChange={(e) => setMediumPriority(e.target.value)}
                   required
-                  className="border-amber-300 focus:ring-[#FFB81C] focus:border-[#FFB81C]"
+                  className="border-amber-300 focus:ring-[#FCD34D] focus:border-[#FCD34D]"
                 />
                 <span className="text-sm font-semibold text-gray-700 whitespace-nowrap">ชั่วโมง</span>
               </div>
@@ -209,12 +209,12 @@ export const SLAConfigDialog: React.FC<SLAConfigDialogProps> = ({ open, onClose 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="p-4 bg-gradient-to-br from-blue-50 to-white rounded-xl border-2 border-blue-200"
+            className="p-4 bg-gradient-to-br from-red-50 to-white rounded-xl border-2 border-red-200"
           >
             <div className="flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-[#002D72] flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="w-5 h-5 text-[#DC2626] flex-shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-[#002D72]">💡 หมายเหตุ:</p>
+                <p className="text-sm font-semibold text-[#DC2626]">💡 หมายเหตุ:</p>
                 <ul className="text-xs text-gray-700 space-y-1">
                   <li>• งานที่เกินเวลา SLA จะถูกแสดงเป็นสีแดงเพื่อเตือน</li>
                   <li>• งานด่วนควรมีเวลาน้อยกว่างานปานกลางและงานต่ำ</li>
@@ -251,7 +251,7 @@ export const SLAConfigDialog: React.FC<SLAConfigDialogProps> = ({ open, onClose 
               </Button>
               <Button 
                 type="submit"
-                className="bg-gradient-to-r from-[#002D72] to-[#0a4a9d] hover:from-[#0a4a9d] hover:to-[#002D72] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 px-6"
+                className="bg-gradient-to-r from-[#DC2626] to-[#EF4444] hover:from-[#EF4444] hover:to-[#DC2626] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 px-6"
               >
                 <Save className="w-4 h-4 mr-2" />
                 บันทึกการตั้งค่า

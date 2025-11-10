@@ -10,7 +10,7 @@ import {
   Phone,
   ClipboardList,
   CheckCircle,
-  Star,
+  TrendingUp,
 } from 'lucide-react';
 
 export const ProfileManagement: React.FC = () => {
@@ -24,16 +24,6 @@ export const ProfileManagement: React.FC = () => {
   const completedRequests = userRequests.filter(req => req.status === 'completed');
   const pendingRequests = userRequests.filter(req => req.status === 'pending');
   const inProgressRequests = userRequests.filter(req => req.status === 'in_progress');
-
-  // Calculate average rating
-  const requestsWithRating = completedRequests.filter(req => req.rating);
-  const averageRating =
-    requestsWithRating.length > 0
-      ? (
-          requestsWithRating.reduce((sum, req) => sum + (req.rating || 0), 0) /
-          requestsWithRating.length
-        ).toFixed(1)
-      : 'N/A';
 
   // For technicians, show assigned tasks
   const assignedRequests = requests.filter(req => req.assignedTo === user.id);
@@ -152,14 +142,6 @@ export const ProfileManagement: React.FC = () => {
                   </div>
                   <span className="text-lg">{completedRequests.length}</span>
                 </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-yellow-500" />
-                    <span className="text-sm">คะแนนเฉลี่ย</span>
-                  </div>
-                  <span className="text-lg">{averageRating}</span>
-                </div>
               </>
             )}
 
@@ -183,7 +165,7 @@ export const ProfileManagement: React.FC = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-yellow-500" />
+                    <TrendingUp className="w-4 h-4 text-green-500" />
                     <span className="text-sm">อัตราสำเร็จ</span>
                   </div>
                   <span className="text-lg">
@@ -218,7 +200,7 @@ export const ProfileManagement: React.FC = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-yellow-500" />
+                    <TrendingUp className="w-4 h-4 text-green-500" />
                     <span className="text-sm">อัตราสำเร็จ</span>
                   </div>
                   <span className="text-lg">
@@ -265,35 +247,6 @@ export const ProfileManagement: React.FC = () => {
                 <p className="text-xs text-gray-500 mt-1">รายการ</p>
               </div>
             </div>
-
-            {requestsWithRating.length > 0 && (
-              <>
-                <Separator className="my-6" />
-                <div>
-                  <h4 className="text-sm mb-4">การให้คะแนนของคุณ</h4>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <div className="text-3xl">{averageRating}</div>
-                      <div className="flex">
-                        {[1, 2, 3, 4, 5].map(star => (
-                          <Star
-                            key={star}
-                            className={`w-5 h-5 ${
-                              star <= parseFloat(averageRating.toString())
-                                ? 'text-yellow-500 fill-yellow-500'
-                                : 'text-gray-300'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-500">
-                      จาก {requestsWithRating.length} การให้คะแนน
-                    </p>
-                  </div>
-                </div>
-              </>
-            )}
           </CardContent>
         </Card>
       )}
