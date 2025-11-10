@@ -79,15 +79,16 @@ export class AuthService {
         if (!passwordMatch) {
             throw new BadRequestException('Invalid password');
         }
-        const payload = { email: NotUser.email, sub: NotUser.id, role: NotUser.role };
+        // Use the found user as payload
+        const payload = { email: user.email, sub: user.id, role: user.role?.name };
         const access_token = await this.jwtService.signAsync(payload);
         return {
             access_token: access_token,
             user: {
-                id: NotUser.id,
-                email: NotUser.email,
-                name: NotUser.name,
-                role: NotUser.role
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                role: user.role?.name
             }
         };
     }

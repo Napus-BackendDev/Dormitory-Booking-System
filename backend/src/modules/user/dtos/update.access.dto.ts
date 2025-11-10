@@ -3,5 +3,5 @@ import { Role } from "src/common/enums/role.enum";
 
 export class UpdateAccessDto {
     @IsEnum(Role)
-    role?: string;
+    role?: Role;
 }

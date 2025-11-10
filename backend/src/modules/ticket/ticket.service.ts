@@ -96,9 +96,9 @@ export class TicketService {
         }
       });
 
-      this.lineService.sendLineUpdateTicket(ticket);
-
       if (ticket) {
+        this.lineService.sendLineUpdateTicket(ticket);
+
         // Find the creator's user ID from the CREATED event
         const createdEvent = ticket.events.find(event => event.type === 'CREATED');
         if (createdEvent) {
@@ -134,3 +134,4 @@ export class TicketService {
   }
 
 
+}
