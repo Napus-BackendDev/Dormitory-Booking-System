@@ -108,7 +108,7 @@ export const SupervisorDashboard: React.FC = () => {
       case 'pending':
         return <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-200 border-0">รอดำเนินการ</Badge>;
       case 'in_progress':
-        return <Badge className="bg-blue-100 text-[#002D72] hover:bg-blue-200 border-0">กำลังซ่อม</Badge>;
+        return <Badge className="bg-red-100 text-[#DC2626] hover:bg-red-200 border-0">กำลังซ่อม</Badge>;
       case 'completed':
         return <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-0">เสร็จสิ้น</Badge>;
       default:
@@ -128,7 +128,7 @@ export const SupervisorDashboard: React.FC = () => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#002D72] via-[#0a4a9d] to-[#002D72] p-8 shadow-2xl"
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#DC2626] via-[#EF4444] to-[#DC2626] p-8 shadow-2xl"
       >
         {/* Animated background pattern */}
         <div className="absolute inset-0">
@@ -136,8 +136,8 @@ export const SupervisorDashboard: React.FC = () => {
         </div>
         
         {/* Floating orbs */}
-        <div className="absolute top-10 right-20 w-32 h-32 bg-[#FFB81C]/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 left-20 w-40 h-40 bg-[#FFB81C]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-10 right-20 w-32 h-32 bg-[#FCD34D]/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 left-20 w-40 h-40 bg-[#FCD34D]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
         <div className="relative flex items-center justify-between">
           <div className="text-white space-y-2">
@@ -147,14 +147,14 @@ export const SupervisorDashboard: React.FC = () => {
               transition={{ delay: 0.2 }}
               className="text-white mb-2 text-3xl flex items-center gap-3"
             >
-              <Crown className="w-8 h-8 text-[#FFB81C]" />
+              <Crown className="w-8 h-8 text-[#FCD34D]" />
               แดชบอร์ดหัวหน้างาน
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-[#FFB81C] text-xl flex items-center gap-2"
+              className="text-[#FCD34D] text-xl flex items-center gap-2"
             >
               สวัสดี, {user?.name}
               <span className="inline-block animate-wave">👔</span>
@@ -167,7 +167,7 @@ export const SupervisorDashboard: React.FC = () => {
           >
             <Button 
               onClick={() => setShowSLAConfig(true)}
-              className="bg-[#FFB81C] text-[#002D72] hover:bg-[#ffd166] shadow-2xl hover:shadow-[0_20px_50px_rgba(255,184,28,0.5)] hover:scale-105 transition-all duration-300 text-base px-6 py-6 rounded-xl group"
+              className="bg-[#FCD34D] text-[#DC2626] hover:bg-[#FDE68A] shadow-2xl hover:shadow-[0_20px_50px_rgba(252,211,77,0.5)] hover:scale-105 transition-all duration-300 text-base px-6 py-6 rounded-xl group"
             >
               <Settings className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
               ตั้งค่า SLA
@@ -205,10 +205,10 @@ export const SupervisorDashboard: React.FC = () => {
             value={inProgressCount}
             description="งานที่กำลังซ่อม"
             icon={Zap}
-            iconColor="text-[#002D72]"
-            iconBg="bg-blue-100"
-            gradientFrom="from-[#002D72]"
-            gradientTo="to-[#0a4a9d]"
+            iconColor="text-[#DC2626]"
+            iconBg="bg-red-100"
+            gradientFrom="from-[#DC2626]"
+            gradientTo="to-[#EF4444]"
           />
         </motion.div>
 
@@ -257,14 +257,14 @@ export const SupervisorDashboard: React.FC = () => {
           transition={{ delay: 0.5 }}
         >
           <Card className="border-0 shadow-2xl backdrop-blur-sm bg-white/95 overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#002D72] via-[#FFB81C] to-[#002D72]"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#DC2626] via-[#FCD34D] to-[#DC2626]"></div>
             <CardHeader className="border-b bg-gradient-to-r from-gray-50/80 to-white/80 backdrop-blur-sm">
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-[#002D72]/10 rounded-lg">
-                  <Users className="w-5 h-5 text-[#002D72]" />
+                <div className="p-2 bg-[#DC2626]/10 rounded-lg">
+                  <Users className="w-5 h-5 text-[#DC2626]" />
                 </div>
                 <div>
-                  <CardTitle className="text-[#002D72]">ประสิทธิภาพช่างแต่ละคน</CardTitle>
+                  <CardTitle className="text-[#DC2626]">ประสิทธิภาพช่างแต่ละคน</CardTitle>
                   <CardDescription>สถิติและคะแนนของช่างทั้งหมด ({technicians.length} คน)</CardDescription>
                 </div>
               </div>
@@ -281,15 +281,15 @@ export const SupervisorDashboard: React.FC = () => {
                       setSelectedTechnicianId(tech.id);
                       setSelectedTechnicianName(tech.name);
                     }}
-                    className="group relative p-5 bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-gray-200 hover:border-[#002D72]/30 hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
+                    className="group relative p-5 bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-gray-200 hover:border-[#DC2626]/30 hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
                   >
                     {/* Hover effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#002D72]/5 to-[#FFB81C]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#DC2626]/5 to-[#FCD34D]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     
                     {/* Top Performer Badge */}
                     {index === 0 && tech.averageRating > 0 && (
                       <div className="absolute top-3 right-3">
-                        <Badge className="bg-gradient-to-r from-[#FFB81C] to-amber-500 text-white border-0 shadow-lg">
+                        <Badge className="bg-gradient-to-r from-[#FCD34D] to-amber-500 text-white border-0 shadow-lg">
                           <Crown className="w-3 h-3 mr-1" />
                           อันดับ 1
                         </Badge>
@@ -299,8 +299,8 @@ export const SupervisorDashboard: React.FC = () => {
                     <div className="relative space-y-4">
                       {/* Technician Info */}
                       <div className="flex items-center gap-3">
-                        <div className="p-3 bg-gradient-to-br from-[#002D72] to-[#0a4a9d] rounded-xl shadow-lg">
-                          <User className="w-6 h-6 text-[#FFB81C]" />
+                        <div className="p-3 bg-gradient-to-br from-[#DC2626] to-[#EF4444] rounded-xl shadow-lg">
+                          <User className="w-6 h-6 text-[#FCD34D]" />
                         </div>
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-900">{tech.name}</h3>
@@ -314,8 +314,8 @@ export const SupervisorDashboard: React.FC = () => {
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-xs text-gray-600">คะแนนเฉลี่ย</span>
                             <div className="flex items-center gap-1">
-                              <Star className="w-4 h-4 text-[#FFB81C] fill-[#FFB81C]" />
-                              <span className="text-lg font-bold text-[#FFB81C]">{tech.averageRating.toFixed(1)}</span>
+                              <Star className="w-4 h-4 text-[#FCD34D] fill-[#FCD34D]" />
+                              <span className="text-lg font-bold text-[#FCD34D]">{tech.averageRating.toFixed(1)}</span>
                             </div>
                           </div>
                           <div className="flex gap-0.5">
@@ -324,7 +324,7 @@ export const SupervisorDashboard: React.FC = () => {
                                 key={star}
                                 className={`w-4 h-4 ${
                                   star <= Math.round(tech.averageRating)
-                                    ? 'text-[#FFB81C] fill-[#FFB81C]'
+                                    ? 'text-[#FCD34D] fill-[#FCD34D]'
                                     : 'text-gray-300'
                                 }`}
                               />
@@ -357,7 +357,7 @@ export const SupervisorDashboard: React.FC = () => {
 
                       {/* View Details Button */}
                       <Button
-                        className="w-full bg-gradient-to-r from-[#002D72] to-[#0a4a9d] hover:from-[#0a4a9d] hover:to-[#002D72] text-white shadow-lg hover:shadow-xl group-hover:scale-105 transition-all duration-200"
+                        className="w-full bg-gradient-to-r from-[#DC2626] to-[#EF4444] hover:from-[#EF4444] hover:to-[#DC2626] text-white shadow-lg hover:shadow-xl group-hover:scale-105 transition-all duration-200"
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedTechnicianId(tech.id);
@@ -383,24 +383,24 @@ export const SupervisorDashboard: React.FC = () => {
         transition={{ delay: 0.7 }}
       >
         <Card className="border-0 shadow-2xl backdrop-blur-sm bg-white/95 overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#002D72] via-[#FFB81C] to-[#002D72]"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#DC2626] via-[#FCD34D] to-[#DC2626]"></div>
           <CardHeader className="border-b bg-gradient-to-r from-gray-50/80 to-white/80 backdrop-blur-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-[#002D72]/10 rounded-lg">
-                  <ClipboardList className="w-5 h-5 text-[#002D72]" />
+                <div className="p-2 bg-[#DC2626]/10 rounded-lg">
+                  <ClipboardList className="w-5 h-5 text-[#DC2626]" />
                 </div>
                 <div>
-                  <CardTitle className="text-[#002D72]">จัดการงานทั้งหมด</CardTitle>
+                  <CardTitle className="text-[#DC2626]">จัดการงานทั้งหมด</CardTitle>
                   <CardDescription>กรองและดูรายละเอียดงานซ่อม ({filteredRequests.length} รายการ)</CardDescription>
                 </div>
               </div>
               <div className="flex gap-2">
-                <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#002D72]/5 to-[#FFB81C]/5 rounded-xl border border-[#002D72]/10">
+                <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#DC2626]/5 to-[#FCD34D]/5 rounded-xl border border-[#DC2626]/10">
                   <TrendingUp className="w-5 h-5 text-green-600" />
                   <div>
                     <p className="text-xs text-gray-500">อัตราความสำเร็จ</p>
-                    <p className="text-lg text-[#002D72]">{calculateCompletionRate()}%</p>
+                    <p className="text-lg text-[#DC2626]">{calculateCompletionRate()}%</p>
                   </div>
                 </div>
               </div>
@@ -411,7 +411,7 @@ export const SupervisorDashboard: React.FC = () => {
               <div className="flex items-center gap-2 flex-1 min-w-[200px]">
                 <Filter className="w-4 h-4 text-gray-500" />
                 <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as RequestStatus | 'all')}>
-                  <SelectTrigger className="bg-white border-gray-300 focus:ring-[#002D72] focus:border-[#002D72]">
+                  <SelectTrigger className="bg-white border-gray-300 focus:ring-[#DC2626] focus:border-[#DC2626]">
                     <SelectValue placeholder="กรองตามสถานะ" />
                   </SelectTrigger>
                   <SelectContent>
@@ -426,7 +426,7 @@ export const SupervisorDashboard: React.FC = () => {
               <div className="flex items-center gap-2 flex-1 min-w-[200px]">
                 <Filter className="w-4 h-4 text-gray-500" />
                 <Select value={priorityFilter} onValueChange={(value) => setPriorityFilter(value as RequestPriority | 'all')}>
-                  <SelectTrigger className="bg-white border-gray-300 focus:ring-[#002D72] focus:border-[#002D72]">
+                  <SelectTrigger className="bg-white border-gray-300 focus:ring-[#DC2626] focus:border-[#DC2626]">
                     <SelectValue placeholder="กรองตามความสำคัญ" />
                   </SelectTrigger>
                   <SelectContent>
@@ -511,7 +511,7 @@ export const SupervisorDashboard: React.FC = () => {
                         <Button
                           size="sm"
                           onClick={() => setSelectedRequest(request)}
-                          className="bg-[#002D72] hover:bg-[#0a4a9d] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 rounded-xl"
+                          className="bg-[#DC2626] hover:bg-[#EF4444] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 rounded-xl"
                         >
                           <Eye className="w-4 h-4 mr-1" />
                           ดูรายละเอียด

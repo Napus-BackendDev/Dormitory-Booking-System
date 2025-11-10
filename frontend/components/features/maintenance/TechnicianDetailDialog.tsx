@@ -68,9 +68,9 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] border-0 shadow-2xl bg-white/98 backdrop-blur-sm">
+      <DialogContent className="max-w-4xl max-h-[90vh] border-0 shadow-2xl bg-white">
         {/* Gradient header bar */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#002D72] via-[#FFB81C] to-[#002D72]"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#DC2626] via-[#FCD34D] to-[#DC2626]"></div>
         
         <DialogHeader className="pb-6 border-b border-gray-200">
           <motion.div
@@ -82,12 +82,12 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200 }}
-                className="p-4 bg-gradient-to-br from-[#002D72] to-[#0a4a9d] rounded-2xl shadow-lg"
+                className="p-4 bg-gradient-to-br from-[#DC2626] to-[#EF4444] rounded-2xl shadow-lg"
               >
-                <User className="w-8 h-8 text-[#FFB81C]" />
+                <User className="w-8 h-8 text-[#FCD34D]" />
               </motion.div>
               <div className="flex-1">
-                <DialogTitle className="text-2xl bg-gradient-to-r from-[#002D72] to-[#0a4a9d] bg-clip-text text-transparent">
+                <DialogTitle className="text-2xl bg-gradient-to-r from-[#DC2626] to-[#EF4444] bg-clip-text text-transparent">
                   {technicianName}
                 </DialogTitle>
                 <DialogDescription className="text-gray-600 flex items-center gap-2 mt-1">
@@ -97,7 +97,7 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
               </div>
               {/* Overall Rating Badge */}
               {averageRating > 0 && (
-                <div className="text-center p-4 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border-2 border-[#FFB81C]/30">
+                <div className="text-center p-4 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl border-2 border-[#FCD34D]/30">
                   <div className="flex items-center gap-2 mb-1">
                     <Star className="w-5 h-5 text-[#FFB81C] fill-[#FFB81C]" />
                     <span className="text-3xl font-bold text-[#FFB81C]">

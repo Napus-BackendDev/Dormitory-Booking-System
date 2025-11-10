@@ -8,13 +8,6 @@ import { Label } from '../ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Wrench, AlertCircle } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
@@ -34,29 +27,6 @@ export const LoginPage: React.FC = () => {
       setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleUserSelect = (value: string) => {
-    switch (value) {
-      case 'user':
-        setEmail('user@dorm.com');
-        setPassword('password');
-        break;
-      case 'technician':
-        setEmail('technician@dorm.com');
-        setPassword('password');
-        break;
-      case 'supervisor':
-        setEmail('supervisor@dorm.com');
-        setPassword('password');
-        break;
-      case 'admin':
-        setEmail('admin@dorm.com');
-        setPassword('password');
-        break;
-      default:
-        break;
     }
   };
 
@@ -95,24 +65,6 @@ export const LoginPage: React.FC = () => {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* User selection dropdown */}
-            <div className="space-y-2">
-              <Label htmlFor="user-select" className="text-sm text-gray-700">
-                เลือกผู้ใช้งาน (เพื่อทดสอบระบบ)
-              </Label>
-              <Select onValueChange={handleUserSelect}>
-                <SelectTrigger id="user-select" className="w-full">
-                  <SelectValue placeholder="เลือกผู้ใช้งาน..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="user">ผู้ใช้ทั่วไป (นักศึกษา)</SelectItem>
-                  <SelectItem value="technician">ทีมช่าง / เจ้าหน้าที่ซ่อม</SelectItem>
-                  <SelectItem value="supervisor">หัวหน้างาน</SelectItem>
-                  <SelectItem value="admin">ผู้ดูแลระบบ</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
             {/* Email field */}
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm text-gray-700">

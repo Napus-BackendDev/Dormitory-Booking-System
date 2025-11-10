@@ -74,7 +74,7 @@ export const RatingDialog: React.FC<RatingDialogProps> = ({ open, onClose, reque
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-xl border-0 shadow-2xl bg-white/98 backdrop-blur-sm">
+      <DialogContent className="max-w-xl border-0 shadow-2xl bg-white">
         {/* Gradient header bar */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#DC2626] via-[#FCD34D] to-[#DC2626]"></div>
         

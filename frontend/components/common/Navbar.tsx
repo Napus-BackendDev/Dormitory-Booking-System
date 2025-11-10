@@ -41,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
   const getNavItems = () => {
     const baseItems = [
       { id: 'dashboard', label: 'แดชบอร์ด', roles: ['user', 'technician', 'supervisor', 'admin'] },
-      { id: 'reports', label: 'รายงานและสถิติ', roles: ['supervisor', 'technician', 'admin'] },
+      { id: 'reports', label: 'รายงานและสถิติ', roles: ['supervisor', 'admin'] },
       { id: 'profile', label: 'โปรไฟล์', roles: ['user', 'technician', 'supervisor', 'admin'] },
     ];
 

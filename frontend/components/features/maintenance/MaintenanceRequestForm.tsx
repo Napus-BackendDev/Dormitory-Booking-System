@@ -31,7 +31,7 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
 }) => {
   const { user } = useAuth();
   const { addRequest } = useMaintenance();
-  const { buildings, maintenanceTypes } = useBuildings();
+  const { maintenanceTypes } = useBuildings();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -111,7 +111,7 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl border-0 shadow-2xl bg-white/98 backdrop-blur-sm max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl border-0 shadow-2xl bg-white max-h-[90vh] overflow-y-auto">
         {/* Gradient header bar */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#DC2626] via-[#FCD34D] to-[#DC2626]"></div>
         
@@ -141,7 +141,7 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
+            transition={{ delay: 0.15 }}
             className="space-y-2"
           >
             <Label htmlFor="maintenanceType" className="flex items-center gap-2 text-gray-700">
