@@ -14,7 +14,7 @@ export class TicketService {
   constructor(
     private prisma: PrismaService,
     private lineService: LineService,
-        private emailService: EmailService
+      private emailService: EmailService
   ) {}
 
   private computeSLA(priority: 'P1' | 'P2' | 'P3' | 'P4', now = new Date()) {
@@ -26,6 +26,15 @@ export class TicketService {
       slaResolveDueAt: now.getTime() + resolveMs,
     };
   }
+
+  async findAll() {
+    return this.prisma.ticket.findMany();
+  }
+
+  async findOne(id: string): Promise<Ticket | null> {
+    return this.prisma.ticket.findUnique({ where: { id } });
+  }
+
 
   async create(createTicketDto: CreateTicketDto, user: any): Promise<Ticket> {
     // Send email notification to the user who created the ticket
@@ -124,11 +133,4 @@ export class TicketService {
     return this.prisma.ticket.delete({ where: { id } });
   }
 
-  async findAll() {
-    return this.prisma.ticket.findMany();
-  }
 
-  async findOne(id: string): Promise<Ticket | null> {
-    return this.prisma.ticket.findUnique({ where: { id } });
-  }
-}

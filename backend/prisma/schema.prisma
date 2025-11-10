@@ -49,8 +49,8 @@ model Ticket {
   // Relations
   repairType  RepairType?   @relation(fields: [repairTypeId], references: [id])
   location    Location?     @relation(fields: [locationId], references: [id])
-  ticketEvent TicketEvent[]
-  attachment  Attachment[]
+  events      TicketEvent[]
+  attachments Attachment[]
   survey      Survey[]
 
   // SLA Fields
@@ -58,19 +58,15 @@ model Ticket {
   slaResolveDueAt  DateTime?
   acknowledgedAt   DateTime?
   resolvedAt       DateTime?
-  responseWarnAt  DateTime?
-  resolveWarnAt   DateTime?
-  responseBreached Boolean @default(false)
-  resolvedBreached Boolean @default(false)
+  responseWarnAt   DateTime?
+  resolveWarnAt    DateTime?
+  responseBreached Boolean   @default(false)
+  resolvedBreached Boolean   @default(false)
 
-  onHoldSeconds Int     @default(0)
+  onHoldSeconds Int @default(0)
 
-  events      TicketEvent[]
-  attachments Attachment[]
-  survey      Survey?
-
-  @@index([status,slaResponseDueAt])
-  @@index([status,slaResolveDueAt])
+  @@index([status, slaResponseDueAt])
+  @@index([status, slaResolveDueAt])
 }
 
 model TicketEvent {
@@ -78,19 +74,16 @@ model TicketEvent {
   ticketId  String
   type      String?
   note      String?
-  createdAt DateTime   @default(now())
+  createdAt DateTime @default(now())
   createdBy String
 
-  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-  @@index([ticketId])
-  ticketId  String? // Foreign key to Ticket
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 
-  // Relations
-  ticket Ticket? @relation(fields: [ticketId], references: [id])
+  @@index([ticketId])
 }
 
 model Line {
-  userId    String   @unique
+  userId String @unique
 }
 
 model Attachment {
@@ -119,9 +112,6 @@ model Location {
   address   String
   createdAt DateTime @default(now())
 
-  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-  @@index([ticketId])
-
   // Relations
   Ticket Ticket[]
 }
@@ -144,8 +134,6 @@ model Role {
 
   // Relations
   User User[]
-
-  ticket   Ticket  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }
 
 model User {
