@@ -37,6 +37,36 @@ export default function useTicket() {
         }
     };
 
+    const fetchByStatus = async (status: string) => {
+        setError(null);
+        setLoading(true);
+        try {
+            const res = await fetch(`/ticket?status=${status}`, { method: "GET", credentials: "include" });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Fetch tickets by status failed");
+            return data;
+        } catch (err) {
+            setError(err && typeof err === "object" && "message" in err ? (err as any).message : "Fetch tickets by status failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchMyTickets = async () => {
+        setError(null);
+        setLoading(true);
+        try {
+            const res = await fetch(`/ticket?assignedToMe=true`, { method: "GET", credentials: "include" });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Fetch my tickets failed");
+            return data;
+        } catch (err) {
+            setError(err && typeof err === "object" && "message" in err ? (err as any).message : "Fetch my tickets failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const create = async (body: Partial<Ticket>) => {
         setError(null);
         setLoading(true);
@@ -77,6 +107,86 @@ export default function useTicket() {
         }
     };
 
+    const updateStatus = async (id: string, status: string) => {
+        setError(null);
+        setLoading(true);
+        try {
+            const res = await fetch(`/ticket/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status }),
+                credentials: "include",
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Update ticket status failed");
+            return data;
+        } catch (err) {
+            setError(err && typeof err === "object" && "message" in err ? (err as any).message : "Update ticket status failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const assignToMe = async (id: string) => {
+        setError(null);
+        setLoading(true);
+        try {
+            const res = await fetch(`/ticket/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ assignToMe: true }),
+                credentials: "include",
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Assign ticket failed");
+            return data;
+        } catch (err) {
+            setError(err && typeof err === "object" && "message" in err ? (err as any).message : "Assign ticket failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const acceptJob = async (id: string) => {
+        setError(null);
+        setLoading(true);
+        try {
+            const res = await fetch(`/ticket/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: "in_progress", assignToMe: true }),
+                credentials: "include",
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Accept job failed");
+            return data;
+        } catch (err) {
+            setError(err && typeof err === "object" && "message" in err ? (err as any).message : "Accept job failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const completeJob = async (id: string) => {
+        setError(null);
+        setLoading(true);
+        try {
+            const res = await fetch(`/ticket/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: "completed" }),
+                credentials: "include",
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Complete job failed");
+            return data;
+        } catch (err) {
+            setError(err && typeof err === "object" && "message" in err ? (err as any).message : "Complete job failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const remove = async (id: string) => {
         setError(null);
         setLoading(true);
@@ -92,5 +202,21 @@ export default function useTicket() {
         }
     };
 
-    return { tickets, error, loading, fetchAll, fetchById, create, update, remove, setTickets };
+    return { 
+        tickets, 
+        error, 
+        loading, 
+        fetchAll, 
+        fetchById, 
+        fetchByStatus,
+        fetchMyTickets,
+        create, 
+        update, 
+        updateStatus,
+        assignToMe,
+        acceptJob,
+        completeJob,
+        remove, 
+        setTickets 
+    };
 }
