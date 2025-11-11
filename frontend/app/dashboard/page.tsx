@@ -10,14 +10,15 @@ import { AdminDashboard } from '@/components/dashboards/AdminDashboard'
 import { Navbar } from '@/components/common/Navbar'
 
 export default function DashboardPage() {
-  const { user, isAuthenticated, loading } = useAuth()
+  const { user, loading } = useAuth()
+
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (!loading && !user) {
       router.push('/login')
     }
-  }, [isAuthenticated, loading, router])
+  }, [loading, router])
 
   if (loading) {
     return (
@@ -31,7 +32,7 @@ export default function DashboardPage() {
   }
 
   const renderDashboard = () => {
-    switch (user?.role) {
+    switch (user?.role?.name.toLowerCase()) {
       case 'user':
         return <UserDashboard />
       case 'technician':

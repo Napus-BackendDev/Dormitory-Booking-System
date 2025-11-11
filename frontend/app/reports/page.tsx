@@ -3,22 +3,19 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { ReportsAnalytics } from '@/components/features/reports/ReportsAnalytics'
 import { Navbar } from '@/components/common/Navbar'
+import { ReportsAnalytics } from '@/components/features/reports/ReportsAnalytics'
 
 export default function ReportsPage() {
-  const { user, isAuthenticated, loading } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (!loading && !user) {
       router.push('/login')
-    } else if (!loading && user && user.role !== 'supervisor' && user.role !== 'admin') {
-      // Only supervisor and admin can access reports
-      router.push('/dashboard')
     }
-  }, [isAuthenticated, loading, user, router])
-
+  }, [loading, router])
+  
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -28,10 +25,6 @@ export default function ReportsPage() {
         </div>
       </div>
     )
-  }
-
-  if (!isAuthenticated || !user || (user.role !== 'supervisor' && user.role !== 'admin')) {
-    return null
   }
 
   return (

@@ -1,5 +1,4 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, IsEnum } from "class-validator";
-import { Role } from "src/common/enums/role.enum";
 
 export class RegisterDto {
     @IsEmail({}, { message: 'Please provide a valid email address' })
@@ -23,9 +22,7 @@ export class RegisterDto {
     )
     password: string;
 
-    @IsEnum(Role, {
-        message: `Role must be one of: ${Object.values(Role).join(', ')}`
-    })
+    @IsString()
     @IsOptional()
-    role: Role = Role.USER;
+    role: string = "USER";
 }

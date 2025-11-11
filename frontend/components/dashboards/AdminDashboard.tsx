@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useMaintenance } from '../../contexts/MaintenanceContext';
-import { useBuildings } from '../../contexts/BuildingContext';
+import useUser from '@/hooks/useUser';
+import useLocation from '@/hooks/useLocation';
+import useRepairType from '@/hooks/useRepairType';
+import useTicket from '@/hooks/useTicket';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -50,31 +53,8 @@ import {
 import { motion } from 'framer-motion';
 import { StatCard } from '../common/StatCard';
 import { toast } from 'sonner';
-import type { UserRole } from '../../contexts/AuthContext';
-
-interface ManagedUser {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  role: UserRole;
-  phone?: string;
-  status: 'active' | 'inactive';
-  createdAt: Date;
-}
-
-// Removed - now using Building type from BuildingContext
-
-interface Technician {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  specialization: string[];
-  status: 'active' | 'inactive';
-  totalCompleted: number;
-  rating: number;
-}
+import { Role } from '@/types/Role';
+import { User } from '@/types/User';
 
 interface Announcement {
   id: string;
@@ -86,71 +66,18 @@ interface Announcement {
   createdAt: Date;
 }
 
-
-
 export const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
   const { requests } = useMaintenance();
-  const { 
-    buildings, 
-    maintenanceTypes,
-    addBuilding, 
-    updateBuilding, 
-    deleteBuilding,
-    addMaintenanceType,
-    updateMaintenanceType,
-    deleteMaintenanceType
-  } = useBuildings();
-  
-  // Users Management
-  const [users, setUsers] = useState<ManagedUser[]>([
-    {
-      id: '1',
-      name: 'สมชาย ใจดี',
-      email: 'somchai@dorm.com',
-      password: 'password123',
-      role: 'user',
-      phone: '081-234-5678',
-      status: 'active',
-      createdAt: new Date('2024-01-15'),
-    },
-    {
-      id: '2',
-      name: 'สมหญิง ศรีสุข',
-      email: 'somying@dorm.com',
-      password: 'password123',
-      role: 'user',
-      phone: '081-345-6789',
-      status: 'active',
-      createdAt: new Date('2024-01-20'),
-    },
-  ]);
 
-  // Buildings Management - now using BuildingContext
 
-  // Technicians Management
-  const [technicians, setTechnicians] = useState<Technician[]>([
-    {
-      id: '1',
-      name: 'ช่างสมศักดิ์',
-      email: 'tech1@dorm.com',
-      phone: '081-111-2222',
-      specialization: ['ไฟฟ้า', 'ประปา'],
-      status: 'active',
-      totalCompleted: 45,
-      rating: 4.5,
-    },
-    {
-      id: '2',
-      name: 'ช่างวิชัย',
-      email: 'tech2@dorm.com',
-      phone: '081-222-3333',
-      specialization: ['แอร์', 'เฟอร์นิเจอร์'],
-      status: 'active',
-      totalCompleted: 38,
-      rating: 4.8,
-    },
-  ]);
+  // Users Management (data from hook)
+  const { users, setUsers: setHookUsers, fetchAll: fetchUsers } = useUser();
+  const { locations, fetchAll: fetchLocations, create: createLocation, update: updateLocation, remove: removeLocation, setLocations } = useLocation();
+  const { repairTypes, fetchAll: fetchRepairTypes, create: createRepairType, update: updateRepairType, remove: removeRepairType, setRepairTypes } = useRepairType();
+  const { tickets, fetchAll: fetchTickets, create: createTicket, update: updateTicket, remove: removeTicket, setTickets } = useTicket();
+
+  const displayUsers = users ?? [];
 
   // Announcements Management
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -167,25 +94,20 @@ export const AdminDashboard: React.FC = () => {
 
   const [searchUsers, setSearchUsers] = useState('');
   const [searchBuildings, setSearchBuildings] = useState('');
-  const [searchTechnicians, setSearchTechnicians] = useState('');
-  const [searchMaintenanceTypes, setSearchMaintenanceTypes] = useState('');
-  
-  const [filterUserRole, setFilterUserRole] = useState<UserRole | 'all'>('all');
-  const [filterBuildingStatus, setFilterBuildingStatus] = useState<'all' | 'active' | 'maintenance'>('all');
-  const [filterTechnicianStatus, setFilterTechnicianStatus] = useState<'all' | 'active' | 'inactive'>('all');
-  const [filterMaintenanceTypeStatus, setFilterMaintenanceTypeStatus] = useState<'all' | 'active' | 'inactive'>('all');
+  const [searchRepairTypes, setSearchRepairTypes] = useState('');
+
+  const [filterUserRole, setFilterUserRole] = useState<Role | 'all'>('all');
+  const [filterRepairTypeStatus, setFilterRepairTypeStatus] = useState<'all' | 'active' | 'inactive'>('all');
 
   // Dialog states
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
   const [isBuildingDialogOpen, setIsBuildingDialogOpen] = useState(false);
-  const [isTechnicianDialogOpen, setIsTechnicianDialogOpen] = useState(false);
-  const [isMaintenanceTypeDialogOpen, setIsMaintenanceTypeDialogOpen] = useState(false);
-  
-  const [editingUser, setEditingUser] = useState<ManagedUser | null>(null);
+  const [isRepairTypeDialogOpen, setIsRepairTypeDialogOpen] = useState(false);
+
+  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [editingBuilding, setEditingBuilding] = useState<any>(null);
-  const [editingTechnician, setEditingTechnician] = useState<Technician | null>(null);
-  const [editingMaintenanceType, setEditingMaintenanceType] = useState<any>(null);
-  
+  const [editingRepairType, setEditingRepairType] = useState<any>(null);
+
   // Password visibility state
   const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
 
@@ -195,28 +117,17 @@ export const AdminDashboard: React.FC = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'user' as UserRole,
-    phone: '',
+    role: { name: 'USER' },
   });
 
   const [buildingForm, setBuildingForm] = useState({
     name: '',
-    code: '',
+    address: '',
   });
 
-  const [technicianForm, setTechnicianForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    specialization: '',
-  });
-
-
-
-  const [maintenanceTypeForm, setMaintenanceTypeForm] = useState({
+  const [repairTypeForm, setRepairTypeForm] = useState({
     name: '',
     description: '',
-    icon: 'Wrench',
     color: 'blue',
   });
 
@@ -226,35 +137,49 @@ export const AdminDashboard: React.FC = () => {
   const inProgressRequests = requests.filter(r => r.status === 'in_progress').length;
   const completedRequests = requests.filter(r => r.status === 'completed').length;
 
+  // Load data from APIs on mount
+  useEffect(() => {
+    // fetch users, locations, and repair types from their hooks
+    try {
+      fetchUsers && fetchUsers();
+    } catch (e) {
+      // ignore - hooks already set error state
+    }
+    try {
+      fetchLocations && fetchLocations();
+    } catch (e) { }
+    try {
+      fetchRepairTypes && fetchRepairTypes();
+    } catch (e) { }
+    try {
+      fetchTickets && fetchTickets();
+    } catch (e) { }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Filter functions
-  const filteredUsers = users.filter(u => {
+  const filteredUsers = (displayUsers).filter(u => {
     const matchesSearch = u.name.toLowerCase().includes(searchUsers.toLowerCase()) ||
-                         u.email.toLowerCase().includes(searchUsers.toLowerCase());
-    const matchesRole = filterUserRole === 'all' || u.role === filterUserRole;
+      u.email.toLowerCase().includes(searchUsers.toLowerCase());
+    const selectedRoleName = filterUserRole === 'all' ? 'all' : (typeof filterUserRole === 'string' ? filterUserRole : filterUserRole.name);
+    const userRoleName = (u.role && u.role.name) ? u.role.name.toLowerCase() : 'user';
+    const matchesRole = selectedRoleName === 'all' || userRoleName === selectedRoleName.toLowerCase();
     return matchesSearch && matchesRole;
   });
 
-  const filteredBuildings = buildings.filter(b => {
+  const filteredBuildings = (locations ?? []).filter(b => {
     const matchesSearch = b.name.toLowerCase().includes(searchBuildings.toLowerCase()) ||
-                         b.code.toLowerCase().includes(searchBuildings.toLowerCase());
-    const matchesStatus = filterBuildingStatus === 'all' || b.status === filterBuildingStatus;
-    return matchesSearch && matchesStatus;
+      (b.address || '').toLowerCase().includes(searchBuildings.toLowerCase());
+    return matchesSearch;
   });
 
-  const filteredTechnicians = technicians.filter(t => {
-    const matchesSearch = t.name.toLowerCase().includes(searchTechnicians.toLowerCase()) ||
-                         t.email.toLowerCase().includes(searchTechnicians.toLowerCase());
-    const matchesStatus = filterTechnicianStatus === 'all' || t.status === filterTechnicianStatus;
-    return matchesSearch && matchesStatus;
-  });
+  // use repairTypes from hook
+  const maintenanceSource = repairTypes ?? [];
 
-
-
-  const filteredMaintenanceTypes = maintenanceTypes.filter(mt => {
-    const matchesSearch = mt.name.toLowerCase().includes(searchMaintenanceTypes.toLowerCase()) ||
-                         mt.description.toLowerCase().includes(searchMaintenanceTypes.toLowerCase());
-    const matchesStatus = filterMaintenanceTypeStatus === 'all' || mt.status === filterMaintenanceTypeStatus;
-    return matchesSearch && matchesStatus;
+  const filteredRepairTypes = (maintenanceSource || []).filter(mt => {
+    const matchesSearch = mt.name.toLowerCase().includes(searchRepairTypes.toLowerCase()) ||
+      (mt.description || '').toLowerCase().includes(searchRepairTypes.toLowerCase());
+    return matchesSearch;
   });
 
   // CRUD operations for Users
@@ -274,27 +199,25 @@ export const AdminDashboard: React.FC = () => {
     }
 
     const { confirmPassword, ...userDataWithoutConfirm } = userForm;
-    const newUser: ManagedUser = {
+    const newUser: User = {
       id: Date.now().toString(),
       ...userDataWithoutConfirm,
-      status: 'active',
       createdAt: new Date(),
     };
-    setUsers([...users, newUser]);
+    setHookUsers([...(users ?? []), newUser]);
     setIsUserDialogOpen(false);
     resetUserForm();
     toast.success('เพิ่มผู้ใช้สำเร็จ');
   };
 
-  const handleEditUser = (user: ManagedUser) => {
+  const handleEditUser = (user: User) => {
     setEditingUser(user);
     setUserForm({
       name: user.name,
       email: user.email,
-      password: '', // Don't show existing password
+      password: '',
       confirmPassword: '',
-      role: user.role,
-      phone: user.phone || '',
+      role: { name: user?.role?.name || "" }
     });
     setIsUserDialogOpen(true);
   };
@@ -314,11 +237,11 @@ export const AdminDashboard: React.FC = () => {
       }
 
       const { confirmPassword, ...userDataWithoutConfirm } = userForm;
-      const updatedData = userForm.password 
-        ? userDataWithoutConfirm 
+      const updatedData = userForm.password
+        ? userDataWithoutConfirm
         : { ...userDataWithoutConfirm, password: editingUser.password }; // Keep old password if not changed
 
-      setUsers(users.map(u => u.id === editingUser.id ? { ...u, ...updatedData } : u));
+      setHookUsers((users ?? []).map(u => u.id === editingUser.id ? { ...u, ...updatedData } : u));
       setIsUserDialogOpen(false);
       setEditingUser(null);
       resetUserForm();
@@ -327,7 +250,7 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const handleDeleteUser = (id: string) => {
-    setUsers(users.filter(u => u.id !== id));
+    setHookUsers((users ?? []).filter(u => u.id !== id));
     toast.success('ลบผู้ใช้สำเร็จ');
   };
 
@@ -337,109 +260,68 @@ export const AdminDashboard: React.FC = () => {
       email: '',
       password: '',
       confirmPassword: '',
-      role: 'user',
-      phone: '',
+      role: { name: 'USER' } as Role,
     });
   };
 
   // CRUD operations for Buildings - now using BuildingContext
-  const handleAddBuilding = () => {
-    addBuilding({
-      ...buildingForm,
-      status: 'active',
-    });
-    setIsBuildingDialogOpen(false);
-    resetBuildingForm();
-    toast.success('เพิ่มอาคารสำเร็จ');
+  const handleAddBuilding = async () => {
+    try {
+      const created = await createLocation({ name: buildingForm.name, address: buildingForm.address });
+      // update hook state so UI refreshes immediately
+      if (created && setLocations) {
+        setLocations([...(locations ?? []), created]);
+      }
+      setIsBuildingDialogOpen(false);
+      resetBuildingForm();
+      toast.success('เพิ่มอาคารสำเร็จ');
+    } catch (e) {
+      toast.error('ไม่สามารถเพิ่มอาคารได้');
+    }
   };
 
   const handleEditBuilding = (building: any) => {
     setEditingBuilding(building);
     setBuildingForm({
       name: building.name,
-      code: building.code,
+      address: building.address || '',
     });
     setIsBuildingDialogOpen(true);
   };
 
-  const handleUpdateBuilding = () => {
+  const handleUpdateBuilding = async () => {
     if (editingBuilding) {
-      updateBuilding(editingBuilding.id, buildingForm);
-      setIsBuildingDialogOpen(false);
-      setEditingBuilding(null);
-      resetBuildingForm();
-      toast.success('อัปเดตอาคารสำเร็จ');
+      try {
+        const updated = await updateLocation(editingBuilding.id, { name: buildingForm.name, address: buildingForm.address });
+        if (updated && setLocations) {
+          setLocations((locations ?? []).map((l: any) => (l.id === updated.id ? updated : l)));
+        }
+        setIsBuildingDialogOpen(false);
+        setEditingBuilding(null);
+        resetBuildingForm();
+        toast.success('อัปเดตอาคารสำเร็จ');
+      } catch (e) {
+        toast.error('ไม่สามารถอัปเดตอาคารได้');
+      }
     }
   };
 
-  const handleDeleteBuilding = (id: string) => {
-    deleteBuilding(id);
-    toast.success('ลบอาคารสำเร็จ');
+  const handleDeleteBuilding = async (id: string) => {
+    try {
+      await removeLocation(id);
+      if (setLocations) {
+        setLocations((locations ?? []).filter((l: any) => l.id !== id));
+      }
+      toast.success('ลบอาคารสำเร็จ');
+    } catch (e) {
+      toast.error('ไม่สามารถลบอาคารได้');
+    }
   };
 
   const resetBuildingForm = () => {
     setBuildingForm({
       name: '',
-      code: '',
-    });
-  };
-
-  // CRUD operations for Technicians
-  const handleAddTechnician = () => {
-    const newTechnician: Technician = {
-      id: Date.now().toString(),
-      name: technicianForm.name,
-      email: technicianForm.email,
-      phone: technicianForm.phone,
-      specialization: technicianForm.specialization.split(',').map(s => s.trim()),
-      status: 'active',
-      totalCompleted: 0,
-      rating: 0,
-    };
-    setTechnicians([...technicians, newTechnician]);
-    setIsTechnicianDialogOpen(false);
-    resetTechnicianForm();
-    toast.success('เพิ่มช่างสำเร็จ');
-  };
-
-  const handleEditTechnician = (technician: Technician) => {
-    setEditingTechnician(technician);
-    setTechnicianForm({
-      name: technician.name,
-      email: technician.email,
-      phone: technician.phone,
-      specialization: technician.specialization.join(', '),
-    });
-    setIsTechnicianDialogOpen(true);
-  };
-
-  const handleUpdateTechnician = () => {
-    if (editingTechnician) {
-      setTechnicians(technicians.map(t => t.id === editingTechnician.id ? {
-        ...t,
-        name: technicianForm.name,
-        email: technicianForm.email,
-        phone: technicianForm.phone,
-        specialization: technicianForm.specialization.split(',').map(s => s.trim()),
-      } : t));
-      setIsTechnicianDialogOpen(false);
-      setEditingTechnician(null);
-      resetTechnicianForm();
-      toast.success('อัปเดตช่างสำเร็จ');
-    }
-  };
-
-  const handleDeleteTechnician = (id: string) => {
-    setTechnicians(technicians.filter(t => t.id !== id));
-    toast.success('ลบช่างสำเร็จ');
-  };
-
-  const resetTechnicianForm = () => {
-    setTechnicianForm({
-      name: '',
-      email: '',
-      phone: '',
-      specialization: '',
+      address: '',
     });
   };
 
@@ -492,73 +374,98 @@ export const AdminDashboard: React.FC = () => {
     });
   };
 
-  // CRUD operations for Maintenance Types
-  const handleAddMaintenanceType = () => {
-    addMaintenanceType({
-      ...maintenanceTypeForm,
-      status: 'active',
-    });
-    setIsMaintenanceTypeDialogOpen(false);
-    resetMaintenanceTypeForm();
-    toast.success('เพิ่มประเภทการซ่อมสำเร็จ');
-  };
-
-  const handleEditMaintenanceType = (type: any) => {
-    setEditingMaintenanceType(type);
-    setMaintenanceTypeForm({
-      name: type.name,
-      description: type.description,
-      icon: type.icon,
-      color: type.color,
-    });
-    setIsMaintenanceTypeDialogOpen(true);
-  };
-
-  const handleUpdateMaintenanceType = () => {
-    if (editingMaintenanceType) {
-      updateMaintenanceType(editingMaintenanceType.id, maintenanceTypeForm);
-      setIsMaintenanceTypeDialogOpen(false);
-      setEditingMaintenanceType(null);
-      resetMaintenanceTypeForm();
-      toast.success('อัปเดตประเภทการซ่อมสำเร็จ');
+  // CRUD operations for Repair Types (use repair-type hook)
+  const handleAddRepairType = async () => {
+    try {
+      const created = await createRepairType({
+        ...repairTypeForm,
+      });
+      if (created && setRepairTypes) {
+        setRepairTypes([...(repairTypes ?? []), created]);
+      } else {
+        // fallback: refetch if setter not available
+        fetchRepairTypes && (await fetchRepairTypes());
+      }
+      setIsRepairTypeDialogOpen(false);
+      resetRepairTypeForm();
+      toast.success('เพิ่มประเภทการซ่อมสำเร็จ');
+    } catch (e) {
+      toast.error('ไม่สามารถเพิ่มประเภทการซ่อมได้');
     }
   };
 
-  const handleDeleteMaintenanceType = (id: string) => {
-    deleteMaintenanceType(id);
-    toast.success('ลบประเภทการซ่อมสำเร็จ');
+  const handleEditRepairType = (type: any) => {
+    setEditingRepairType(type);
+    setRepairTypeForm({
+      name: type.name,
+      description: type.description || '',
+      color: type.color || 'blue',
+    });
+    setIsRepairTypeDialogOpen(true);
   };
 
-  const resetMaintenanceTypeForm = () => {
-    setMaintenanceTypeForm({
+  const handleUpdateRepairType = async () => {
+    if (editingRepairType) {
+      try {
+        const updated = await updateRepairType(editingRepairType.id, repairTypeForm);
+        if (updated && setRepairTypes) {
+          setRepairTypes((repairTypes ?? []).map((t: any) => (t.id === updated.id ? updated : t)));
+        } else {
+          fetchRepairTypes && (await fetchRepairTypes());
+        }
+        setIsRepairTypeDialogOpen(false);
+        setEditingRepairType(null);
+        resetRepairTypeForm();
+        toast.success('อัปเดตประเภทการซ่อมสำเร็จ');
+      } catch (e) {
+        toast.error('ไม่สามารถอัปเดตประเภทการซ่อมได้');
+      }
+    }
+  };
+
+  const handleDeleteRepairType = async (id: string) => {
+    try {
+      await removeRepairType(id);
+      if (setRepairTypes) {
+        setRepairTypes((repairTypes ?? []).filter((t: any) => t.id !== id));
+      } else {
+        fetchRepairTypes && (await fetchRepairTypes());
+      }
+      toast.success('ลบประเภทการซ่อมสำเร็จ');
+    } catch (e) {
+      toast.error('ไม่สามารถลบประเภทการซ่อมได้');
+    }
+  };
+
+  const resetRepairTypeForm = () => {
+    setRepairTypeForm({
       name: '',
       description: '',
-      icon: 'Wrench',
       color: 'blue',
     });
   };
 
-  const getRoleBadgeColor = (role: UserRole) => {
-    switch (role) {
-      case 'admin':
+  const getRoleBadgeColor = (role: Role) => {
+    switch (role.name.toUpperCase()) {
+      case 'ADMIN':
         return 'bg-red-100 text-red-700 border-red-300';
-      case 'supervisor':
+      case 'SUPERVISOR':
         return 'bg-purple-100 text-purple-700 border-purple-300';
-      case 'technician':
+      case 'TECHNICIAN':
         return 'bg-blue-100 text-blue-700 border-blue-300';
       default:
         return 'bg-gray-100 text-gray-700 border-gray-300';
     }
   };
 
-  const getRoleLabel = (role: UserRole) => {
+  const getRoleLabel = (role: Role) => {
     const labels = {
       admin: 'ผู้ดูแลระบบ',
       supervisor: 'หัวหน้างาน',
       technician: 'ช่างเทคนิค',
       user: 'ผู้ใช้ทั่วไป',
     };
-    return labels[role];
+    return labels[role.name.toLowerCase() as keyof typeof labels];
   };
 
   const getColorClasses = (color: string) => {
@@ -647,7 +554,7 @@ export const AdminDashboard: React.FC = () => {
       <Card>
         <CardContent className="p-6">
           <Tabs defaultValue="users" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4 bg-red-50">
+            <TabsList className="grid w-full grid-cols-3 bg-red-50">
               <TabsTrigger value="users" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
                 <Users className="h-4 w-4 mr-2" />
                 ผู้ใช้
@@ -656,11 +563,7 @@ export const AdminDashboard: React.FC = () => {
                 <Building2 className="h-4 w-4 mr-2" />
                 อาคาร
               </TabsTrigger>
-              <TabsTrigger value="technicians" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
-                <Wrench className="h-4 w-4 mr-2" />
-                ช่างเทคนิค
-              </TabsTrigger>
-              <TabsTrigger value="maintenanceTypes" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
+              <TabsTrigger value="repairTypes" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
                 <ClipboardList className="h-4 w-4 mr-2" />
                 ประเภทการซ่อม
               </TabsTrigger>
@@ -693,7 +596,10 @@ export const AdminDashboard: React.FC = () => {
                     className="pl-10"
                   />
                 </div>
-                <Select value={filterUserRole} onValueChange={(value) => setFilterUserRole(value as UserRole | 'all')}>
+                <Select
+                  value={filterUserRole ? (typeof filterUserRole === 'string' ? filterUserRole : filterUserRole.name) : 'all'}
+                  onValueChange={(value) => setFilterUserRole(value as Role | 'all')}
+                >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="ทุกบทบาท" />
                   </SelectTrigger>
@@ -708,9 +614,9 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                {filteredUsers.map((user) => (
+                {filteredUsers.map((u) => (
                   <motion.div
-                    key={user.id}
+                    key={u.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="p-4 border border-gray-200 rounded-lg hover:border-red-300 hover:shadow-md transition-all"
@@ -723,30 +629,30 @@ export const AdminDashboard: React.FC = () => {
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="text-gray-900">{user.name}</span>
-                              <Badge className={getRoleBadgeColor(user.role)}>
-                                {getRoleLabel(user.role)}
+                              <span className="text-gray-900">{u.name}</span>
+                              <Badge className={getRoleBadgeColor(u.role ?? ({ name: 'user' } as Role))}>
+                                {getRoleLabel(u.role ?? ({ name: 'user' } as Role))}
                               </Badge>
                             </div>
                             <div className="flex items-center gap-4 text-gray-600 mt-1">
                               <span className="flex items-center gap-1">
                                 <Mail className="h-3 w-3" />
-                                {user.email}
+                                {u.email}
                               </span>
-                              {user.phone && (
+                              {(u as any).phone && (
                                 <span className="flex items-center gap-1">
                                   <Phone className="h-3 w-3" />
-                                  {user.phone}
+                                  {(u as any).phone}
                                 </span>
                               )}
                               <span className="flex items-center gap-1">
                                 <Key className="h-3 w-3" />
-                                {showPasswords[user.id] ? user.password : '••••••••'}
+                                {showPasswords[u.id] ? u.password : '••••••••'}
                                 <button
-                                  onClick={() => setShowPasswords({ ...showPasswords, [user.id]: !showPasswords[user.id] })}
+                                  onClick={() => setShowPasswords({ ...showPasswords, [u.id]: !showPasswords[u.id] })}
                                   className="text-gray-400 hover:text-gray-600 transition-colors"
                                 >
-                                  {showPasswords[user.id] ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                                  {showPasswords[u.id] ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
                                 </button>
                               </span>
                             </div>
@@ -757,7 +663,7 @@ export const AdminDashboard: React.FC = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleEditUser(user)}
+                          onClick={() => handleEditUser(u as User)}
                           className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                         >
                           <Edit className="h-4 w-4" />
@@ -765,7 +671,7 @@ export const AdminDashboard: React.FC = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleDeleteUser(user.id)}
+                          onClick={() => handleDeleteUser(u.id)}
                           className="text-red-600 hover:text-red-700 hover:bg-red-50"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -804,16 +710,7 @@ export const AdminDashboard: React.FC = () => {
                     className="pl-10"
                   />
                 </div>
-                <Select value={filterBuildingStatus} onValueChange={(value) => setFilterBuildingStatus(value as any)}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="สถานะ" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">ทุกสถานะ</SelectItem>
-                    <SelectItem value="active">ใช้งาน</SelectItem>
-                    <SelectItem value="maintenance">ซ่อมบำรุง</SelectItem>
-                  </SelectContent>
-                </Select>
+                {/* filter by building status removed — buildings are driven by API */}
               </div>
 
               <div className="space-y-3">
@@ -833,10 +730,7 @@ export const AdminDashboard: React.FC = () => {
                           <div className="flex items-center gap-2">
                             <span className="text-gray-900">{building.name}</span>
                             <Badge variant="outline" className="text-gray-600">
-                              {building.code}
-                            </Badge>
-                            <Badge className={building.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}>
-                              {building.status === 'active' ? 'ใช้งาน' : 'ซ่อมบำรุง'}
+                              {building.address}
                             </Badge>
                           </div>
                         </div>
@@ -865,125 +759,15 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </TabsContent>
 
-            {/* Technicians Management */}
-            <TabsContent value="technicians" className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-gray-900">จัดการช่างเทคนิค</h3>
-                <Button
-                  onClick={() => {
-                    setEditingTechnician(null);
-                    resetTechnicianForm();
-                    setIsTechnicianDialogOpen(true);
-                  }}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  เพิ่มช่างใหม่
-                </Button>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="ค้นหา..."
-                    value={searchTechnicians}
-                    onChange={(e) => setSearchTechnicians(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                <Select value={filterTechnicianStatus} onValueChange={(value) => setFilterTechnicianStatus(value as any)}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="สถานะ" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">ทุกสถานะ</SelectItem>
-                    <SelectItem value="active">ทำงาน</SelectItem>
-                    <SelectItem value="inactive">ไม่ทำงาน</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-3">
-                {filteredTechnicians.map((tech) => (
-                  <motion.div
-                    key={tech.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="p-4 border border-gray-200 rounded-lg hover:border-red-300 hover:shadow-md transition-all"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-orange-100 rounded-lg">
-                            <Wrench className="h-5 w-5 text-orange-600" />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-gray-900">{tech.name}</span>
-                              <Badge className={tech.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}>
-                                {tech.status === 'active' ? 'ทำงาน' : 'ไม่ทำงาน'}
-                              </Badge>
-                            </div>
-                            <div className="flex items-center gap-4 text-gray-600 mt-1">
-                              <span className="flex items-center gap-1">
-                                <Mail className="h-3 w-3" />
-                                {tech.email}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Phone className="h-3 w-3" />
-                                {tech.phone}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-4 text-gray-600 ml-14">
-                          <div className="flex gap-1">
-                            {tech.specialization.map((spec, idx) => (
-                              <Badge key={idx} variant="outline" className="text-xs">
-                                {spec}
-                              </Badge>
-                            ))}
-                          </div>
-                          <span>งานสำเร็จ: {tech.totalCompleted}</span>
-                          <span className="flex items-center gap-1">
-                            ⭐ {tech.rating.toFixed(1)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditTechnician(tech)}
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteTechnician(tech.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </TabsContent>
-
             {/* Maintenance Types Management */}
-            <TabsContent value="maintenanceTypes" className="space-y-4">
+            <TabsContent value="repairTypes" className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-gray-900">จัดการประเภทการซ่อม</h3>
                 <Button
                   onClick={() => {
-                    setEditingMaintenanceType(null);
-                    resetMaintenanceTypeForm();
-                    setIsMaintenanceTypeDialogOpen(true);
+                    setEditingRepairType(null);
+                    resetRepairTypeForm();
+                    setIsRepairTypeDialogOpen(true);
                   }}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
@@ -992,31 +776,19 @@ export const AdminDashboard: React.FC = () => {
                 </Button>
               </div>
 
-              <div className="flex gap-4">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="ค้นหา..."
-                    value={searchMaintenanceTypes}
-                    onChange={(e) => setSearchMaintenanceTypes(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                <Select value={filterMaintenanceTypeStatus} onValueChange={(value) => setFilterMaintenanceTypeStatus(value as any)}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="สถานะ" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">ทุกสถานะ</SelectItem>
-                    <SelectItem value="active">ใช้งาน</SelectItem>
-                    <SelectItem value="inactive">ไม่ใช้งาน</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="ค้นหา..."
+                  value={searchRepairTypes}
+                  onChange={(e) => setSearchRepairTypes(e.target.value)}
+                  className="pl-10"
+                />
               </div>
 
               <div className="space-y-3">
-                {filteredMaintenanceTypes.map((type) => {
-                  const colorClasses = getColorClasses(type.color);
+                {filteredRepairTypes.map((type) => {
+                  const colorClasses = getColorClasses(type.color || 'gray');
                   return (
                     <motion.div
                       key={type.id}
@@ -1032,9 +804,6 @@ export const AdminDashboard: React.FC = () => {
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
                               <span className="text-gray-900">{type.name}</span>
-                              <Badge className={type.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}>
-                                {type.status === 'active' ? 'ใช้งาน' : 'ไม่ใช้งาน'}
-                              </Badge>
                             </div>
                             <p className="text-gray-600 mt-1">{type.description}</p>
                           </div>
@@ -1043,7 +812,7 @@ export const AdminDashboard: React.FC = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleEditMaintenanceType(type)}
+                            onClick={() => handleEditRepairType(type)}
                             className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                           >
                             <Edit className="h-4 w-4" />
@@ -1051,7 +820,7 @@ export const AdminDashboard: React.FC = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleDeleteMaintenanceType(type.id)}
+                            onClick={() => handleDeleteRepairType(type.id)}
                             className="text-red-600 hover:text-red-700 hover:bg-red-50"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -1129,7 +898,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
             <div className="space-y-2">
               <Label>บทบาท</Label>
-              <Select value={userForm.role} onValueChange={(value) => setUserForm({ ...userForm, role: value as UserRole })}>
+              <Select value={userForm.role.name} onValueChange={(value) => setUserForm({ ...userForm, role: { name: value } })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -1141,20 +910,12 @@ export const AdminDashboard: React.FC = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label>เบอร์โทรศัพท์</Label>
-              <Input
-                value={userForm.phone}
-                onChange={(e) => setUserForm({ ...userForm, phone: e.target.value })}
-                placeholder="081-234-5678"
-              />
-            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsUserDialogOpen(false)}>
               ยกเลิก
             </Button>
-            <Button 
+            <Button
               onClick={editingUser ? handleUpdateUser : handleAddUser}
               className="bg-red-600 hover:bg-red-700"
             >
@@ -1185,8 +946,8 @@ export const AdminDashboard: React.FC = () => {
             <div className="space-y-2">
               <Label>รหัสอาคาร</Label>
               <Input
-                value={buildingForm.code}
-                onChange={(e) => setBuildingForm({ ...buildingForm, code: e.target.value })}
+                value={buildingForm.address}
+                onChange={(e) => setBuildingForm({ ...buildingForm, address: e.target.value })}
                 placeholder="เช่น DORM-A"
               />
             </div>
@@ -1195,7 +956,7 @@ export const AdminDashboard: React.FC = () => {
             <Button variant="outline" onClick={() => setIsBuildingDialogOpen(false)}>
               ยกเลิก
             </Button>
-            <Button 
+            <Button
               onClick={editingBuilding ? handleUpdateBuilding : handleAddBuilding}
               className="bg-red-600 hover:bg-red-700"
             >
@@ -1205,69 +966,11 @@ export const AdminDashboard: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Technician Dialog */}
-      <Dialog open={isTechnicianDialogOpen} onOpenChange={setIsTechnicianDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>{editingTechnician ? 'แก้ไขช่าง' : 'เพิ่มช่างใหม่'}</DialogTitle>
-            <DialogDescription>
-              กรอกข้อมูลช่างเทคนิคด้านล่าง
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>ชื่อ-นามสกุล</Label>
-              <Input
-                value={technicianForm.name}
-                onChange={(e) => setTechnicianForm({ ...technicianForm, name: e.target.value })}
-                placeholder="กรอกชื่อ-นามสกุล"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>อีเมล</Label>
-              <Input
-                type="email"
-                value={technicianForm.email}
-                onChange={(e) => setTechnicianForm({ ...technicianForm, email: e.target.value })}
-                placeholder="email@example.com"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>เบอร์โทรศัพท์</Label>
-              <Input
-                value={technicianForm.phone}
-                onChange={(e) => setTechnicianForm({ ...technicianForm, phone: e.target.value })}
-                placeholder="081-234-5678"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>ความเชี่ยวชาญ (คั่นด้วยจุลภาค)</Label>
-              <Input
-                value={technicianForm.specialization}
-                onChange={(e) => setTechnicianForm({ ...technicianForm, specialization: e.target.value })}
-                placeholder="เช่น ไฟฟ้า, ประปา"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsTechnicianDialogOpen(false)}>
-              ยกเลิก
-            </Button>
-            <Button 
-              onClick={editingTechnician ? handleUpdateTechnician : handleAddTechnician}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              {editingTechnician ? 'บันทึก' : 'เพิ่ม'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       {/* Maintenance Type Dialog */}
-      <Dialog open={isMaintenanceTypeDialogOpen} onOpenChange={setIsMaintenanceTypeDialogOpen}>
+      <Dialog open={isRepairTypeDialogOpen} onOpenChange={setIsRepairTypeDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{editingMaintenanceType ? 'แก้ไขประเภทการซ่อม' : 'เพิ่มประเภทการซ่อมใหม่'}</DialogTitle>
+            <DialogTitle>{editingRepairType ? 'แก้ไขประเภทการซ่อม' : 'เพิ่มประเภทการซ่อมใหม่'}</DialogTitle>
             <DialogDescription>
               กรอกข้อมูลประเภทการซ่อมด้านล่าง
             </DialogDescription>
@@ -1276,25 +979,25 @@ export const AdminDashboard: React.FC = () => {
             <div className="space-y-2">
               <Label>ชื่อประเภท</Label>
               <Input
-                value={maintenanceTypeForm.name}
-                onChange={(e) => setMaintenanceTypeForm({ ...maintenanceTypeForm, name: e.target.value })}
+                value={repairTypeForm.name}
+                onChange={(e) => setRepairTypeForm({ ...repairTypeForm, name: e.target.value })}
                 placeholder="เช่น ไฟฟ้า"
               />
             </div>
             <div className="space-y-2">
               <Label>คำอธิบาย</Label>
               <Textarea
-                value={maintenanceTypeForm.description}
-                onChange={(e) => setMaintenanceTypeForm({ ...maintenanceTypeForm, description: e.target.value })}
+                value={repairTypeForm.description}
+                onChange={(e) => setRepairTypeForm({ ...repairTypeForm, description: e.target.value })}
                 placeholder="อธิบายรายละเอียดประเภทการซ่อม"
                 rows={3}
               />
             </div>
             <div className="space-y-2">
               <Label>สี</Label>
-              <Select 
-                value={maintenanceTypeForm.color} 
-                onValueChange={(value) => setMaintenanceTypeForm({ ...maintenanceTypeForm, color: value })}
+              <Select
+                value={repairTypeForm.color}
+                onValueChange={(value) => setRepairTypeForm({ ...repairTypeForm, color: value })}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -1313,14 +1016,14 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsMaintenanceTypeDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsRepairTypeDialogOpen(false)}>
               ยกเลิก
             </Button>
-            <Button 
-              onClick={editingMaintenanceType ? handleUpdateMaintenanceType : handleAddMaintenanceType}
+            <Button
+              onClick={editingRepairType ? handleUpdateRepairType : handleAddRepairType}
               className="bg-red-600 hover:bg-red-700"
             >
-              {editingMaintenanceType ? 'บันทึก' : 'เพิ่ม'}
+              {editingRepairType ? 'บันทึก' : 'เพิ่ม'}
             </Button>
           </DialogFooter>
         </DialogContent>

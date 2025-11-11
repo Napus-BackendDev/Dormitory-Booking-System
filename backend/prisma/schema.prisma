@@ -99,9 +99,11 @@ model Attachment {
 }
 
 model RepairType {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  color       String?
+  createdAt   DateTime @default(now())
 
   // Relations
   Ticket Ticket[]

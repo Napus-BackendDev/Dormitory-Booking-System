@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import useTicket from '@/hooks/useTicket';
 
 export type RequestStatus = 'pending' | 'in_progress' | 'completed';
 export type RequestPriority = 'low' | 'medium' | 'high';
@@ -328,6 +329,74 @@ export const MaintenanceProvider: React.FC<{ children: ReactNode }> = ({ childre
     medium: 72,
     low: 168,
   });
+
+  // Integrate tickets from API via useTicket
+  const { tickets: ticketList, fetchAll: fetchTickets } = useTicket();
+
+  // Fetch tickets on mount
+  useEffect(() => {
+    try {
+      fetchTickets && fetchTickets();
+    } catch (e) {
+      // ignore
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Map incoming tickets into MaintenanceRequest and merge with existing requests
+  useEffect(() => {
+    if (!ticketList || ticketList.length === 0) return;
+
+    const mapPriority = (p: any): RequestPriority => {
+      if (!p) return 'medium';
+      // ticket priority might be 'P1'..'P4' or numeric/other; map conservatively
+      switch (p) {
+        case 'P1':
+          return 'high';
+        case 'P2':
+          return 'medium';
+        case 'P3':
+          return 'low';
+        case 'P4':
+          return 'low';
+        case 'high':
+        case 'medium':
+        case 'low':
+          return p as RequestPriority;
+        default:
+          return 'medium';
+      }
+    };
+
+    const mapped = ticketList.map((t: any): MaintenanceRequest => ({
+      id: t.id,
+      userId: t.userId ?? 'system',
+      userName: t.userName ?? 'ระบบ',
+      maintenanceType: t.repairTypeId ?? undefined,
+      maintenanceTypeName: t.repairTypeName ?? undefined,
+      title: t.title ?? (t.code ?? 'Ticket'),
+      description: t.description ?? '',
+      images: t.photo ? (Array.isArray(t.photo) ? t.photo : [t.photo]) : t.images ?? [],
+      status: (t.status as RequestStatus) ?? 'pending',
+      priority: mapPriority(t.priority),
+      createdAt: t.createdAt ? new Date(t.createdAt) : new Date(),
+      updatedAt: t.updatedAt ? new Date(t.updatedAt) : new Date(),
+      assignedTo: t.assignedTo ?? undefined,
+      assignedToName: t.assignedToName ?? undefined,
+      completedAt: t.completedAt ? new Date(t.completedAt) : undefined,
+      rating: t.rating ?? undefined,
+      feedback: t.feedback ?? undefined,
+    }));
+
+    setRequests(prev => {
+      const map = new Map<string, MaintenanceRequest>();
+      // keep existing
+      prev.forEach(r => map.set(r.id, r));
+      // overwrite/insert from API
+      mapped.forEach(m => map.set(m.id, m));
+      return Array.from(map.values());
+    });
+  }, [ticketList]);
 
   const addEvent = (event: Omit<TicketEvent, 'id' | 'timestamp'>) => {
     const newEvent: TicketEvent = {

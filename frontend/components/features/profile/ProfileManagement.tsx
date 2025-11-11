@@ -82,7 +82,7 @@ export const ProfileManagement: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
-                {getRoleBadge(user.role)}
+                {getRoleBadge(user?.role?.name ?? "")}
               </div>
             </div>
 
@@ -97,21 +97,11 @@ export const ProfileManagement: React.FC = () => {
                 </div>
               </div>
 
-              {user.phone && (
-                <div className="flex items-start gap-3">
-                  <Phone className="w-5 h-5 text-gray-500 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-gray-600">เบอร์โทรศัพท์</p>
-                    <p className="text-sm">{user.phone}</p>
-                  </div>
-                </div>
-              )}
-
               <div className="flex items-start gap-3">
                 <User className="w-5 h-5 text-gray-500 mt-0.5" />
                 <div>
                   <p className="text-sm text-gray-600">บทบาท</p>
-                  <p className="text-sm">{getRoleText(user.role)}</p>
+                  <p className="text-sm">{getRoleText(user?.role?.name ?? "")}</p>
                 </div>
               </div>
             </div>
@@ -125,7 +115,7 @@ export const ProfileManagement: React.FC = () => {
             <CardDescription>ภาพรวมการใช้งาน</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {user.role === 'user' && (
+            {user?.role?.name.toLowerCase() === 'user' && (
               <>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -145,7 +135,7 @@ export const ProfileManagement: React.FC = () => {
               </>
             )}
 
-            {user.role === 'technician' && (
+            {user?.role?.name.toLowerCase() === 'technician' && (
               <>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -178,7 +168,7 @@ export const ProfileManagement: React.FC = () => {
               </>
             )}
 
-            {user.role === 'supervisor' && (
+            {user?.role?.name.toLowerCase() === 'supervisor' && (
               <>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -221,7 +211,7 @@ export const ProfileManagement: React.FC = () => {
       </div>
 
       {/* User-specific Statistics */}
-      {user.role === 'user' && userRequests.length > 0 && (
+      {user?.role?.name.toLowerCase() === 'user' && userRequests.length > 0 && (
         <Card className="border-0 shadow-lg">
           <CardHeader className="border-b bg-gradient-to-r from-gray-50 to-white">
             <CardTitle className="text-[#DC2626]">สถิติการแจ้งซ่อม</CardTitle>
@@ -252,7 +242,7 @@ export const ProfileManagement: React.FC = () => {
       )}
 
       {/* Technician-specific Statistics */}
-      {user.role === 'technician' && assignedRequests.length > 0 && (
+      {user?.role?.name.toLowerCase() === 'technician' && assignedRequests.length > 0 && (
         <Card className="border-0 shadow-lg">
           <CardHeader className="border-b bg-gradient-to-r from-gray-50 to-white">
             <CardTitle className="text-[#DC2626]">สถิติการทำงาน</CardTitle>

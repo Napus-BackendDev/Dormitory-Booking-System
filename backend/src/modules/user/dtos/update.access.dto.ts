@@ -1,7 +1,6 @@
-import { IsEnum } from "class-validator";
-import { Role } from "src/common/enums/role.enum";
+import { IsString } from "class-validator";
 
 export class UpdateAccessDto {
-    @IsEnum(Role)
-    role?: Role;
+    @IsString()
+    role?: string;
 }

@@ -7,14 +7,14 @@ import { ProfileManagement } from '@/components/features/profile/ProfileManageme
 import { Navbar } from '@/components/common/Navbar'
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, loading } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (!loading && !user) {
       router.push('/login')
     }
-  }, [isAuthenticated, loading, router])
+  }, [loading, router])
 
   if (loading) {
     return (
@@ -25,10 +25,6 @@ export default function ProfilePage() {
         </div>
       </div>
     )
-  }
-
-  if (!isAuthenticated || !user) {
-    return null
   }
 
   return (

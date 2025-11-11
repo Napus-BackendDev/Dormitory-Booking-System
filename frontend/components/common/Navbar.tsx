@@ -28,14 +28,15 @@ export const Navbar: React.FC = () => {
   };
 
   const getRoleText = (role: string) => {
+    if (!role) return '';
     switch (role) {
-      case 'user':
+      case 'USER':
         return 'ผู้ใช้ทั่วไป';
-      case 'technician':
+      case 'TECHNICIAN':
         return 'ทีมช่าง';
-      case 'supervisor':
+      case 'SUPERVISOR':
         return 'หัวหน้างาน';
-      case 'admin':
+      case 'ADMIN':
         return 'ผู้ดูแลระบบ';
       default:
         return role;
@@ -44,12 +45,12 @@ export const Navbar: React.FC = () => {
 
   const getNavItems = () => {
     const baseItems = [
-      { id: 'dashboard', label: 'แดชบอร์ด', href: '/dashboard', roles: ['user', 'technician', 'supervisor', 'admin'] },
-      { id: 'reports', label: 'รายงานและสถิติ', href: '/reports', roles: ['supervisor', 'admin'] },
-      { id: 'profile', label: 'โปรไฟล์', href: '/profile', roles: ['user', 'technician', 'supervisor', 'admin'] },
+      { id: 'dashboard', label: 'แดชบอร์ด', href: '/dashboard', roles: ['USER', 'TECHNICIAN', 'SUPERVISOR', 'ADMIN'] },
+      { id: 'reports', label: 'รายงานและสถิติ', href: '/reports', roles: ['SUPERVISOR', 'ADMIN'] },
+      { id: 'profile', label: 'โปรไฟล์', href: '/profile', roles: ['USER', 'TECHNICIAN', 'SUPERVISOR', 'ADMIN'] },
     ];
 
-    return baseItems.filter(item => item.roles.includes(user.role));
+    return baseItems.filter(item => item.roles.includes(user.role?.name || ''));
   };
 
   return (
@@ -147,7 +148,7 @@ export const Navbar: React.FC = () => {
                     <p className="text-sm text-gray-900">{user.name}</p>
                     <p className="text-xs text-gray-500 flex items-center gap-1">
                       <Sparkles className="w-3 h-3 text-[#FCD34D]" />
-                      {getRoleText(user.role)}
+                      {getRoleText(user.role?.name || '')}
                     </p>
                   </div>
                 </Button>

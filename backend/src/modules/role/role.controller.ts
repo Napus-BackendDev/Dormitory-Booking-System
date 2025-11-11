@@ -8,7 +8,7 @@ import { Roles } from 'src/common/author/role.decorator';
 
 @Controller('role')
 // @UseGuards(AuthGuard, RolesGuard)
-//@Roles('ADMIN')
+// @Roles('ADMIN')
 export class RoleController {
   constructor(private readonly roleService: RoleService) { }
 

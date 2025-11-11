@@ -1,29 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../contexts/AuthContext';
 import { Wrench, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@radix-ui/react-label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
-  const { login, isAuthenticated } = useAuth();
+  const { login } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/dashboard');
-    }
-  }, [isAuthenticated, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,8 +24,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await login(email, password);
-      // Router will redirect automatically via useEffect
+      const res = await login(email, password);
+      if (res) router.push('/dashboard');
     } catch (err) {
       setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
     } finally {
@@ -83,7 +76,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="กรุณากรอกอีเมล์"
+                placeholder="กรุณากรอกอีเมล"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -129,11 +122,9 @@ export default function LoginPage() {
           <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
             <p className="text-sm font-semibold text-gray-900 mb-2">🔑 บัญชีทดสอบ</p>
             <div className="space-y-1.5 text-xs text-gray-700">
-              <p>👤 ผู้ใช้ทั่วไป: <span className="font-mono bg-white px-2 py-0.5 rounded">user@dorm.com</span></p>
-              <p>🔧 ทีมช่าง: <span className="font-mono bg-white px-2 py-0.5 rounded">technician@dorm.com</span></p>
-              <p>👨‍💼 หัวหน้างาน: <span className="font-mono bg-white px-2 py-0.5 rounded">supervisor@dorm.com</span></p>
-              <p>⚙️ ผู้ดูแลระบบ: <span className="font-mono bg-white px-2 py-0.5 rounded">admin@dorm.com</span></p>
-              <p className="text-gray-500 mt-2">รหัสผ่าน: อะไรก็ได้</p>
+              <p>👤 ผู้ใช้ทั่วไป: <span className="font-mono bg-white px-2 py-0.5 rounded">user@gmail.com</span> รหัส: <span className="font-mono bg-white px-2 py-0.5 rounded">user123#</span></p>
+              <p>🔧 ทีมช่าง: <span className="font-mono bg-white px-2 py-0.5 rounded">technician@gmail.com</span> รหัส: <span className="font-mono bg-white px-2 py-0.5 rounded">technician123#</span></p>
+              <p>⚙️ ผู้ดูแลระบบ: <span className="font-mono bg-white px-2 py-0.5 rounded">admin@gmail.com</span> รหัส: <span className="font-mono bg-white px-2 py-0.5 rounded">admin123#</span></p>
             </div>
           </div>
         </CardContent>
