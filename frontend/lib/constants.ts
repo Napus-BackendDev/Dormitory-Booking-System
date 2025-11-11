@@ -4,6 +4,9 @@
 
 import type { SLAConfig } from './types'
 
+// API Configuration
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+
 // Default SLA configuration (in hours)
 export const DEFAULT_SLA_CONFIG: SLAConfig = {
   low: 72,      // 3 days
