@@ -25,6 +25,7 @@ import { Wrench, AlertCircle, Zap, Send, Image, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { RequestPriority } from "../../../contexts/MaintenanceContext";
 import useTicket from "../../../hooks/useTicket";
+import { useMaintenance } from '../../../contexts/MaintenanceContext';
 
 interface MaintenanceRequestFormProps {
   open: boolean;
@@ -34,6 +35,7 @@ interface MaintenanceRequestFormProps {
 export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({ open, onClose }) => {
   const { user } = useAuth();
   const { create } = useTicket();
+  const { addRequest } = useMaintenance();
   const { maintenanceTypes } = useBuildings();
 
   const [title, setTitle] = useState("");
@@ -79,8 +81,8 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({ 
     if (!user) return;
 
     try {
-      
-      create({
+      // create on server
+      const created = await create({
         title,
         description,
         status: "pending",
@@ -89,6 +91,24 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({ 
         photo: photos,
         dueAt: new Date().toISOString(),
       });
+
+      // Optimistically add to maintenance context for immediate UI update
+      try {
+        const maintenanceTypeName = maintenanceTypes.find((t: any) => t.id === maintenanceType)?.name;
+        addRequest({
+          userId: user.id,
+          userName: user.name,
+          maintenanceType: maintenanceType || undefined,
+          maintenanceTypeName: maintenanceTypeName || undefined,
+          title: created?.title ?? title,
+          description: created?.description ?? description,
+          images: created?.photo ? (Array.isArray(created.photo) ? created.photo : [created.photo]) : [],
+          priority: (created?.priority as any) ?? priority,
+        });
+      } catch (err) {
+        // if addRequest fails, ignore — the fetch/merge from API will still occur
+        console.warn('addRequest failed', err);
+      }
 
       toast.success("แจ้งซ่อมสำเร็จ 🎉", {
         description: "ทีมงานจะดำเนินการตรวจสอบโดยเร็วที่สุด",

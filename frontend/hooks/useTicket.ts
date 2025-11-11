@@ -60,6 +60,8 @@ export default function useTicket() {
       formData.append("title", body.title || "");
       formData.append("description", body.description || "");
       formData.append("status", body.status || "");
+      // include repair type id if provided
+      formData.append("repairTypeId", (body as any).repairTypeId || "");
       formData.append("priority", body.priority || "");
       formData.append("dueAt", body.dueAt ? body.dueAt.toString() : "");
       
@@ -78,6 +80,12 @@ export default function useTicket() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Create ticket failed");
+      // update local tickets state so UI can reflect the new ticket immediately
+      try {
+        setTickets(prev => (prev ? [data, ...prev] : [data]));
+      } catch (e) {
+        // ignore
+      }
       return data;
     } catch (err) {
       setError(

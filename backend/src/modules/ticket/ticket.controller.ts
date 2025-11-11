@@ -15,23 +15,22 @@ export class TicketController {
   constructor(private readonly ticketService: TicketService) { }
 
   @Get()
-  @Roles("ADMIN")
   findAll() {
     return this.ticketService.findAll();
   }
-  @Roles("STAFF", "ADMIN")
   @Get(':id')
   findById(@Param('id') id: string) {
     return this.ticketService.findOne(id);
   }
-  @Roles("USER")
   @Post()
+  @Roles("USER")
   @UseInterceptors(FilesInterceptor('photo', 5, imageUploadOptions))
   create(@Body() createTicketsDto: CreateTicketDto, @UploadedFiles() photos: Express.Multer.File[], @CurrentUser() user: any) {
     return this.ticketService.create(createTicketsDto, photos, user);
   }
-  @Roles("USER", "STAFF")
+
   @Patch(':id') 
+  @Roles("USER", "TECHNICIAN")
   update(@Param('id') id: string, @Body() updateTicketsDto: UpdateTicketDto, @CurrentUser() user: any) {
     return this.ticketService.update(id, updateTicketsDto, user);
   }

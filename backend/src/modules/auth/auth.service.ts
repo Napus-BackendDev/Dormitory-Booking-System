@@ -12,7 +12,6 @@ export class AuthService {
     constructor(
         private prismaService: PrismaService, 
         private jwtService: JwtService,
-        @Inject('REDIS_CLIENT') private redisClient: Redis
     ) { }
 
     async register(registerDto: RegisterDto) {
@@ -119,14 +118,6 @@ export class AuthService {
         const currentTime = Math.floor(Date.now() / 1000);
         if (decoded.exp < currentTime) {
             throw new BadRequestException('Token already expired');
-        }
-
-        // Calculate remaining time until token expires (in seconds)
-        const expiresIn = decoded.exp - currentTime;
-
-        if (expiresIn > 0) {
-            // Store token in Redis blacklist with expiration
-            await this.redisClient.setex(`blacklist:${token}`, expiresIn, 'true');
         }
 
         return {

@@ -621,7 +621,7 @@ export const MaintenanceProvider: React.FC<{ children: ReactNode }> = ({ childre
   );
 };
 
-export const useMaintenance = () => {
+export const  useMaintenance = () => {
   const context = useContext(MaintenanceContext);
   if (context === undefined) {
     throw new Error('useMaintenance must be used within a MaintenanceProvider');

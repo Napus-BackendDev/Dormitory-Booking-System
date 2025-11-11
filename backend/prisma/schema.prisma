@@ -50,8 +50,6 @@ model Ticket {
   // Relations
   repairType  RepairType?   @relation(fields: [repairTypeId], references: [id])
   location    Location?     @relation(fields: [locationId], references: [id])
-  events      TicketEvent[]
-  attachments Attachment[]
   survey      Survey[]
 
   // SLA Fields
@@ -70,32 +68,8 @@ model Ticket {
   @@index([status, slaResolveDueAt])
 }
 
-model TicketEvent {
-  id        String   @id @default(cuid())
-  ticketId  String
-  type      String?
-  note      String?
-  createdAt DateTime @default(now())
-  createdBy String
-
-  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-
-  @@index([ticketId])
-}
-
 model Line {
   userId String @unique
-}
-
-model Attachment {
-  id        String         @id @default(cuid())
-  url       String
-  type      AttachmentType
-  createdAt DateTime       @default(now())
-  ticketId  String? // Foreign key to Ticket
-
-  // Relations
-  ticket Ticket? @relation(fields: [ticketId], references: [id])
 }
 
 model RepairType {

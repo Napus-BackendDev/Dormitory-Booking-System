@@ -70,7 +70,6 @@ export const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
   const { requests } = useMaintenance();
 
-
   // Users Management (data from hook)
   const { users, setUsers: setHookUsers, fetchAll: fetchUsers } = useUser();
   const { locations, fetchAll: fetchLocations, create: createLocation, update: updateLocation, remove: removeLocation, setLocations } = useLocation();

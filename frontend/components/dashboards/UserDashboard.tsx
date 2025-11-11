@@ -19,7 +19,6 @@ export const UserDashboard: React.FC = () => {
   const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null);
   const [ratingRequest, setRatingRequest] = useState<MaintenanceRequest | null>(null);
 
-  // Filter requests for current user
   const userRequests = requests.filter(req => req.userId === user?.id);
 
   const pendingCount = userRequests.filter(req => req.status === 'pending').length;

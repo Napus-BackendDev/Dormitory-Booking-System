@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Ticket } from '@prisma/client';
+import { Ticket, User } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
@@ -37,7 +37,7 @@ export class TicketService {
   }
 
 
-  async create(createTicketDto: CreateTicketDto, photos: Express.Multer.File[], user: any): Promise<Ticket> {
+  async create(createTicketDto: CreateTicketDto, photos: Express.Multer.File[], user: User): Promise<Ticket> {
     // Send email notification to the user who created the ticket
     try {
       await RecieveTicketMailer(this.emailService, user.email);
@@ -61,14 +61,6 @@ export class TicketService {
 
     this.lineService.sendLineCreateTicket(ticket);
 
-    await this.prisma.ticketEvent.create({
-      data: {
-        type: 'CREATED',
-        createdBy: user.sub.toString(),
-        ticketId: ticket.id,
-      },
-    });
-
     return ticket;
   }
 
@@ -90,43 +82,10 @@ export class TicketService {
       // Get ticket details and creator email
       const ticket = await this.prisma.ticket.findUnique({
         where: { id },
-        include: {
-          events: {
-            where: { type: 'CREATED' },
-            include: {
-              ticket: true
-            }
-          }
-        }
       });
 
       if (ticket) {
         this.lineService.sendLineUpdateTicket(ticket);
-
-        // Find the creator's user ID from the CREATED event
-        const createdEvent = ticket.events.find(event => event.type === 'CREATED');
-        if (createdEvent) {
-          const creator = await this.prisma.user.findUnique({
-            where: { id: createdEvent.createdBy }
-          });
-
-          if (creator) {
-            // Send completion email to the ticket creator
-            try {
-              await WorkDoneMailer(
-                this.emailService,
-                ticket.id,
-                ticket.code,
-                ticket.title,
-                creator.email,
-                new Date()
-              );
-            } catch (error) {
-              console.error('Failed to send work completion email:', error);
-              // Don't fail the update if email fails
-            }
-          }
-        }
       }
     }
 
