@@ -30,12 +30,8 @@ export default function DashboardPage() {
     )
   }
 
-  if (!isAuthenticated || !user) {
-    return null
-  }
-
   const renderDashboard = () => {
-    switch (user.role) {
+    switch (user?.role) {
       case 'user':
         return <UserDashboard />
       case 'technician':
