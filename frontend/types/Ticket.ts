@@ -7,8 +7,8 @@ export type Ticket = {
     description: string
     status: string
     priority: TicketPriority
-    photo?: any
-    dueAt: Date
+    photo?: File[]
+    dueAt: string | Date
     createdAt: Date
     repairTypeId?: string
     locationId?: string
