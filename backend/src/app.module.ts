@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { PrismaModule } from './common/prisma.module';
 import { TicketModule } from './modules/ticket/ticket.module';
 import { AttachmentModule } from './modules/attachment/attachment.module';
@@ -15,11 +16,13 @@ import { EmailModule } from './common/email/email.module';
 import { BullModule } from '@nestjs/bull';
 import { SlaMonitorModule } from './modules/sla-monitor/sla.monitor.module';
 import { RedisModule } from './common/redis/redis.module';
+import { join } from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
     PrismaModule,
     AttachmentModule,
@@ -31,16 +34,20 @@ import { RedisModule } from './common/redis/redis.module';
     RepairTypeModule,
     RoleModule,
     LocationModule,
-    LineModule,,
+    LineModule,
     EmailModule,
     RedisModule,
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST || 'localhost',
-        port: process.env.REDIS_PORT! || 6379,
+        port: parseInt(process.env.REDIS_PORT || '6379', 10),
       }
     }),
     SlaMonitorModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
   ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,17 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { imageUploadOptions } from 'src/common/interceptors/upload-options';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { RolesGuard } from 'src/common/author/roles.guard';
 import { Role } from 'src/common/enums/role.enum';
 import { Roles } from 'src/common/author/role.decorator';
-import { AuthGuard } from '../auth/auth.guard';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('ticket')
-@UseGuards(AuthGuard)
 export class TicketController {
   constructor(private readonly ticketService: TicketService) { }
 
@@ -27,11 +27,12 @@ export class TicketController {
   }
   @Roles(Role.USER)
   @Post()
-  create(@Body() createTicketsDto: CreateTicketDto, @CurrentUser() user: any) {
-    return this.ticketService.create(createTicketsDto, user);
+  @UseInterceptors(FilesInterceptor('photo', 5, imageUploadOptions))
+  create(@Body() createTicketsDto: CreateTicketDto, @UploadedFiles() photos: Express.Multer.File[], @CurrentUser() user: any) {
+    return this.ticketService.create(createTicketsDto, photos, user);
   }
   @Roles(Role.USER, Role.STAFF)
-  @Patch(':id')
+  @Patch(':id') 
   update(@Param('id') id: string, @Body() updateTicketsDto: UpdateTicketDto, @CurrentUser() user: any) {
     return this.ticketService.update(id, updateTicketsDto, user);
   }
