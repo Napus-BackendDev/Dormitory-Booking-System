@@ -10,7 +10,6 @@ import { RolesGuard } from 'src/common/author/roles.guard';
 import { Role } from 'src/common/enums/role.enum';
 import { Roles } from 'src/common/author/role.decorator';
 
-@UseGuards(AuthGuard, RolesGuard)
 @Controller('ticket')
 export class TicketController {
   constructor(private readonly ticketService: TicketService) { }
@@ -25,13 +24,13 @@ export class TicketController {
   findById(@Param('id') id: string) {
     return this.ticketService.findOne(id);
   }
-  @Roles(Role.USER)
+
   @Post()
   @UseInterceptors(FilesInterceptor('photo', 5, imageUploadOptions))
   create(@Body() createTicketsDto: CreateTicketDto, @UploadedFiles() photos: Express.Multer.File[], @CurrentUser() user: any) {
     return this.ticketService.create(createTicketsDto, photos, user);
   }
-  @Roles(Role.USER, Role.STAFF)
+  
   @Patch(':id') 
   update(@Param('id') id: string, @Body() updateTicketsDto: UpdateTicketDto, @CurrentUser() user: any) {
     return this.ticketService.update(id, updateTicketsDto, user);

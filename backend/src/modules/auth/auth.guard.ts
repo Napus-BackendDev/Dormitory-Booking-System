@@ -3,14 +3,12 @@ import { AuthService } from "./auth.service";
 import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 import { jwtConstants } from "src/common/constants/jwt.constant";
-import { Redis } from 'ioredis';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
     constructor(
         private authService: AuthService, 
         private jwtService: JwtService,
-        @Inject('REDIS_CLIENT') private redisClient: Redis
     ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -23,12 +21,6 @@ export class AuthGuard implements CanActivate {
         }
 
         try {
-            // Check if token is blacklisted
-            const isBlacklisted = await this.redisClient.get(`blacklist:${token}`);
-            if (isBlacklisted) {
-                console.log('Token is blacklisted');
-                throw new UnauthorizedException('Token has been invalidated');
-            }
 
             const payload = await this.jwtService.verifyAsync(token, {
                 secret: jwtConstants.secret
