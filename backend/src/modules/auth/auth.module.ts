@@ -6,9 +6,10 @@ import { PrismaService } from "src/common/prisma.service";
 import { JwtModule } from "@nestjs/jwt";
 import { jwtConstants } from "src/common/constants/jwt.constant";
 import { AuthGuard } from "./auth.guard";
+import { RedisModule } from "../../common/redis/redis.module";
 
 @Module({
-    imports: [PrismaModule,
+    imports: [PrismaModule, RedisModule,
         JwtModule.register({
             global: true,
             secret: jwtConstants.secret,
@@ -18,4 +19,4 @@ import { AuthGuard } from "./auth.guard";
     providers: [AuthService, PrismaService, AuthGuard],
     exports: [AuthService, AuthGuard]
 })
-export class AuthModule { }
+export class AuthModule {}

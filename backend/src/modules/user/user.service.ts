@@ -1,19 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/common/prisma.service";
+import { UpdateAccessDto } from "./dtos/update.access.dto";
 
 @Injectable()
 export class UserService {
-    getAdminUser() {
-        const adminUser = this.prismaService.user.findFirst({
-            where: {
-                role: {
-                    name: 'ADMIN'
-                }
-            }
-        });
-        return adminUser;
-    }
-
     constructor(private prismaService: PrismaService) { }
 
     getAllUsers() {
@@ -37,6 +27,27 @@ export class UserService {
     }
     deleteAllUsers() {
         return this.prismaService.user.deleteMany();
+    }
+    getAdminUser() {
+        const adminUser = this.prismaService.user.findFirst({
+            where: {
+                role: {
+                    name: 'ADMIN'
+                }
+            }
+        });
+        return adminUser;
+    }
+    manageAccess(userId: string, updateAccessDto: UpdateAccessDto) {
+        const { role} = updateAccessDto;
+        const updates: any = {};
+        if (role) {
+            updates.role = role;
+        }
+        return this.prismaService.user.update({
+            where: { id: userId },
+            data: updates
+        });
     }
 
 }
