@@ -48,8 +48,6 @@ export default function useRepairType() {
                 credentials: "include",
             });
             const data = await res.json();
-            console.log(res)
-            console.log(data)
             if (!res.ok) throw new Error(data.message || "Create repair type failed");
             return data;
         } catch (err) {

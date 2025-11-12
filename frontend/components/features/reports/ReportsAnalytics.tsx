@@ -34,7 +34,7 @@ import {
 import { motion } from 'framer-motion';
 
 export const ReportsAnalytics: React.FC = () => {
-  const { requests } = useMaintenance();
+  const { tickets } = useMaintenance();
 
   // Get today's date range
   const today = new Date();
@@ -49,30 +49,30 @@ export const ReportsAnalytics: React.FC = () => {
   endOfWeek.setDate(startOfWeek.getDate() + 7);
 
   // Daily statistics
-  const todayRequests = requests.filter(
+  const todayRequests = tickets.filter(
     req => new Date(req.createdAt) >= today && new Date(req.createdAt) < tomorrow
   );
-  const todayCompleted = requests.filter(
+  const todayCompleted = tickets.filter(
     req =>
-      req.completedAt &&
-      new Date(req.completedAt) >= today &&
-      new Date(req.completedAt) < tomorrow
+      (req.updatedAt && req.status === "COMPLETED" ) &&
+      new Date(req.updatedAt) >= today &&
+      new Date(req.updatedAt) < tomorrow
   );
-  const todayPending = requests.filter(
+  const todayPending = tickets.filter(
     req =>
-      req.status !== 'completed' &&
+      req.status !== 'COMPLETED' &&
       new Date(req.createdAt) < tomorrow
   );
 
   // Weekly statistics
-  const weekRequests = requests.filter(
+  const weekRequests = tickets.filter(
     req => new Date(req.createdAt) >= startOfWeek && new Date(req.createdAt) < endOfWeek
   );
-  const weekCompleted = requests.filter(
+  const weekCompleted = tickets.filter(
     req =>
-      req.completedAt &&
-      new Date(req.completedAt) >= startOfWeek &&
-      new Date(req.completedAt) < endOfWeek
+      (req.updatedAt && req.status === "COMPLETED") &&
+      new Date(req.updatedAt) >= startOfWeek &&
+      new Date(req.updatedAt) < endOfWeek
   );
   const weekCompletionRate =
     weekRequests.length > 0
@@ -80,7 +80,7 @@ export const ReportsAnalytics: React.FC = () => {
       : 0;
 
   // Average rating
-  const completedWithRating = requests.filter(req => req.rating);
+  const completedWithRating = tickets.filter(req => req.rating);
   const averageRating =
     completedWithRating.length > 0
       ? (
@@ -90,14 +90,14 @@ export const ReportsAnalytics: React.FC = () => {
       : 0;
 
   // By priority breakdown
-  const highPriorityCount = requests.filter(req => req.priority === 'high').length;
-  const mediumPriorityCount = requests.filter(req => req.priority === 'medium').length;
-  const lowPriorityCount = requests.filter(req => req.priority === 'low').length;
+  const highPriorityCount = tickets.filter(req => req.priority === 'P1').length;
+  const mediumPriorityCount = tickets.filter(req => req.priority === 'P2').length;
+  const lowPriorityCount = tickets.filter(req => req.priority === 'P3').length;
 
   // By status breakdown
-  const pendingCount = requests.filter(req => req.status === 'pending').length;
-  const inProgressCount = requests.filter(req => req.status === 'in_progress').length;
-  const completedCount = requests.filter(req => req.status === 'completed').length;
+  const pendingCount = tickets.filter(req => req.status === 'ASSIGNED').length;
+  const inProgressCount = tickets.filter(req => req.status === 'IN_PROGRESS').length;
+  const completedCount = tickets.filter(req => req.status === 'COMPLETED').length;
 
   // Chart data
   const dailyChartData = [
@@ -127,14 +127,14 @@ export const ReportsAnalytics: React.FC = () => {
       const nextDate = new Date(date);
       nextDate.setDate(nextDate.getDate() + 1);
 
-      const dayRequests = requests.filter(
+      const dayRequests = tickets.filter(
         req => new Date(req.createdAt) >= date && new Date(req.createdAt) < nextDate
       );
-      const dayCompleted = requests.filter(
+      const dayCompleted = tickets.filter(
         req =>
-          req.completedAt &&
-          new Date(req.completedAt) >= date &&
-          new Date(req.completedAt) < nextDate
+          (req.updatedAt && req.status === "COMPLETED") &&
+          new Date(req.updatedAt) >= date &&
+          new Date(req.updatedAt) < nextDate
       );
 
       data.push({
@@ -144,7 +144,7 @@ export const ReportsAnalytics: React.FC = () => {
       });
     }
     return data;
-  }, [requests, today]);
+  }, [tickets, today]);
 
   // Completion rate trend (last 7 days)
   const completionRateData = useMemo(() => {
@@ -155,14 +155,14 @@ export const ReportsAnalytics: React.FC = () => {
       const nextDate = new Date(date);
       nextDate.setDate(nextDate.getDate() + 1);
 
-      const dayRequests = requests.filter(
+      const dayRequests = tickets.filter(
         req => new Date(req.createdAt) >= date && new Date(req.createdAt) < nextDate
       );
-      const dayCompleted = requests.filter(
+      const dayCompleted = tickets.filter(
         req =>
-          req.completedAt &&
-          new Date(req.completedAt) >= date &&
-          new Date(req.completedAt) < nextDate
+          (req.updatedAt && req.status === "COMPLETED") &&
+          new Date(req.updatedAt) >= date &&
+          new Date(req.updatedAt) < nextDate
       );
 
       const rate = dayRequests.length > 0 ? Math.round((dayCompleted.length / dayRequests.length) * 100) : 0;
@@ -173,13 +173,13 @@ export const ReportsAnalytics: React.FC = () => {
       });
     }
     return data;
-  }, [requests, today]);
+  }, [tickets, today]);
 
   const handleExportReport = () => {
     const reportData = {
       generatedAt: new Date().toISOString(),
       summary: {
-        total: requests.length,
+        total: tickets.length,
         pending: pendingCount,
         inProgress: inProgressCount,
         completed: completedCount,

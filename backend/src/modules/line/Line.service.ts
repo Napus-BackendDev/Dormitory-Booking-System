@@ -54,7 +54,7 @@ export class LineService {
   async sendLineCreateTicket(ticket: Ticket) {
     const userIds = await this.prisma.line.findMany().then((lines) => lines.map((line) => line.userId));
 
-    const dueDate = new Date(ticket.dueAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+    const dueDate = new Date(ticket.responseDueAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
 
     const message = renderTemplate('line-ticket', { ...ticket, dueDate});
 
@@ -65,7 +65,7 @@ export class LineService {
   async sendLineUpdateTicket(ticket: Ticket) {
   const userIds = await this.prisma.line.findMany().then((lines) => lines.map((line) => line.userId));
 
-  const dueDate = new Date(ticket.dueAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+  const dueDate = new Date(ticket.resolveDueAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
 
   const message = renderTemplate('line-ticket', { ...ticket, dueDate });
 

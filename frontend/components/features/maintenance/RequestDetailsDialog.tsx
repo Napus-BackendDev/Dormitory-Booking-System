@@ -7,16 +7,15 @@ import {
   DialogTitle,
 } from '../../ui/dialog';
 import { Badge } from '../../ui/badge';
-import { Separator } from '../../ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
-import { Calendar, User, MapPin, Clock, Star, CheckCircle2, AlertCircle, Zap, Image as ImageIcon, Wrench, History } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import type { MaintenanceRequest } from '../../../contexts/MaintenanceContext';
+import { Calendar, User, Clock, Star, CheckCircle2, AlertCircle, Zap, Image as ImageIcon, Wrench, History } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useMaintenance } from '../../../contexts/MaintenanceContext';
 import { TicketTimeline } from '../../common/TicketTimeline';
+import { Ticket } from '@/types/Ticket';
 
 interface RequestDetailsDialogProps {
-  request: MaintenanceRequest;
+  request: Ticket;
   open: boolean;
   onClose: () => void;
 }
@@ -31,11 +30,11 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'pending':
+      case 'ASSIGNED':
         return 'รอดำเนินการ';
-      case 'in_progress':
+      case 'IN_PROGRESS':
         return 'กำลังซ่อม';
-      case 'completed':
+      case 'COMPLETED':
         return 'เสร็จสิ้น';
       default:
         return status;
@@ -57,17 +56,17 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'pending':
+      case 'ASSIGNED':
         return <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-200 border-0 flex items-center gap-1">
           <Clock className="w-3 h-3" />
           {getStatusText(status)}
         </Badge>;
-      case 'in_progress':
+      case 'IN_PROGRESS':
         return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 flex items-center gap-1">
           <Zap className="w-3 h-3" />
           {getStatusText(status)}
         </Badge>;
-      case 'completed':
+      case 'COMPLETED':
         return <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-0 flex items-center gap-1">
           <CheckCircle2 className="w-3 h-3" />
           {getStatusText(status)}
@@ -198,7 +197,7 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
             {/* Maintenance Type */}
-            {request.maintenanceTypeName && (
+            {/* {request.maintenanceTypeName && (
               <div className="p-4 bg-gradient-to-br from-red-50/50 to-white rounded-xl border border-red-100 hover:shadow-md transition-shadow duration-200">
                 <div className="flex items-start gap-3">
                   <div className="p-2 bg-red-100 rounded-lg">
@@ -210,9 +209,7 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
                   </div>
                 </div>
               </div>
-            )}
-
-
+            )} */}
 
             {/* Reporter */}
             <div className="p-4 bg-gradient-to-br from-purple-50/50 to-white rounded-xl border border-purple-100 hover:shadow-md transition-shadow duration-200">
@@ -279,7 +276,7 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
           </motion.div>
 
           {/* Assigned Technician */}
-          {request.assignedToName && (
+          {request.technicianName && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -292,14 +289,14 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 mb-1">ช่างผู้รับผิดชอบ</p>
-                  <p className="font-semibold text-red-600 text-lg">{request.assignedToName}</p>
+                  <p className="font-semibold text-red-600 text-lg">{request.technicianName}</p>
                 </div>
               </div>
             </motion.div>
           )}
 
           {/* Completion Info */}
-          {request.status === 'completed' && request.completedAt && (
+          {request.status === 'COMPLETED' && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -314,22 +311,6 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
               </div>
 
               <div className="space-y-4">
-                {/* Completion Date */}
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-4 h-4 text-green-600" />
-                  <div>
-                    <p className="text-xs text-gray-600">วันที่เสร็จสิ้น</p>
-                    <p className="text-sm font-semibold text-gray-900">
-                      {new Date(request.completedAt).toLocaleString('th-TH', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </p>
-                  </div>
-                </div>
 
                 {/* Rating */}
                 {request.rating && (
@@ -340,7 +321,7 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
                           <Star className="w-4 h-4 text-white fill-white" />
                         </div>
                         <div>
-                          <span className="text-sm font-semibold text-gray-700">คะแนนช่าง {request.assignedToName}</span>
+                          <span className="text-sm font-semibold text-gray-700">คะแนนช่าง {request.technicianName}</span>
                           <p className="text-xs text-gray-500">ความพึงพอใจในการให้บริการ</p>
                         </div>
                       </div>

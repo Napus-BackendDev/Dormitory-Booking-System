@@ -10,28 +10,28 @@ import { RequestDetailsDialog } from '../features/maintenance/RequestDetailsDial
 import { RatingDialog } from '../features/maintenance/RatingDialog';
 import { StatCard } from '../common/StatCard';
 import { motion } from 'framer-motion';
-import type { MaintenanceRequest } from '../../contexts/MaintenanceContext';
+import { Ticket } from '@/types/Ticket';
 
 export const UserDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { requests } = useMaintenance();
+  const { tickets } = useMaintenance();
   const [showRequestForm, setShowRequestForm] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null);
-  const [ratingRequest, setRatingRequest] = useState<MaintenanceRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<Ticket | null>(null);
+  const [ratingRequest, setRatingRequest] = useState<Ticket | null>(null);
 
-  const userRequests = requests.filter(req => req.userId === user?.id);
+  const userRequests = tickets.filter(req => req.userId === user?.id);
 
-  const pendingCount = userRequests.filter(req => req.status === 'pending').length;
-  const inProgressCount = userRequests.filter(req => req.status === 'in_progress').length;
-  const completedCount = userRequests.filter(req => req.status === 'completed').length;
+  const pendingCount = userRequests.filter(req => req.status === 'ASSIGNED').length;
+  const inProgressCount = userRequests.filter(req => req.status === 'IN_PROGRESS').length;
+  const completedCount = userRequests.filter(req => req.status === 'COMPLETED').length;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'pending':
+      case 'ASSIGNED':
         return <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-200 border-0">รอดำเนินการ</Badge>;
-      case 'in_progress':
+      case 'IN_PROGRESS':
         return <Badge className="bg-red-100 text-[#DC2626] hover:bg-red-200 border-0">กำลังซ่อม</Badge>;
-      case 'completed':
+      case 'COMPLETED':
         return <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-0">เสร็จสิ้น</Badge>;
       default:
         return <Badge>{status}</Badge>;
@@ -40,11 +40,11 @@ export const UserDashboard: React.FC = () => {
 
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
-      case 'high':
+      case 'P1':
         return <Badge className="bg-red-100 text-red-700 hover:bg-red-200 border-0">ด่วน</Badge>;
-      case 'medium':
+      case 'P2':
         return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200 border-0">ปานกลาง</Badge>;
-      case 'low':
+      case 'P3':
         return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-200 border-0">ต่ำ</Badge>;
       default:
         return <Badge>{priority}</Badge>;
@@ -201,8 +201,8 @@ export const UserDashboard: React.FC = () => {
                     
                     {/* Status indicator line */}
                     <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl ${
-                      request.status === 'pending' ? 'bg-orange-400' :
-                      request.status === 'in_progress' ? 'bg-blue-600' :
+                      request.status === 'ASSIGNED' ? 'bg-orange-400' :
+                      request.status === 'IN_PROGRESS' ? 'bg-blue-600' :
                       'bg-green-500'
                     }`}></div>
 
@@ -214,15 +214,10 @@ export const UserDashboard: React.FC = () => {
                           <div className="flex items-center gap-2 flex-wrap">
                             {getStatusBadge(request.status)}
                             {getPriorityBadge(request.priority)}
-                            {request.maintenanceTypeName && (
-                              <Badge variant="outline" className="border-red-300 text-red-700 bg-red-50">
-                                {request.maintenanceTypeName}
-                              </Badge>
-                            )}
                           </div>
-                          {request.assignedToName && (
+                          {request.technicianName && (
                             <p className="text-sm text-gray-500 mt-2">
-                              ผู้รับผิดชอบ: {request.assignedToName}
+                              ผู้รับผิดชอบ: {request.technicianName}
                             </p>
                           )}
                         </div>
@@ -230,7 +225,7 @@ export const UserDashboard: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2 relative z-10">
                       {/* Rating Button - show only for completed requests without rating */}
-                      {request.status === 'completed' && !request.rating && (
+                      {request.status === 'COMPLETED' && !request.rating && (
                         <Button
                           size="sm"
                           onClick={() => setRatingRequest(request)}

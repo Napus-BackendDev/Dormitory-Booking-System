@@ -8,7 +8,6 @@ export class LineController {
 
   @Post('webhook')
   async handleWebhook(@Body() body: any) {
-    console.log('📩 Webhook event:', body);
 
     const events = body.events;
     if (events && events.length > 0) {
@@ -19,10 +18,8 @@ export class LineController {
         const existingUser = await this.prisma.line.findUnique({ where: { userId } });
         if (!existingUser) {
           const userRecord = await this.prisma.line.create({ data: { userId } });
-          console.log('ℹ️ User does not exist in the database:', userRecord);
           return 'OK';
         } else {
-          console.log('ℹ️ User already exists in the database:');
           return 'OK';
         }
       }

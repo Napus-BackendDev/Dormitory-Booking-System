@@ -18,7 +18,12 @@ enum TicketPriority {
   P1
   P2
   P3
-  P4
+}
+
+enum TicketStatus {
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
 }
 
 enum TicketEventType {
@@ -35,37 +40,43 @@ enum AttachmentType {
 
 // Schema Models //
 model Ticket {
-  id           String         @id @default(cuid())
-  code         String         @unique
-  title        String
-  description  String
-  status       String
-  priority     TicketPriority
-  photo        Json?
-  dueAt        DateTime
-  createdAt    DateTime       @default(now())
-  repairTypeId String? // Foreign key to RepairType
-  locationId   String? // Foreign key to Location
+  id            String         @id @default(cuid())
+  code          String?
+  title         String
+  description   String
+  status        TicketStatus   @default(ASSIGNED)
+  priority      TicketPriority @default(P2)
+  photo         Json?
+  responseDueAt DateTime
+  resolveDueAt  DateTime
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime?
+  repairTypeId  String? // Foreign key to RepairType
+  locationId    String? // Foreign key to Location
+  userId        String?
+  technicianId  String?
 
   // Relations
-  repairType  RepairType?   @relation(fields: [repairTypeId], references: [id])
-  location    Location?     @relation(fields: [locationId], references: [id])
-  survey      Survey[]
+  repairType RepairType? @relation(fields: [repairTypeId], references: [id])
+  location   Location?   @relation(fields: [locationId], references: [id])
+  user       User?       @relation("user", fields: [userId], references: [id])
+  technician User?       @relation("technician", fields: [technicianId], references: [id])
+  survey     Survey[]
 
   // SLA Fields
-  slaResponseDueAt DateTime?
-  slaResolveDueAt  DateTime?
-  acknowledgedAt   DateTime?
-  resolvedAt       DateTime?
-  responseWarnAt   DateTime?
-  resolveWarnAt    DateTime?
-  responseBreached Boolean   @default(false)
-  resolvedBreached Boolean   @default(false)
+  // slaResponseDueAt DateTime?
+  // slaResolveDueAt  DateTime?
+  // acknowledgedAt   DateTime?
+  // resolvedAt       DateTime?
+  // responseWarnAt   DateTime?
+  // resolveWarnAt    DateTime?
+  // responseBreached Boolean   @default(false)
+  // resolvedBreached Boolean   @default(false)
 
-  onHoldSeconds Int @default(0)
+  // onHoldSeconds Int @default(0)
 
-  @@index([status, slaResponseDueAt])
-  @@index([status, slaResolveDueAt])
+  // @@index([status, slaResponseDueAt])
+  // @@index([status, slaResolveDueAt])
 }
 
 model Line {
@@ -122,5 +133,7 @@ model User {
   roleId    String? // Foreign key to Role
 
   // Relations
-  role Role? @relation(fields: [roleId], references: [id])
+  role            Role?    @relation(fields: [roleId], references: [id])
+  createdTickets  Ticket[] @relation("user")
+  assignedTickets Ticket[] @relation("technician")
 }

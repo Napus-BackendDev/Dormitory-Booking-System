@@ -24,8 +24,8 @@ export const SLAConfigDialog: React.FC<SLAConfigDialogProps> = ({ open, onClose 
   
   // Default SLA values (in hours)
   const DEFAULT_SLA = {
-    high: 4,
-    medium: 24,
+    high: 24,
+    medium: 48,
     low: 72,
   };
   

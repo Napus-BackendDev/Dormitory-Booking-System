@@ -23,7 +23,6 @@ import {
   BarChart3
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import type { MaintenanceRequest } from '../../../contexts/MaintenanceContext';
 
 interface TechnicianDetailDialogProps {
   open: boolean;
@@ -38,13 +37,13 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
   technicianId,
   technicianName 
 }) => {
-  const { requests } = useMaintenance();
+  const { tickets } = useMaintenance();
 
-  // Filter requests for this technician
-  const technicianRequests = requests.filter(req => req.assignedTo === technicianId);
-  const completedRequests = technicianRequests.filter(req => req.status === 'completed');
-  const inProgressRequests = technicianRequests.filter(req => req.status === 'in_progress');
-  const pendingRequests = technicianRequests.filter(req => req.status === 'pending');
+  // Filter requests for this technician (use technicianId)
+  const technicianRequests = tickets.filter(req => req.technicianId === technicianId);
+  const completedRequests = technicianRequests.filter(req => req.status === 'COMPLETED');
+  const inProgressRequests = technicianRequests.filter(req => req.status === 'IN_PROGRESS');
+  const pendingRequests = technicianRequests.filter(req => req.status === 'ASSIGNED');
 
   // Calculate ratings
   const ratedRequests = completedRequests.filter(req => req.rating !== undefined);
@@ -54,8 +53,7 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
 
   // Get feedback
   const feedbackList = completedRequests
-    .filter(req => req.feedback)
-    .sort((a, b) => new Date(b.completedAt || b.updatedAt).getTime() - new Date(a.completedAt || a.updatedAt).getTime());
+    .filter(req => req.status === 'COMPLETED');
 
   // Calculate rating distribution
   const ratingDistribution = [5, 4, 3, 2, 1].map(stars => ({
@@ -241,13 +239,6 @@ export const TechnicianDetailDialog: React.FC<TechnicianDetailDialogProps> = ({
                           <Badge className="bg-[#FFB81C]/10 text-[#FFB81C] border-0 text-xs">
                             {request.rating}/5
                           </Badge>
-                        </div>
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <Calendar className="w-3 h-3" />
-                          {request.completedAt && new Date(request.completedAt).toLocaleDateString('th-TH', {
-                            day: 'numeric',
-                            month: 'short'
-                          })}
                         </div>
                       </div>
                       <p className="text-sm text-gray-900 italic mb-2">&ldquo;{request.feedback}&rdquo;</p>

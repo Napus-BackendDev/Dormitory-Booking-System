@@ -12,13 +12,11 @@ export class UserController {
     constructor(private userService: UserService) { }
 
     @Get()
-    @Roles("USER", "STAFF", "ADMIN")
     async getAllUsers() {
         return this.userService.getAllUsers();
     }
 
     @Get('admin-user')
-    @Roles("ADMIN")
     async getAdminUser() {
         return this.userService.getAdminUser();
     }
@@ -28,8 +26,6 @@ export class UserController {
     async deleteAllUsers() {
         return this.userService.deleteAllUsers();
     }
-
-
 
     @Put('/manage-access/:id')
     @Roles("USER")

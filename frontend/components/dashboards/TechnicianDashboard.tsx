@@ -10,47 +10,72 @@ import { RequestDetailsDialog } from '../features/maintenance/RequestDetailsDial
 import { StatCard } from '../common/StatCard';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
-import type { MaintenanceRequest } from '../../contexts/MaintenanceContext';
+import { Ticket, TicketPriority } from '@/types/Ticket';
 
 export const TechnicianDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { requests, assignRequest, updateRequestStatus, slaSettings } = useMaintenance();
-  const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null);
+  const { tickets, assign, complete, slaSettings, refetch } = useMaintenance();
+  const [selectedRequest, setSelectedRequest] = useState<Ticket | null>(null);
 
-  const pendingRequests = requests.filter(req => req.status === 'pending');
-  const inProgressRequests = requests.filter(req => req.status === 'in_progress');
-  const completedRequests = requests.filter(req => req.status === 'completed');
+  const pendingRequests = tickets.filter(req => req.status === 'ASSIGNED');
+  const inProgressRequests = tickets.filter(req => req.status === 'IN_PROGRESS');
+  const completedRequests = tickets.filter(req => req.status === 'COMPLETED');
 
-  const myRequests = requests.filter(req => req.assignedTo === user?.id);
-  const myInProgress = myRequests.filter(req => req.status === 'in_progress');
-  const myCompleted = myRequests.filter(req => req.status === 'completed');
+  const myRequests = tickets.filter(req => req.technicianId === user?.id);
+  const myInProgress = myRequests.filter(req => req.status === 'IN_PROGRESS');
+  const myCompleted = myRequests.filter(req => req.status === 'COMPLETED');
 
   // Calculate average rating
   const ratedRequests = myCompleted.filter(req => req.rating !== undefined);
-  const averageRating = ratedRequests.length > 0 
-    ? ratedRequests.reduce((sum, req) => sum + (req.rating || 0), 0) / ratedRequests.length 
+  const averageRating = ratedRequests.length > 0
+    ? ratedRequests.reduce((sum, req) => sum + (req.rating || 0), 0) / ratedRequests.length
     : 0;
 
-  const handleAcceptJob = (request: MaintenanceRequest) => {
+  const priorityMap: Record<TicketPriority, keyof typeof slaSettings> = {
+    P1: 'high',
+    P2: 'medium',
+    P3: 'low',
+  };
+
+  const handleAcceptTicket = async (request: Ticket) => {
     if (!user) return;
-    assignRequest(request.id, user.id, user.name);
-    toast.success('รับงานสำเร็จ', {
-      description: `คุณได้รับงาน "${request.title}" แล้ว`,
-    });
+    try {
+      await assign(request.id, user.id);
+
+      // Refresh tickets from backend so component shows latest data
+      if (refetch) await refetch();
+
+      toast.success('รับงานสำเร็จ', {
+        description: `คุณได้รับงาน "${request.title}" แล้ว`,
+      });
+    } catch (err) {
+      console.error('Accept failed', err);
+      toast.error('ไม่สามารถรับงานได้', { description: String(err || 'เกิดข้อผิดพลาด') });
+    }
   };
 
-  const handleCompleteJob = (request: MaintenanceRequest) => {
-    updateRequestStatus(request.id, 'completed');
-    toast.success('อัปเดตสถานะสำเร็จ', {
-      description: `งาน "${request.title}" เสร็จสิ้นแล้ว`,
-    });
+  const handleCompleteTicket = async (request: Ticket) => {
+    if (!user) return;
+    try {
+      await complete(request.id, user.id);
+
+      // Refresh tickets from backend so component shows latest data
+      if (refetch) await refetch();
+
+      toast.success('อัปเดตสถานะสำเร็จ', {
+        description: `งาน "${request.title}" เสร็จสิ้นแล้ว`,
+      });
+    } catch (err) {
+      console.error('Complete failed', err);
+      toast.error('ไม่สามารถอัปเดตสถานะได้', { description: String(err || 'เกิดข้อผิดพลาด') });
+    }
   };
 
-  const checkSLA = (request: MaintenanceRequest) => {
+  const checkSLA = (request: Ticket) => {
     const now = new Date();
     const createdAt = new Date(request.createdAt);
     const hoursPassed = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
-    const slaLimit = slaSettings[request.priority];
+    const slaLimit = slaSettings[priorityMap[request.priority]];
     return hoursPassed > slaLimit;
   };
 
@@ -67,7 +92,7 @@ export const TechnicianDashboard: React.FC = () => {
     }
   };
 
-  const renderRequestCard = (request: MaintenanceRequest, showActions: boolean = false) => {
+  const renderRequestCard = (request: Ticket, showActions: boolean = false) => {
     const isOverSLA = checkSLA(request);
 
     return (
@@ -75,22 +100,20 @@ export const TechnicianDashboard: React.FC = () => {
         key={request.id}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`group relative p-5 border rounded-2xl hover:shadow-xl transition-all duration-300 overflow-hidden ${
-          isOverSLA && request.status !== 'completed' 
-            ? 'border-red-300 bg-gradient-to-br from-red-50/80 to-white shadow-md' 
+        className={`group relative p-5 border rounded-2xl hover:shadow-xl transition-all duration-300 overflow-hidden ${isOverSLA && request.status !== 'COMPLETED'
+            ? 'border-red-300 bg-gradient-to-br from-red-50/80 to-white shadow-md'
             : 'border-gray-200 bg-gradient-to-br from-white to-gray-50/30 hover:border-[#DC2626]/30'
-        }`}
+          }`}
       >
         {/* Hover effect background */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#DC2626]/5 to-[#FFB81C]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        
+
         {/* Status indicator line */}
-        <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl ${
-          isOverSLA && request.status !== 'completed' ? 'bg-red-500' :
-          request.priority === 'high' ? 'bg-red-400' :
-          request.priority === 'medium' ? 'bg-amber-400' :
-          'bg-blue-500'
-        }`}></div>
+        <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl ${isOverSLA && request.status !== 'COMPLETED' ? 'bg-red-500' :
+            request.priority === 'P1' ? 'bg-red-400' :
+              request.priority === 'P2' ? 'bg-amber-400' :
+                'bg-blue-500'
+          }`}></div>
 
         <div className="relative z-10">
           <div className="flex items-start justify-between mb-3">
@@ -98,7 +121,7 @@ export const TechnicianDashboard: React.FC = () => {
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <h3 className="font-semibold text-gray-900">{request.title}</h3>
                 {getPriorityBadge(request.priority)}
-                {isOverSLA && request.status !== 'completed' && (
+                {isOverSLA && request.status !== 'COMPLETED' && (
                   <Badge variant="destructive" className="text-xs flex items-center gap-1">
                     <AlertTriangle className="w-3 h-3" />
                     เกิน SLA
@@ -117,8 +140,8 @@ export const TechnicianDashboard: React.FC = () => {
                     minute: '2-digit',
                   })}
                 </span>
-                {request.assignedToName && (
-                  <span className="text-[#DC2626] font-medium">ผู้รับผิดชอบ: {request.assignedToName}</span>
+                {request.technicianName && (
+                  <span className="text-[#DC2626] font-medium">ผู้รับผิดชอบ: {request.technicianName}</span>
                 )}
               </div>
             </div>
@@ -135,20 +158,20 @@ export const TechnicianDashboard: React.FC = () => {
             </Button>
             {showActions && (
               <>
-                {request.status === 'pending' && (
+                {request.status === 'ASSIGNED' && (
                   <Button
                     size="sm"
-                    onClick={() => handleAcceptJob(request)}
+                    onClick={() => handleAcceptTicket(request)}
                     className="bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
                   >
                     <UserCheck className="w-4 h-4 mr-1" />
                     รับงาน
                   </Button>
                 )}
-                {request.status === 'in_progress' && request.assignedTo === user?.id && (
+                {request.status === 'IN_PROGRESS' && request.technicianId === user?.id && (
                   <Button
                     size="sm"
-                    onClick={() => handleCompleteJob(request)}
+                    onClick={() => handleCompleteTicket(request)}
                     className="bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
                   >
                     <CheckCircle className="w-4 h-4 mr-1" />
@@ -176,13 +199,13 @@ export const TechnicianDashboard: React.FC = () => {
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-50"></div>
         </div>
-        
+
         {/* Floating orbs */}
         <div className="absolute top-10 right-20 w-32 h-32 bg-[#FFB81C]/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 left-20 w-40 h-40 bg-[#FFB81C]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        
+
         <div className="relative text-white space-y-2">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -191,7 +214,7 @@ export const TechnicianDashboard: React.FC = () => {
             <Wrench className="w-8 h-8 text-[#FFB81C]" />
             แดชบอร์ดช่าง
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
@@ -212,7 +235,7 @@ export const TechnicianDashboard: React.FC = () => {
         >
           <StatCard
             title="งานของฉัน (รอดำเนินการ)"
-            value={myRequests.filter(r => r.status === 'pending').length}
+            value={myRequests.filter(r => r.status === 'ASSIGNED').length}
             description="งานที่รับไปแล้ว"
             icon={Clock}
             iconColor="text-orange-600"
@@ -282,11 +305,10 @@ export const TechnicianDashboard: React.FC = () => {
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star
                       key={star}
-                      className={`w-4 h-4 ${
-                        star <= Math.round(averageRating)
+                      className={`w-4 h-4 ${star <= Math.round(averageRating)
                           ? 'text-[#FFB81C] fill-[#FFB81C]'
                           : 'text-gray-300'
-                      }`}
+                        }`}
                     />
                   ))}
                 </div>
@@ -317,19 +339,19 @@ export const TechnicianDashboard: React.FC = () => {
           <CardContent className="pt-6">
             <Tabs defaultValue="pending" className="w-full">
               <TabsList className="grid w-full grid-cols-3 bg-gray-100/80 p-1 rounded-xl">
-                <TabsTrigger 
+                <TabsTrigger
                   value="pending"
                   className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#DC2626] data-[state=active]:to-[#B91C1C] data-[state=active]:text-white rounded-lg transition-all duration-200"
                 >
                   รอรับงาน ({pendingRequests.length})
                 </TabsTrigger>
-                <TabsTrigger 
+                <TabsTrigger
                   value="in_progress"
                   className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#DC2626] data-[state=active]:to-[#B91C1C] data-[state=active]:text-white rounded-lg transition-all duration-200"
                 >
                   กำลังซ่อม ({inProgressRequests.length})
                 </TabsTrigger>
-                <TabsTrigger 
+                <TabsTrigger
                   value="completed"
                   className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#DC2626] data-[state=active]:to-[#B91C1C] data-[state=active]:text-white rounded-lg transition-all duration-200"
                 >

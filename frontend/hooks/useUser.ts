@@ -10,7 +10,10 @@ export default function useUser() {
         setError(null);
         setLoading(true);
         try {
-            const res = await fetch(`/user`, { method: "GET", credentials: "include" });
+            const res = await fetch(`/user`, {
+                method: "GET",
+                credentials: "include"
+            });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Fetch users failed");
             setUsers(data);

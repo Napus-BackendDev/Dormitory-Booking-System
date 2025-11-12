@@ -26,49 +26,55 @@ import { SLAConfigDialog } from '../features/maintenance/SLAConfigDialog';
 import { TechnicianDetailDialog } from '../features/maintenance/TechnicianDetailDialog';
 import { StatCard } from '../common/StatCard';
 import { motion } from 'framer-motion';
-import type { MaintenanceRequest, RequestStatus, RequestPriority } from '../../contexts/MaintenanceContext';
+import { Ticket, TicketPriority, TicketStatus } from '@/types/Ticket';
 
 export const SupervisorDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { requests, slaSettings } = useMaintenance();
-  const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null);
+  const { tickets, slaSettings } = useMaintenance();
+  const [selectedRequest, setSelectedRequest] = useState<Ticket | null>(null);
   const [showSLAConfig, setShowSLAConfig] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<RequestStatus | 'all'>('all');
-  const [priorityFilter, setPriorityFilter] = useState<RequestPriority | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<TicketStatus | 'all'>('all');
+  const [priorityFilter, setPriorityFilter] = useState<TicketPriority | 'all'>('all');
   const [selectedTechnicianId, setSelectedTechnicianId] = useState<string | null>(null);
   const [selectedTechnicianName, setSelectedTechnicianName] = useState<string>('');
 
   // Calculate statistics
-  const pendingCount = requests.filter(req => req.status === 'pending').length;
-  const inProgressCount = requests.filter(req => req.status === 'in_progress').length;
-  const completedCount = requests.filter(req => req.status === 'completed').length;
+  const pendingCount = tickets.filter(req => req.status === 'ASSIGNED').length;
+  const inProgressCount = tickets.filter(req => req.status === 'IN_PROGRESS').length;
+  const completedCount = tickets.filter(req => req.status === 'COMPLETED').length;
 
-  const checkSLA = (request: MaintenanceRequest) => {
+  const priorityMap: Record<TicketPriority, keyof typeof slaSettings> = {
+    P1: 'high',
+    P2: 'medium',
+    P3: 'low',
+  };
+
+  const checkSLA = (request: Ticket) => {
     const now = new Date();
     const createdAt = new Date(request.createdAt);
     const hoursPassed = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
-    const slaLimit = slaSettings[request.priority];
+    const slaLimit = slaSettings[priorityMap[request.priority]];
     return hoursPassed > slaLimit;
   };
 
-  const overSLACount = requests.filter(
-    req => req.status !== 'completed' && checkSLA(req)
+  const overSLACount = tickets.filter(
+    req => req.status !== 'COMPLETED' && checkSLA(req)
   ).length;
 
   // Get unique technicians
   const technicians = Array.from(
     new Set(
-      requests
-        .filter(req => req.assignedTo && req.assignedToName)
-        .map(req => JSON.stringify({ id: req.assignedTo, name: req.assignedToName }))
+      tickets
+        .filter(req => req.technicianId && req.technicianName)
+        .map(req => JSON.stringify({ id: req.technicianId, name: req.technicianName }))
     )
   ).map(str => JSON.parse(str));
 
   // Calculate technician stats
   const technicianStats = technicians.map(tech => {
-    const techRequests = requests.filter(req => req.assignedTo === tech.id);
-    const completed = techRequests.filter(req => req.status === 'completed');
-    const rated = completed.filter(req => req.rating !== undefined);
+  const techRequests = tickets.filter(req => req.technicianId === tech.id);
+  const completed = techRequests.filter(req => req.status === 'COMPLETED');
+  const rated = completed.filter(req => req.rating !== undefined);
     const avgRating = rated.length > 0 
       ? rated.reduce((sum, req) => sum + (req.rating || 0), 0) / rated.length 
       : 0;
@@ -77,39 +83,39 @@ export const SupervisorDashboard: React.FC = () => {
       ...tech,
       totalJobs: techRequests.length,
       completedJobs: completed.length,
-      inProgressJobs: techRequests.filter(req => req.status === 'in_progress').length,
+  inProgressJobs: techRequests.filter(req => req.status === 'IN_PROGRESS').length,
       averageRating: avgRating,
       ratedCount: rated.length,
     };
   }).sort((a, b) => b.averageRating - a.averageRating);
 
   // Filter requests
-  const filteredRequests = requests.filter(req => {
+  const filteredRequests = tickets.filter(req => {
     if (statusFilter !== 'all' && req.status !== statusFilter) return false;
     if (priorityFilter !== 'all' && req.priority !== priorityFilter) return false;
     return true;
   });
 
-  const getPriorityBadge = (priority: string) => {
+  const getPriorityBadge = (priority: TicketPriority) => {
     switch (priority) {
-      case 'high':
+      case 'P1':
         return <Badge className="bg-red-100 text-red-700 hover:bg-red-200 border-0">ด่วน</Badge>;
-      case 'medium':
+      case 'P2':
         return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200 border-0">ปานกลาง</Badge>;
-      case 'low':
+      case 'P3':
         return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-200 border-0">ต่ำ</Badge>;
       default:
         return <Badge>{priority}</Badge>;
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: TicketStatus) => {
     switch (status) {
-      case 'pending':
+      case 'ASSIGNED':
         return <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-200 border-0">รอดำเนินการ</Badge>;
-      case 'in_progress':
+      case 'IN_PROGRESS':
         return <Badge className="bg-red-100 text-[#DC2626] hover:bg-red-200 border-0">กำลังซ่อม</Badge>;
-      case 'completed':
+      case 'COMPLETED':
         return <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-0">เสร็จสิ้น</Badge>;
       default:
         return <Badge>{status}</Badge>;
@@ -117,8 +123,8 @@ export const SupervisorDashboard: React.FC = () => {
   };
 
   const calculateCompletionRate = () => {
-    if (requests.length === 0) return 0;
-    return Math.round((completedCount / requests.length) * 100);
+    if (tickets.length === 0) return 0;
+    return Math.round((completedCount / tickets.length) * 100);
   };
 
   return (
@@ -410,31 +416,31 @@ export const SupervisorDashboard: React.FC = () => {
             <div className="flex gap-3 mt-4 flex-wrap">
               <div className="flex items-center gap-2 flex-1 min-w-[200px]">
                 <Filter className="w-4 h-4 text-gray-500" />
-                <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as RequestStatus | 'all')}>
+                <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as TicketStatus | 'all')}>
                   <SelectTrigger className="bg-white border-gray-300 focus:ring-[#DC2626] focus:border-[#DC2626]">
                     <SelectValue placeholder="กรองตามสถานะ" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">ทุกสถานะ</SelectItem>
-                    <SelectItem value="pending">รอดำเนินการ</SelectItem>
-                    <SelectItem value="in_progress">กำลังซ่อม</SelectItem>
-                    <SelectItem value="completed">เสร็จสิ้น</SelectItem>
-                  </SelectContent>
+                      <SelectItem value="all">ทุกสถานะ</SelectItem>
+                      <SelectItem value="ASSIGNED">รอดำเนินการ</SelectItem>
+                      <SelectItem value="IN_PROGRESS">กำลังซ่อม</SelectItem>
+                      <SelectItem value="COMPLETED">เสร็จสิ้น</SelectItem>
+                    </SelectContent>
                 </Select>
               </div>
 
               <div className="flex items-center gap-2 flex-1 min-w-[200px]">
                 <Filter className="w-4 h-4 text-gray-500" />
-                <Select value={priorityFilter} onValueChange={(value) => setPriorityFilter(value as RequestPriority | 'all')}>
+                <Select value={priorityFilter} onValueChange={(value) => setPriorityFilter(value as TicketPriority | 'all')}>
                   <SelectTrigger className="bg-white border-gray-300 focus:ring-[#DC2626] focus:border-[#DC2626]">
                     <SelectValue placeholder="กรองตามความสำคัญ" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">ทุกระดับ</SelectItem>
-                    <SelectItem value="high">ด่วน</SelectItem>
-                    <SelectItem value="medium">ปานกลาง</SelectItem>
-                    <SelectItem value="low">ต่ำ</SelectItem>
-                  </SelectContent>
+                      <SelectItem value="all">ทุกระดับ</SelectItem>
+                      <SelectItem value="P1">ด่วน</SelectItem>
+                      <SelectItem value="P2">ปานกลาง</SelectItem>
+                      <SelectItem value="P3">ต่ำ</SelectItem>
+                    </SelectContent>
                 </Select>
               </div>
             </div>
@@ -457,7 +463,7 @@ export const SupervisorDashboard: React.FC = () => {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.05 * index }}
                       className={`group relative p-5 border rounded-2xl hover:shadow-xl transition-all duration-300 overflow-hidden ${
-                        isOverSLA && request.status !== 'completed'
+                        isOverSLA && request.status !== 'COMPLETED'
                           ? 'border-red-300 bg-gradient-to-br from-red-50/80 to-white shadow-md'
                           : 'border-gray-200 bg-gradient-to-br from-white to-gray-50/30 hover:border-[#002D72]/30'
                       }`}
@@ -467,9 +473,9 @@ export const SupervisorDashboard: React.FC = () => {
                       
                       {/* Status indicator line */}
                       <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl ${
-                        isOverSLA && request.status !== 'completed' ? 'bg-red-500' :
-                        request.status === 'completed' ? 'bg-green-500' :
-                        request.status === 'in_progress' ? 'bg-blue-600' :
+                        isOverSLA && request.status !== 'COMPLETED' ? 'bg-red-500' :
+                        request.status === 'COMPLETED' ? 'bg-green-500' :
+                        request.status === 'IN_PROGRESS' ? 'bg-blue-600' :
                         'bg-orange-400'
                       }`}></div>
 
@@ -480,7 +486,7 @@ export const SupervisorDashboard: React.FC = () => {
                               <h3 className="font-semibold text-gray-900">{request.title}</h3>
                               {getStatusBadge(request.status)}
                               {getPriorityBadge(request.priority)}
-                              {isOverSLA && request.status !== 'completed' && (
+                              {isOverSLA && request.status !== 'COMPLETED' && (
                                 <Badge variant="destructive" className="text-xs flex items-center gap-1">
                                   <AlertTriangle className="w-3 h-3" />
                                   เกิน SLA
@@ -499,9 +505,9 @@ export const SupervisorDashboard: React.FC = () => {
                                   minute: '2-digit',
                                 })}
                               </span>
-                              {request.assignedToName && (
+                              {request.technicianName && (
                                 <span className="text-[#002D72] font-medium">
-                                  ผู้รับผิดชอบ: {request.assignedToName}
+                                  ผู้รับผิดชอบ: {request.technicianName}
                                 </span>
                               )}
                             </div>

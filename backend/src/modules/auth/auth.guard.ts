@@ -16,7 +16,6 @@ export class AuthGuard implements CanActivate {
         const token = this.extractTokenFromHeader(request) || this.extractTokenFromCookie(request);
 
         if (!token) {
-            console.log('No token found in request (checked header and cookie)');
             throw new UnauthorizedException('No token provided');
         }
 
@@ -27,7 +26,6 @@ export class AuthGuard implements CanActivate {
 
             // Attach the decoded token payload to the request
             request['user'] = payload;
-            console.log('Token verified successfully:', payload);
             return true;
         } catch (error) {
             console.error('Token verification failed:', error.message);

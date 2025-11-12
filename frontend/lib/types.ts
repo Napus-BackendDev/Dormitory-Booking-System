@@ -27,27 +27,6 @@ export interface User {
   createdAt: Date
 }
 
-export interface MaintenanceRequest {
-  id: string
-  title: string
-  description: string
-  category: RequestCategory
-  priority: RequestPriority
-  status: RequestStatus
-  location: string
-  images?: string[]
-  userId: string
-  userName: string
-  technicianId?: string
-  technicianName?: string
-  createdAt: Date
-  updatedAt: Date
-  acceptedAt?: Date
-  completedAt?: Date
-  rejectedReason?: string
-  rating?: number
-  feedback?: string
-}
 
 export interface SLAConfig {
   low: number      // hours

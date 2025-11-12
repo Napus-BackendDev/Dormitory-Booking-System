@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
-import type {TicketPriority} from "../../../types/Ticket";
+import type { TicketPriority, TicketStatus } from "../../../types/Ticket";
 import { useBuildings } from "../../../contexts/BuildingContext";
 import {
   Dialog,
@@ -23,9 +23,8 @@ import {
 import { toast } from "sonner";
 import { Wrench, AlertCircle, Zap, Send, Image, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { RequestPriority } from "../../../contexts/MaintenanceContext";
+import type { } from "../../../contexts/MaintenanceContext";
 import useTicket from "../../../hooks/useTicket";
-import { useMaintenance } from '../../../contexts/MaintenanceContext';
 
 interface MaintenanceRequestFormProps {
   open: boolean;
@@ -35,14 +34,15 @@ interface MaintenanceRequestFormProps {
 export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({ open, onClose }) => {
   const { user } = useAuth();
   const { create } = useTicket();
-  const { addRequest } = useMaintenance();
   const { maintenanceTypes } = useBuildings();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [maintenanceType, setMaintenanceType] = useState("");
-  const [priority, setPriority] = useState<RequestPriority>("medium");
+  const [priority, setPriority] = useState<TicketPriority>("P2");
   const [photos, setPhotos] = useState<File[]>([]);
+
+  const now = new Date();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -55,7 +55,6 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({ 
       return;
     }
 
-    // ตรวจสอบไฟล์ก่อนเพิ่ม
     const validFiles = newFiles.filter((file) => {
       if (file.size > 5 * 1024 * 1024) {
         toast.error(`ไฟล์ ${file.name} มีขนาดใหญ่เกิน 5MB`);
@@ -81,44 +80,30 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({ 
     if (!user) return;
 
     try {
-      // create on server
-      const created = await create({
+
+      const res = await create({
         title,
         description,
-        status: "pending",
-        priority: priority as TicketPriority,
-        repairTypeId: maintenanceType,
+        status: "ASSIGNED", 
+        priority: priority,
         photo: photos,
-        dueAt: new Date().toISOString(),
+        // SLA P2 Mockup
+        responseDueAt: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(),
+        resolveDueAt: new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString(),
+        userId: user.id,
       });
 
-      // Optimistically add to maintenance context for immediate UI update
-      try {
-        const maintenanceTypeName = maintenanceTypes.find((t: any) => t.id === maintenanceType)?.name;
-        addRequest({
-          userId: user.id,
-          userName: user.name,
-          maintenanceType: maintenanceType || undefined,
-          maintenanceTypeName: maintenanceTypeName || undefined,
-          title: created?.title ?? title,
-          description: created?.description ?? description,
-          images: created?.photo ? (Array.isArray(created.photo) ? created.photo : [created.photo]) : [],
-          priority: (created?.priority as any) ?? priority,
+      if (res) {
+        toast.success("แจ้งซ่อมสำเร็จ 🎉", {
+          description: "ทีมงานจะดำเนินการตรวจสอบโดยเร็วที่สุด",
         });
-      } catch (err) {
-        // if addRequest fails, ignore — the fetch/merge from API will still occur
-        console.warn('addRequest failed', err);
       }
-
-      toast.success("แจ้งซ่อมสำเร็จ 🎉", {
-        description: "ทีมงานจะดำเนินการตรวจสอบโดยเร็วที่สุด",
-      });
 
       // reset form
       setTitle("");
       setDescription("");
       setMaintenanceType("");
-      setPriority("medium");
+      setPriority("P2");
       setPhotos([]);
       onClose();
     } catch (err) {
@@ -277,7 +262,7 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({ 
               <Zap className="w-4 h-4 text-[#FCD34D]" />
               ระดับความเร่งด่วน
             </Label>
-            <Select value={priority} onValueChange={(v) => setPriority(v as RequestPriority)}>
+            <Select value={priority} onValueChange={(v) => setPriority(v as TicketPriority)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>

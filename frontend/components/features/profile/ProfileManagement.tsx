@@ -15,19 +15,20 @@ import {
 
 export const ProfileManagement: React.FC = () => {
   const { user } = useAuth();
-  const { requests } = useMaintenance();
+  const { tickets } = useMaintenance();
 
   if (!user) return null;
 
   // Calculate user statistics
-  const userRequests = requests.filter(req => req.userId === user.id);
-  const completedRequests = userRequests.filter(req => req.status === 'completed');
-  const pendingRequests = userRequests.filter(req => req.status === 'pending');
-  const inProgressRequests = userRequests.filter(req => req.status === 'in_progress');
+  const userRequests = tickets.filter(req => req.userId === user.id);
+  const completedRequests = userRequests.filter(req => req.status === 'COMPLETED');
+  const pendingRequests = userRequests.filter(req => req.status === 'ASSIGNED');
+  const inProgressRequests = userRequests.filter(req => req.status === 'IN_PROGRESS');
 
   // For technicians, show assigned tasks
-  const assignedRequests = requests.filter(req => req.assignedTo === user.id);
-  const completedAssigned = assignedRequests.filter(req => req.status === 'completed');
+  // tickets now use `technicianId` (previously `assignedTo`)
+  const assignedRequests = tickets.filter(req => req.technicianId === user.id);
+  const completedAssigned = assignedRequests.filter(req => req.status === 'COMPLETED');
 
   const getRoleText = (role: string) => {
     switch (role) {
@@ -175,7 +176,7 @@ export const ProfileManagement: React.FC = () => {
                     <ClipboardList className="w-4 h-4 text-gray-500" />
                     <span className="text-sm">งานทั้งหมด</span>
                   </div>
-                  <span className="text-lg">{requests.length}</span>
+                  <span className="text-lg">{tickets.length}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -184,7 +185,7 @@ export const ProfileManagement: React.FC = () => {
                     <span className="text-sm">เสร็จสิ้น</span>
                   </div>
                   <span className="text-lg">
-                    {requests.filter(req => req.status === 'completed').length}
+                    {tickets.filter(req => req.status === 'COMPLETED').length}
                   </span>
                 </div>
 
@@ -194,10 +195,10 @@ export const ProfileManagement: React.FC = () => {
                     <span className="text-sm">อัตราสำเร็จ</span>
                   </div>
                   <span className="text-lg">
-                    {requests.length > 0
+                    {tickets.length > 0
                       ? Math.round(
-                          (requests.filter(req => req.status === 'completed').length /
-                            requests.length) *
+              (tickets.filter(req => req.status === 'COMPLETED').length /
+                tickets.length) *
                             100
                         )
                       : 0}
@@ -253,7 +254,7 @@ export const ProfileManagement: React.FC = () => {
               <div className="p-4 bg-blue-50 rounded-lg">
                 <p className="text-sm text-gray-600 mb-1">กำลังดำเนินการ</p>
                 <p className="text-2xl">
-                  {assignedRequests.filter(req => req.status === 'in_progress').length}
+                  {assignedRequests.filter(req => req.status === 'IN_PROGRESS').length}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">รายการ</p>
               </div>

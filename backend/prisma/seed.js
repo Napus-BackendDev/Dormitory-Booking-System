@@ -32,7 +32,6 @@ async function run() {
       }
     }
 
-    console.log('Database seeding completed.');
   } finally {
     await prisma.$disconnect();
   }

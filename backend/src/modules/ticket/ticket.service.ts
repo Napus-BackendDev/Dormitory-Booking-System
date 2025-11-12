@@ -3,10 +3,9 @@ import { Ticket, User } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
-import { SLA_CONSTANTS} from 'src/common/constants/sla.constant';
+import { SLA_CONSTANTS } from 'src/common/constants/sla.constant';
 import { RecieveTicketMailer } from 'src/common/email/mail-temp/recieve.confirm';
 import { EmailService } from 'src/common/email/email.service';
-import { WorkDoneMailer } from 'src/common/email/mail-temp/workdone.confirm';
 import { LineService } from '../line/Line.service';
 import { generateImageUrl } from '../../common/utils/utils';
 
@@ -16,15 +15,15 @@ export class TicketService {
     private prisma: PrismaService,
     private lineService: LineService,
     private emailService: EmailService
-  ) {}
+  ) { }
 
   private computeSLA(priority: 'P1' | 'P2' | 'P3' | 'P4', now = new Date()) {
     const responseMs = SLA_CONSTANTS.response[priority];
     const resolveMs = SLA_CONSTANTS.resolve[priority];
 
     return {
-      slaResponseDueAt: now.getTime() + responseMs,
-      slaResolveDueAt: now.getTime() + resolveMs,
+      responseDueAt: now.getTime() + responseMs,
+      resolveDueAt: now.getTime() + resolveMs,
     };
   }
 
@@ -38,24 +37,23 @@ export class TicketService {
 
 
   async create(createTicketDto: CreateTicketDto, photos: Express.Multer.File[], user: User): Promise<Ticket> {
-    // Send email notification to the user who created the ticket
     try {
       await RecieveTicketMailer(this.emailService, user.email);
     } catch (error) {
       console.error('Failed to send ticket confirmation email:', error);
-      // Don't fail the ticket creation if email fails
     }
 
     const photoUrls = photos.map(file => generateImageUrl(file.filename));
 
-    const { slaResponseDueAt, slaResolveDueAt } = this.computeSLA(createTicketDto.priority);
+    const { responseDueAt, resolveDueAt } = this.computeSLA(createTicketDto.priority);
     const ticket = await this.prisma.ticket.create({
       data: {
         ...createTicketDto,
+        status: createTicketDto.status,
         photo: photoUrls,
         createdAt: new Date(),
-        slaResponseDueAt: new Date(slaResponseDueAt),
-        slaResolveDueAt: new Date(slaResolveDueAt),
+        responseDueAt: new Date(responseDueAt),
+        resolveDueAt: new Date(resolveDueAt),
       },
     });
 
@@ -64,22 +62,21 @@ export class TicketService {
     return ticket;
   }
 
-  async update(id: string, updateTicketsDto: UpdateTicketDto, user: any): Promise<Ticket> {
-    const data: any = {
-      status: updateTicketsDto.status,
-      TicketEvent: {
-        create: {
-          type: 'STATUS_UPDATED',
-          createdBy: user.sub, // Use user ID from JWT
-        },
-      },
-    };
+  async update(id: string, updateTicketDto: UpdateTicketDto): Promise<Ticket> {
+    // const data = {
+    //   status: updateTicketsDto.status,
+    //   TicketEvent: {
+    //     create: {
+    //       type: 'STATUS_UPDATED',
+    //       createdBy: user.id, // Use user ID from JWT
+    //     },
+    //   },
+    // };
 
-    // If status is being changed to completed, update resolvedAt and send completion email
-    if (updateTicketsDto.status === 'completed') {
-      data.resolvedAt = new Date();
+    const { userId, technicianId, ...updatedData } = updateTicketDto;
 
-      // Get ticket details and creator email
+    if (updateTicketDto.status === 'COMPLETED') {
+
       const ticket = await this.prisma.ticket.findUnique({
         where: { id },
       });
@@ -89,10 +86,16 @@ export class TicketService {
       }
     }
 
-    return await this.prisma.ticket.update({ data, where: { id } });
+    return await this.prisma.ticket.update({
+      data: {
+        ...updatedData,
+        ...(technicianId ? { technician: { connect: { id: technicianId } } } : {})
+      },
+      where: { id }
+    });
   }
 
-  async delete(id: string, user: any): Promise<Ticket> {
+  async delete(id: string): Promise<Ticket> {
     return this.prisma.ticket.delete({ where: { id } });
   }
 

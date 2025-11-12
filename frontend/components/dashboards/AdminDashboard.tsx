@@ -4,8 +4,7 @@ import { useMaintenance } from '../../contexts/MaintenanceContext';
 import useUser from '@/hooks/useUser';
 import useLocation from '@/hooks/useLocation';
 import useRepairType from '@/hooks/useRepairType';
-import useTicket from '@/hooks/useTicket';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
@@ -40,8 +39,6 @@ import {
   UserCircle,
   Mail,
   Phone,
-  Shield,
-  AlertCircle,
   TrendingUp,
   ClipboardList,
   CheckCircle,
@@ -68,13 +65,12 @@ interface Announcement {
 
 export const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { requests } = useMaintenance();
+  const { tickets } = useMaintenance();
 
   // Users Management (data from hook)
   const { users, setUsers: setHookUsers, fetchAll: fetchUsers } = useUser();
   const { locations, fetchAll: fetchLocations, create: createLocation, update: updateLocation, remove: removeLocation, setLocations } = useLocation();
   const { repairTypes, fetchAll: fetchRepairTypes, create: createRepairType, update: updateRepairType, remove: removeRepairType, setRepairTypes } = useRepairType();
-  const { tickets, fetchAll: fetchTickets, create: createTicket, update: updateTicket, remove: removeTicket, setTickets } = useTicket();
 
   const displayUsers = users ?? [];
 
@@ -89,14 +85,11 @@ export const AdminDashboard: React.FC = () => {
     priority: 'medium' as 'low' | 'medium' | 'high',
   });
 
-
-
   const [searchUsers, setSearchUsers] = useState('');
   const [searchBuildings, setSearchBuildings] = useState('');
   const [searchRepairTypes, setSearchRepairTypes] = useState('');
 
   const [filterUserRole, setFilterUserRole] = useState<Role | 'all'>('all');
-  const [filterRepairTypeStatus, setFilterRepairTypeStatus] = useState<'all' | 'active' | 'inactive'>('all');
 
   // Dialog states
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
@@ -131,10 +124,10 @@ export const AdminDashboard: React.FC = () => {
   });
 
   // Statistics
-  const totalRequests = requests.length;
-  const pendingRequests = requests.filter(r => r.status === 'pending').length;
-  const inProgressRequests = requests.filter(r => r.status === 'in_progress').length;
-  const completedRequests = requests.filter(r => r.status === 'completed').length;
+  const totalRequests = tickets.length;
+  const pendingRequests = tickets.filter(r => r.status === 'ASSIGNED').length;
+  const inProgressRequests = tickets.filter(r => r.status === 'IN_PROGRESS').length;
+  const completedRequests = tickets.filter(r => r.status === 'COMPLETED').length;
 
   // Load data from APIs on mount
   useEffect(() => {
@@ -149,9 +142,6 @@ export const AdminDashboard: React.FC = () => {
     } catch (e) { }
     try {
       fetchRepairTypes && fetchRepairTypes();
-    } catch (e) { }
-    try {
-      fetchTickets && fetchTickets();
     } catch (e) { }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

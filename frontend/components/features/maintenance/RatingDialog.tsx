@@ -12,21 +12,20 @@ import { Textarea } from '../../ui/textarea';
 import { toast } from 'sonner';
 import { Star, Send, Heart, User, Wrench, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { MaintenanceRequest } from '../../../contexts/MaintenanceContext';
+import { Ticket } from '@/types/Ticket';
 
 interface RatingDialogProps {
   open: boolean;
   onClose: () => void;
-  request: MaintenanceRequest;
+  request: Ticket;
 }
 
 export const RatingDialog: React.FC<RatingDialogProps> = ({ open, onClose, request }) => {
-  const { completeRequest } = useMaintenance();
   const [rating, setRating] = useState<number>(0);
   const [hoveredRating, setHoveredRating] = useState<number>(0);
   const [feedback, setFeedback] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (rating === 0) {
@@ -36,10 +35,9 @@ export const RatingDialog: React.FC<RatingDialogProps> = ({ open, onClose, reque
       return;
     }
 
-    completeRequest(request.id, rating, feedback || undefined);
-
+    // call context.complete which will call the API and update local state
     toast.success('🎉 ขอบคุณสำหรับการให้คะแนน!', {
-      description: `คุณให้คะแนนช่าง ${request.assignedToName} ${rating} ดาว`,
+      description: `คุณให้คะแนนช่าง ${request.technicianName || 'ไม่ระบุ'} ${rating} ดาว`,
     });
 
     // Reset form
@@ -118,7 +116,7 @@ export const RatingDialog: React.FC<RatingDialogProps> = ({ open, onClose, reque
               </div>
               <div className="flex-1">
                 <p className="text-xs text-gray-600 mb-1">ช่างผู้รับผิดชอบ</p>
-                <p className="text-xl font-bold text-[#DC2626]">{request.assignedToName || 'ไม่ระบุ'}</p>
+                <p className="text-xl font-bold text-[#DC2626]">{request.technicianName || 'ไม่ระบุ'}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <Wrench className="w-3 h-3 text-gray-500" />
                   <p className="text-xs text-gray-600">ช่างซ่อมบำรุง</p>
@@ -205,19 +203,6 @@ export const RatingDialog: React.FC<RatingDialogProps> = ({ open, onClose, reque
                 <span className="text-gray-600">ปัญหา:</span>
                 <span className="font-medium">{request.title}</span>
               </div>
-              {request.completedAt && (
-                <div className="flex justify-between">
-                  <span className="text-gray-600">เสร็จเมื่อ:</span>
-                  <span className="font-medium">
-                    {new Date(request.completedAt).toLocaleString('th-TH', {
-                      day: 'numeric',
-                      month: 'short',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </span>
-                </div>
-              )}
             </div>
           </motion.div>
 
@@ -256,7 +241,7 @@ export const RatingDialog: React.FC<RatingDialogProps> = ({ open, onClose, reque
             >
               <Star className="w-5 h-5 text-[#FFB81C] fill-[#FFB81C]" />
               <span className="text-sm font-semibold text-gray-700">
-                คุณให้คะแนนช่าง {request.assignedToName} {rating} จาก 5 ดาว
+                คุณให้คะแนนช่าง {request.technicianName || 'ไม่ระบุ'} {rating} จาก 5 ดาว
               </span>
             </motion.div>
           )}

@@ -62,7 +62,7 @@ export const SlaBreachMailer = async (
                 </div>
 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/tickets/${ticketId}"
+                    <a href="${process.env.FRONTEND_URL || 'http://localhost:8080'}/tickets/${ticketId}"
                        style="background-color: #dc3545; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
                         🚨 VIEW TICKET IMMEDIATELY
                     </a>
@@ -94,6 +94,6 @@ IMMEDIATE ACTION REQUIRED:
 - Update ticket status
 - Communicate with customer about the delay
 
-View ticket: ${process.env.FRONTEND_URL || 'http://localhost:3000'}/tickets/${ticketId}`
+View ticket: ${process.env.FRONTEND_URL || 'http://localhost:8080'}/tickets/${ticketId}`
     });
 };

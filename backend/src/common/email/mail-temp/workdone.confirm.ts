@@ -55,7 +55,7 @@ export const WorkDoneMailer = async (
                 </div>
 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/tickets/${ticketId}"
+                    <a href="${process.env.FRONTEND_URL || 'http://localhost:8080'}/tickets/${ticketId}"
                        style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
                         View Ticket Details
                     </a>
@@ -64,7 +64,7 @@ export const WorkDoneMailer = async (
                 <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 15px; margin: 20px 0;">
                     <h4 style="color: #856404; margin-top: 0;">📊 Service Quality Feedback</h4>
                     <p>Your feedback helps us improve our service. Please take a moment to rate your experience:</p>
-                    <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/survey/${ticketId}"
+                    <a href="${process.env.FRONTEND_URL || 'http://localhost:8080'}/survey/${ticketId}"
                        style="background-color: #ffc107; color: #212529; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
                         ⭐ Rate Our Service
                     </a>
@@ -92,8 +92,8 @@ What was done:
 
 If you need further assistance, please reply to this email or create a new ticket.
 
-View ticket: ${process.env.FRONTEND_URL || 'http://localhost:3000'}/tickets/${ticketId}
-Rate our service: ${process.env.FRONTEND_URL || 'http://localhost:3000'}/survey/${ticketId}
+View ticket: ${process.env.FRONTEND_URL || 'http://localhost:8080'}/tickets/${ticketId}
+Rate our service: ${process.env.FRONTEND_URL || 'http://localhost:8080'}/survey/${ticketId}
 
 Thank you for using our service!
 

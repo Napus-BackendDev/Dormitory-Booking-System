@@ -60,7 +60,7 @@ export const SlaWarningMailer = async (
                 </div>
 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/tickets/${ticketId}"
+                    <a href="${process.env.FRONTEND_URL || 'http://localhost:8080'}/tickets/${ticketId}"
                        style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
                         View Ticket Details
                     </a>
@@ -77,6 +77,6 @@ Time Remaining: Less than 15 minutes
 
 Please ${actionRequired === 'acknowledged' ? 'acknowledge this ticket' : 'resolve this ticket'} immediately to avoid SLA breach.
 
-View ticket: ${process.env.FRONTEND_URL || 'http://localhost:3000'}/tickets/${ticketId}`
+View ticket: ${process.env.FRONTEND_URL || 'http://localhost:8080'}/tickets/${ticketId}`
     });
 };

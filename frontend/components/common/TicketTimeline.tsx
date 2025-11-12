@@ -70,12 +70,12 @@ export const TicketTimeline: React.FC<TicketTimelineProps> = ({ ticketId, events
   const handleAddNote = () => {
     if (!noteText.trim() || !user) return;
     
-    addNote(ticketId, noteText, user.id, user.name, user.role);
+    addNote(ticketId, noteText, user.id, user.name, user.role?.name);
     setNoteText('');
     setIsAddingNote(false);
   };
 
-  const canAddNote = user && (user.role === 'technician' || user.role === 'supervisor' || user.role === 'admin');
+  const canAddNote = user && (user.role?.name.toLowerCase() === 'technician' || user.role?.name.toLowerCase() === 'supervisor' || user.role?.name.toLowerCase() === 'admin');
 
   return (
     <div className="space-y-6">
