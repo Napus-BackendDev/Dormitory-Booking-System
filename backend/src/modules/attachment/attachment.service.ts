@@ -21,7 +21,7 @@ export class AttachmentService {
     }
 
     async findAll(): Promise<Attachment[]> {
-        return this.prisma.attachment.findMany();
+        return this.prisma.attachment.findMany({ take: 50, skip: 0 });
     }
 
     async findById(id: UUID): Promise<Attachment> {

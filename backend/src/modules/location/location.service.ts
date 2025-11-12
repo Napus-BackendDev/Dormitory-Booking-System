@@ -9,7 +9,7 @@ export class LocationService {
   constructor(private prisma: PrismaService) { }
 
   async findAll() {
-    return this.prisma.location.findMany();
+    return this.prisma.location.findMany({ take: 20, skip: 0 });
   }
 
   async findOne(id: string): Promise<Location | null> {

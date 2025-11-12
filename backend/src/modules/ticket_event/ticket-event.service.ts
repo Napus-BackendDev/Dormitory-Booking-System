@@ -18,7 +18,7 @@ export class TicketEventService {
     }
     
     async findAll(): Promise<TicketEvent[]> {
-        return this.prisma.ticketEvent.findMany();
+        return this.prisma.ticketEvent.findMany({ take: 50, skip: 0 });
     }
 
     async findById(id: string): Promise<TicketEvent> {

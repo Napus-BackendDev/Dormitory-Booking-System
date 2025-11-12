@@ -7,7 +7,7 @@ export class UserService {
     constructor(private prismaService: PrismaService) { }
 
     getAllUsers() {
-        return this.prismaService.user.findMany();
+        return this.prismaService.user.findMany({ take: 50, skip: 0 });
     }
 
     updateUserRole(userId: string, newRole: string) {
