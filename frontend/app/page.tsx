@@ -5,18 +5,18 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function HomePage() {
-  const { isAuthenticated, loading } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
     if (!loading) {
-      if (isAuthenticated) {
+      if (user) {
         router.push('/dashboard')
       } else {
         router.push('/login')
       }
     }
-  }, [isAuthenticated, loading, router])
+  }, [user, loading, router])
 
   // Show loading spinner while checking authentication
   return (
