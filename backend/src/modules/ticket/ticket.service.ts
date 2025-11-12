@@ -29,7 +29,7 @@ export class TicketService {
   }
 
   async findAll() {
-    return this.prisma.ticket.findMany();
+    return this.prisma.ticket.findMany({take: 50, skip: 0});
   }
 
   async findOne(id: string): Promise<Ticket | null> {

@@ -9,7 +9,7 @@ export class RoleService {
   constructor(private prisma: PrismaService) { }
 
   async findAll() {
-    return this.prisma.role.findMany();
+    return this.prisma.role.findMany({ take: 10, skip: 0 });
   }
 
   async findOne(id: string): Promise<Role | null> {
