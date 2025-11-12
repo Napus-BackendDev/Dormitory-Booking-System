@@ -9,7 +9,7 @@ export class SurveyService {
   constructor(private prisma: PrismaService) { }
 
   async findAll() {
-    return this.prisma.survey.findMany();
+    return this.prisma.survey.findMany({ take: 10, skip: 0 });
   }
 
   async findOne(id: string): Promise<Survey | null> {
