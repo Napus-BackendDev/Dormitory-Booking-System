@@ -10,7 +10,6 @@ import { RepairTypeModule } from './modules/repair_type/repairtype.module';
 import { RoleModule } from './modules/role/role.module';
 import { LocationModule } from './modules/location/location.module';
 import { LineModule } from './modules/line/Line.module';
-import { EmailModule } from './common/email/email.module';
 import { join } from 'path';
 
 @Module({
@@ -28,7 +27,6 @@ import { join } from 'path';
     RoleModule,
     LocationModule,
     LineModule,
-    EmailModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
