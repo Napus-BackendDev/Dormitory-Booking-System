@@ -52,24 +52,28 @@ export class LineService {
   }
 
   async sendLineCreateTicket(ticket: Ticket) {
+    try {
     const userIds = await this.prisma.line.findMany().then((lines) => lines.map((line) => line.userId));
-
     const dueDate = new Date(ticket.responseDueAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
-
     const message = renderTemplate('line-ticket', { ...ticket, dueDate});
-
     const results = await Promise.all(userIds.map((userId) => this.sendMessage(userId, message)));
     return { success: true, results };
+    } catch (error) {
+      console.error('Error sending LINE create ticket message:', error);
+    }
+    return { success: true, results: [] };
   }
 
   async sendLineUpdateTicket(ticket: Ticket) {
+  try {
   const userIds = await this.prisma.line.findMany().then((lines) => lines.map((line) => line.userId));
-
   const dueDate = new Date(ticket.resolveDueAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
-
   const message = renderTemplate('line-ticket', { ...ticket, dueDate });
-
   const results = await Promise.all(userIds.map((userId) => this.sendMessage(userId, message)));
   return { success: true, results };
+  } catch (error) {
+  console.error('Error sending LINE update ticket message:', error);
   }
+  return { success: true, results: [] };
+}
 }

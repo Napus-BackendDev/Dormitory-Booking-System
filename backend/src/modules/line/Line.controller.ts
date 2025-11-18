@@ -17,7 +17,7 @@ export class LineController {
       if (userId) {
         const existingUser = await this.prisma.line.findUnique({ where: { userId } });
         if (!existingUser) {
-          const userRecord = await this.prisma.line.create({ data: { userId } });
+          await this.prisma.line.create({ data: { userId } });
           return 'OK';
         } else {
           return 'OK';
