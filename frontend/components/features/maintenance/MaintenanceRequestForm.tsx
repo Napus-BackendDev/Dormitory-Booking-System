@@ -267,9 +267,9 @@ export const MaintenanceRequestForm: React.FC<MaintenanceRequestFormProps> = ({ 
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="low">ต่ำ - ไม่เร่งด่วน</SelectItem>
-                <SelectItem value="medium">ปานกลาง - ควรแก้ไขเร็ว</SelectItem>
-                <SelectItem value="high">สูง - เร่งด่วนมาก</SelectItem>
+                <SelectItem value="P1">ต่ำ - ไม่เร่งด่วน</SelectItem>
+                <SelectItem value="P2">ปานกลาง - ควรแก้ไขเร็ว</SelectItem>
+                <SelectItem value="P3">สูง - เร่งด่วนมาก</SelectItem>
               </SelectContent>
             </Select>
           </div>
