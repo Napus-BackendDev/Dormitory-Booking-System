@@ -5,7 +5,7 @@ import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { SLA_CONSTANTS } from 'src/common/constants/sla.constant';
 import { RecieveTicketMailer } from 'src/common/email/mail-temp/recieve.confirm';
-import { EmailService } from 'src/common/email/email.service';
+// import { EmailService } from 'src/common/email/email.service';
 import { LineService } from '../line/Line.service';
 import { generateImageUrl } from '../../common/utils/utils';
 
@@ -14,7 +14,7 @@ export class TicketService {
   constructor(
     private prisma: PrismaService,
     private lineService: LineService,
-    private emailService: EmailService
+    // private emailService: EmailService
   ) { }
 
   private computeSLA(priority: 'P1' | 'P2' | 'P3' | 'P4', now = new Date()) {
@@ -37,11 +37,11 @@ export class TicketService {
 
 
   async create(createTicketDto: CreateTicketDto, photos: Express.Multer.File[], user: User): Promise<Ticket> {
-    try {
-      await RecieveTicketMailer(this.emailService, user.email);
-    } catch (error) {
-      console.error('Failed to send ticket confirmation email:', error);
-    }
+    // try {
+    //   await RecieveTicketMailer(this.emailService, user.email);
+    // } catch (error) {
+    //   console.error('Failed to send ticket confirmation email:', error);
+    // }
 
     const photoUrls = photos.map(file => generateImageUrl(file.filename));
 
